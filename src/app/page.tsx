@@ -374,14 +374,14 @@ export default function Home() {
             </motion.a>
             
             <motion.a
-              href="https://github.com/doom"
+              href="https://discord.gg/FxFpDcpGdC"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255, 255, 255, 0.3)' }}
               whileTap={{ scale: 0.95 }}
               className="px-10 py-4 rounded-full font-mono text-sm text-black bg-white hover:bg-white/90 transition-colors"
             >
-              GitHub
+              My Market Server
             </motion.a>
           </div>
         </motion.div>
