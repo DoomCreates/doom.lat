@@ -7,14 +7,14 @@ import { motion } from 'framer-motion';
 
 export default function Home() {
   return (
-    <main className="relative">
+    <main className="relative bg-black">
       {/* Custom cursor */}
       <CursorFollower />
 
       {/* Hero section */}
       <Hero />
 
-      {/* Additional sections can be added here */}
+      {/* Additional sections */}
       <section id="work" className="min-h-screen flex items-center justify-center px-6 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 60 }}
@@ -24,10 +24,10 @@ export default function Home() {
           className="text-center max-w-4xl"
         >
           <h2 className="font-display text-5xl md:text-7xl text-white mb-8 font-light tracking-tight">
-            Nourish your mind, with the fruits of knowledge
+            Selected Work
           </h2>
-          <p className="font-mono text-white/40 text-sm md:text-base">
-            It's important that you remember that your outlook on life is influenced by one's ability to think.
+          <p className="font-mono text-white/35 text-sm md:text-base">
+            Coming soon. This space will showcase my latest projects and creative endeavors.
           </p>
         </motion.div>
       </section>
@@ -43,29 +43,29 @@ export default function Home() {
           <h2 className="font-display text-5xl md:text-7xl text-white mb-8 font-light tracking-tight">
             Let's Connect
           </h2>
-          <p className="font-mono text-white/40 text-sm md:text-base mb-12">
+          <p className="font-mono text-white/35 text-sm md:text-base mb-12">
             Interested in working together? Feel free to reach out.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <motion.a
               href="mailto:hello@doom.lat"
-              whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
+              whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(255, 255, 255, 0.1)' }}
               whileTap={{ scale: 0.95 }}
-              className="px-10 py-4 border border-white/20 rounded-full font-mono text-sm text-white/80 hover:text-white transition-colors backdrop-blur-sm bg-white/5"
+              className="px-10 py-4 glass rounded-full font-mono text-sm text-white/70 hover:text-white transition-colors"
             >
-              Discord : doomwrites
+              hello@doom.lat
             </motion.a>
             
             <motion.a
-              href="https://discord.gg/xXNAxJhXVT"
+              href="https://github.com/doom"
               target="_blank"
               rel="noopener noreferrer"
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255, 255, 255, 0.3)' }}
               whileTap={{ scale: 0.95 }}
               className="px-10 py-4 rounded-full font-mono text-sm text-black bg-white hover:bg-white/90 transition-colors"
             >
-              My Market Server
+              GitHub
             </motion.a>
           </div>
         </motion.div>
@@ -77,11 +77,14 @@ export default function Home() {
       {/* Footer */}
       <footer className="relative z-10 pb-8">
         <div className="text-center">
-          <p className="font-mono text-xs text-white/20">
+          <p className="font-mono text-xs text-white/15">
             © 2026 doom.lat — Designed & Developed with care
           </p>
         </div>
       </footer>
+
+      {/* Global noise overlay */}
+      <div className="noise-overlay" />
     </main>
   );
 }
