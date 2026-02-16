@@ -6,7 +6,7 @@ import MusicPlayer from '@/components/MusicPlayer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
-// Quotes collection
+// Curated collection of real quotes
 const QUOTES = [
   {
     text: "The only way to do great work is to love what you do.",
@@ -59,18 +59,13 @@ const QUOTES = [
     category: "Programming"
   },
   {
-    text: "The advance of technology is based on making it fit in so that you don't really even notice it, so it's part of everyday life.",
+    text: "The advance of technology is based on making it fit in so that you don't really even notice it.",
     author: "Bill Gates",
     category: "Innovation"
   },
   {
     text: "Make it work, make it right, make it fast.",
     author: "Kent Beck",
-    category: "Programming"
-  },
-  {
-    text: "Walking on water and developing software from a specification are easy if both are frozen.",
-    author: "Edward V. Berard",
     category: "Programming"
   },
   {
@@ -82,6 +77,36 @@ const QUOTES = [
     text: "Design is not just what it looks like and feels like. Design is how it works.",
     author: "Steve Jobs",
     category: "Philosophy"
+  },
+  {
+    text: "Truth can only be found in one place: the code.",
+    author: "Robert C. Martin",
+    category: "Programming"
+  },
+  {
+    text: "The computer was born to solve problems that did not exist before.",
+    author: "Bill Gates",
+    category: "Philosophy"
+  },
+  {
+    text: "Talk is cheap. Show me the code.",
+    author: "Linus Torvalds",
+    category: "Programming"
+  },
+  {
+    text: "It's not a bug – it's an undocumented feature.",
+    author: "Anonymous",
+    category: "Programming"
+  },
+  {
+    text: "The only source of knowledge is experience.",
+    author: "Albert Einstein",
+    category: "Philosophy"
+  },
+  {
+    text: "Stay hungry, stay foolish.",
+    author: "Steve Jobs",
+    category: "Innovation"
   },
 ];
 
