@@ -58,12 +58,12 @@ export default function Hero() {
       style={{ opacity, scale }}
       className="relative min-h-screen flex items-center justify-center px-6"
     >
-      {/* Animated glass orbs */}
+      {/* Minimal light orbs - very subtle */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
           initial={{ opacity: 0, scale: 0, x: -100, y: -100 }}
           animate={{ 
-            opacity: 0.06, 
+            opacity: 0.015, 
             scale: 1,
             x: 0,
             y: 0,
@@ -78,7 +78,7 @@ export default function Hero() {
         <motion.div
           initial={{ opacity: 0, scale: 0, x: 100, y: 100 }}
           animate={{ 
-            opacity: 0.04, 
+            opacity: 0.01, 
             scale: 1,
             x: 0,
             y: 0,
@@ -91,32 +91,9 @@ export default function Hero() {
           className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-white rounded-full blur-3xl animate-float"
           style={{ animationDelay: '3s' }}
         />
-        
-        {/* Additional floating particles */}
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ 
-              opacity: [0.02, 0.04, 0.02],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 4 + i,
-              delay: 1 + i * 0.3,
-              repeat: Infinity,
-              repeatType: 'reverse',
-            }}
-            className="absolute w-32 h-32 bg-white rounded-full blur-2xl"
-            style={{
-              left: `${20 + i * 15}%`,
-              top: `${30 + i * 10}%`,
-            }}
-          />
-        ))}
       </div>
 
-      {/* Glass panel behind content */}
+      {/* Darker glass panel behind content */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -136,7 +113,7 @@ export default function Hero() {
         {/* Animated top line with shimmer */}
         <motion.div
           variants={lineVariants}
-          className="h-[2px] bg-gradient-to-r from-transparent via-white/60 to-transparent mb-16 origin-center relative overflow-hidden"
+          className="h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent mb-16 origin-center relative overflow-hidden"
         >
           <motion.div
             animate={{
@@ -148,13 +125,13 @@ export default function Hero() {
               ease: 'linear',
               delay: 1.5,
             }}
-            className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+            className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-white/30 to-transparent"
           />
         </motion.div>
 
         {/* Label with glass effect */}
         <motion.div variants={itemVariants} className="mb-6">
-          <span className="inline-block font-mono text-xs tracking-[0.4em] text-white/60 uppercase px-6 py-2 glass rounded-full">
+          <span className="inline-block font-mono text-xs tracking-[0.4em] text-white/50 uppercase px-6 py-2 glass rounded-full">
             Portfolio
           </span>
         </motion.div>
@@ -172,36 +149,35 @@ export default function Hero() {
             <span className="text-gradient-soft inline-block">DOOM</span>
           </motion.span>
           
-          {/* Glow effect on hover */}
+          {/* Subtle glow effect */}
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 0.5, 0] }}
+            animate={{ opacity: [0, 0.3, 0] }}
             transition={{ duration: 3, repeat: Infinity, delay: 2 }}
-            className="absolute inset-0 blur-3xl bg-white/10 -z-10"
+            className="absolute inset-0 blur-3xl bg-white/5 -z-10"
           />
         </motion.h1>
 
         {/* Subtitle with glass container */}
         <motion.div variants={itemVariants} className="mb-6">
-          <p className="font-display text-2xl md:text-3xl text-white/70 tracking-wide inline-block px-8 py-3 glass-strong rounded-2xl">
-            Roblox Developer & Cyber-Security analyst
+          <p className="font-display text-2xl md:text-3xl text-white/60 tracking-wide inline-block px-8 py-3 glass-strong rounded-2xl">
+            Creative Developer & Designer
           </p>
         </motion.div>
 
         {/* Description */}
         <motion.p
           variants={itemVariants}
-          className="font-mono text-sm md:text-base text-white/50 max-w-2xl mx-auto leading-relaxed px-6"
+          className="font-mono text-sm md:text-base text-white/40 max-w-2xl mx-auto leading-relaxed px-6"
         >
-                       Passionate Roblox developer, and cyber-security analyst. 
-          Most notably recognized for the development of the best external Blade Ball AutoParry,
-                                during the widespread Roblox ban wave.
+          Crafting digital experiences at the intersection of art and technology.
+          Specializing in minimalist design, fluid animations, and immersive web experiences.
         </motion.p>
 
         {/* Bottom line with shimmer */}
         <motion.div
           variants={lineVariants}
-          className="h-[2px] bg-gradient-to-r from-transparent via-white/60 to-transparent mt-16 origin-center relative overflow-hidden"
+          className="h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent mt-16 origin-center relative overflow-hidden"
         >
           <motion.div
             animate={{
@@ -213,7 +189,7 @@ export default function Hero() {
               ease: 'linear',
               delay: 1.5,
             }}
-            className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-white/40 to-transparent"
+            className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-white/30 to-transparent"
           />
         </motion.div>
 
@@ -226,14 +202,14 @@ export default function Hero() {
             href="#work"
             whileHover={{ 
               scale: 1.05,
-              boxShadow: '0 0 30px rgba(255, 255, 255, 0.2)',
+              boxShadow: '0 0 30px rgba(255, 255, 255, 0.15)',
             }}
             whileTap={{ scale: 0.95 }}
-            className="group relative px-8 py-3 glass rounded-full font-mono text-sm text-white/90 hover:text-white transition-all overflow-hidden"
+            className="group relative px-8 py-3 glass rounded-full font-mono text-sm text-white/80 hover:text-white transition-all overflow-hidden"
           >
-            <span className="relative z-10">A Word From Me</span>
+            <span className="relative z-10">View Work</span>
             <motion.div
-              className="absolute inset-0 bg-white/5"
+              className="absolute inset-0 bg-white/03"
               initial={{ scale: 0, opacity: 0 }}
               whileHover={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.3 }}
@@ -244,7 +220,7 @@ export default function Hero() {
             href="#contact"
             whileHover={{ 
               scale: 1.05,
-              boxShadow: '0 0 40px rgba(255, 255, 255, 0.4)',
+              boxShadow: '0 0 40px rgba(255, 255, 255, 0.3)',
             }}
             whileTap={{ scale: 0.95 }}
             className="group relative px-8 py-3 rounded-full font-mono text-sm text-black bg-white hover:bg-white/95 transition-all overflow-hidden"
@@ -256,7 +232,7 @@ export default function Hero() {
         {/* Scroll indicator with bounce */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: [0, 1, 1, 0], y: [0, 10, 10, 0] }}
+          animate={{ opacity: [0, 0.5, 0.5, 0], y: [0, 10, 10, 0] }}
           transition={{
             duration: 2.5,
             delay: 2.5,
@@ -266,11 +242,11 @@ export default function Hero() {
           className="absolute bottom-12 left-1/2 -translate-x-1/2"
         >
           <div className="flex flex-col items-center gap-3 glass px-4 py-3 rounded-full">
-            <span className="font-mono text-xs text-white/40 tracking-[0.3em]">SCROLL</span>
+            <span className="font-mono text-xs text-white/30 tracking-[0.3em]">SCROLL</span>
             <motion.svg
               animate={{ y: [0, 5, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
-              className="w-4 h-6 text-white/40"
+              className="w-4 h-6 text-white/30"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -287,12 +263,7 @@ export default function Hero() {
       </motion.div>
 
       {/* Enhanced grain overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.02] mix-blend-overlay"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E")`,
-        }}
-      />
+      <div className="noise-overlay" />
     </motion.div>
   );
 }
