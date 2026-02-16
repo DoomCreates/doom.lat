@@ -370,7 +370,7 @@ export default function Home() {
               whileTap={{ scale: 0.95 }}
               className="px-10 py-4 glass rounded-full font-mono text-sm text-white/70 hover:text-white transition-colors"
             >
-              hello@doom.lat
+              Discord : doomwrites
             </motion.a>
             
             <motion.a
