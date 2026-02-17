@@ -7,7 +7,6 @@ export const metadata: Metadata = {
   description: "Portfolio of doom",
 };
 
-// Force dynamic rendering
 export const dynamic = 'force-dynamic';
 
 export default function RootLayout({
