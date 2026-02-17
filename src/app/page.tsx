@@ -1,10 +1,12 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import CursorFollower from '@/components/CursorFollower';
 import Hero from '@/components/Hero';
 import MusicPlayer from '@/components/MusicPlayer';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const QUOTES = [
   {
@@ -110,8 +112,13 @@ const QUOTES = [
 ];
 
 export default function Home() {
+  const [mounted, setMounted] = useState(false);
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
   const [direction, setDirection] = useState(0);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const currentQuote = QUOTES[currentQuoteIndex];
 
@@ -142,6 +149,10 @@ export default function Home() {
       filter: 'blur(10px)',
     }),
   };
+
+  if (!mounted) {
+    return <div className="min-h-screen bg-black" />;
+  }
 
   return (
     <main className="relative bg-black">
