@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { displayFont, monoFont } from "./fonts/fonts";
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   title: "doom.lat",
@@ -18,6 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${displayFont.variable} ${monoFont.variable} antialiased`}>
         {children}
+        <Analytics />
       </body>
     </html>
   );
