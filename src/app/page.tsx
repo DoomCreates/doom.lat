@@ -436,6 +436,8 @@ export default function Home() {
                 <p className="font-mono text-base text-white/60 leading-relaxed">
                   An advanced detection system designed for Blade Ball, with, precision timing algorithms, 
                                     and integration with game mechanics.
+
+                    This video captures the moment that we found the breakthrough we needed.
                 </p>
                 <p className="font-mono text-base text-white/60 leading-relaxed">
                   This was a two-person project, little to no external involvement.
