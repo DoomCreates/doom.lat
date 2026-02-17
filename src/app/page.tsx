@@ -116,14 +116,15 @@ export default function Home() {
 
   const currentQuote = QUOTES[currentQuoteIndex];
 
-  // Auto-advance quotes
+  // Auto-advance quotes - fixed to prevent infinite loop
   useEffect(() => {
     const timer = setInterval(() => {
-      nextQuote();
-    }, 8000); // Change quote every 8 seconds
+      setDirection(1);
+      setCurrentQuoteIndex((prev) => (prev + 1) % QUOTES.length);
+    }, 8000);
 
     return () => clearInterval(timer);
-  }, [currentQuoteIndex]);
+  }, []); // Empty deps - prevents re-creating interval
 
   const nextQuote = () => {
     setDirection(1);
@@ -160,6 +161,230 @@ export default function Home() {
 
       {/* Hero section */}
       <Hero />
+
+      {/* External Blade Ball AP Showcase Section */}
+      <section id="showcase" className="min-h-screen flex items-center justify-center px-6 relative z-10 py-20">
+        <div className="max-w-7xl w-full">
+          <motion.div
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            viewport={{ once: true }}
+            className="grid md:grid-cols-2 gap-12 items-center"
+          >
+            {/* Left side - Video with cool frame */}
+            <motion.div
+              initial={{ opacity: 0, x: -60 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+              viewport={{ once: true }}
+              className="relative group"
+            >
+              {/* Decorative frame elements */}
+              <div className="absolute -inset-4 glass-strong rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute -top-6 -left-6 w-24 h-24 border-t-2 border-l-2 border-white/20 rounded-tl-2xl" />
+              <div className="absolute -bottom-6 -right-6 w-24 h-24 border-b-2 border-r-2 border-white/20 rounded-br-2xl" />
+              
+              {/* Glowing corners */}
+              <motion.div
+                animate={{
+                  opacity: [0.3, 0.6, 0.3],
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+                className="absolute -top-2 -left-2 w-4 h-4 bg-white/40 rounded-full blur-md"
+              />
+              <motion.div
+                animate={{
+                  opacity: [0.3, 0.6, 0.3],
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                  delay: 1.5,
+                }}
+                className="absolute -bottom-2 -right-2 w-4 h-4 bg-white/40 rounded-full blur-md"
+              />
+
+              {/* Video container */}
+              <div className="relative glass-strong rounded-xl overflow-hidden border border-white/10 shadow-2xl">
+                <div className="aspect-video bg-black/20 flex items-center justify-center">
+                  {/* Replace this with your actual video */}
+                  <video
+                    className="w-full h-full object-cover"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  >
+                    <source src="/videos/blade-ball-showcase.mp4" type="video/mp4" />
+                    {/* Fallback content */}
+                    <div className="flex flex-col items-center justify-center h-full text-white/50">
+                      <svg
+                        className="w-20 h-20 mb-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <p className="font-mono text-sm">Video Preview</p>
+                    </div>
+                  </video>
+                </div>
+
+                {/* Video overlay gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+              </div>
+
+              {/* Floating particles around video */}
+              <motion.div
+                animate={{
+                  y: [0, -10, 0],
+                  opacity: [0.2, 0.4, 0.2],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+                className="absolute -top-10 right-1/4 w-20 h-20 bg-white/5 rounded-full blur-2xl"
+              />
+              <motion.div
+                animate={{
+                  y: [0, 10, 0],
+                  opacity: [0.2, 0.4, 0.2],
+                }}
+                transition={{
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                  delay: 2,
+                }}
+                className="absolute -bottom-10 left-1/4 w-24 h-24 bg-white/5 rounded-full blur-2xl"
+              />
+            </motion.div>
+
+            {/* Right side - Heading + Description */}
+            <motion.div
+              initial={{ opacity: 0, x: 60 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
+              viewport={{ once: true }}
+              className="space-y-8"
+            >
+              {/* Label */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
+                viewport={{ once: true }}
+              >
+                <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-white/40 uppercase">
+                  Featured Project
+                </span>
+              </motion.div>
+
+              {/* Heading */}
+              <motion.h2
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+                viewport={{ once: true }}
+                className="font-display text-4xl md:text-6xl text-white font-light tracking-tight leading-tight"
+              >
+                External Blade Ball AP Showcase
+              </motion.h2>
+
+              {/* Description */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
+                viewport={{ once: true }}
+                className="space-y-4"
+              >
+                <p className="font-mono text-base text-white/60 leading-relaxed">
+                  An advanced automation platform designed for Blade Ball, featuring intelligent auto-parry mechanics, 
+                  precision timing algorithms, and seamless integration with game mechanics.
+                </p>
+                <p className="font-mono text-base text-white/60 leading-relaxed">
+                  Built with cutting-edge technology to deliver unparalleled performance and reliability, 
+                  pushing the boundaries of what's possible in game automation.
+                </p>
+              </motion.div>
+
+              {/* Features list */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                viewport={{ once: true }}
+                className="space-y-3"
+              >
+                {[
+                  'Intelligent Auto-Parry System',
+                  'Real-time Performance Optimization',
+                  'Advanced Detection Evasion',
+                  'Seamless User Experience',
+                ].map((feature, index) => (
+                  <motion.div
+                    key={feature}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.4, delay: 0.9 + index * 0.1 }}
+                    viewport={{ once: true }}
+                    className="flex items-center gap-3 group"
+                  >
+                    <div className="w-1.5 h-1.5 bg-white/40 rounded-full group-hover:bg-white/80 transition-colors" />
+                    <span className="font-mono text-sm text-white/50 group-hover:text-white/80 transition-colors">
+                      {feature}
+                    </span>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* CTA Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1.2 }}
+                viewport={{ once: true }}
+                className="pt-4"
+              >
+                <motion.a
+                  href="#contact"
+                  whileHover={{ 
+                    scale: 1.05,
+                    boxShadow: '0 0 30px rgba(255, 255, 255, 0.2)',
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  className="inline-block px-8 py-3 glass-strong rounded-full font-mono text-sm text-white/80 hover:text-white transition-colors"
+                >
+                  Learn More
+                </motion.a>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
 
       {/* Quotes section */}
       <section id="quotes" className="min-h-screen flex items-center justify-center px-6 relative z-10 py-20">
@@ -370,18 +595,18 @@ export default function Home() {
               whileTap={{ scale: 0.95 }}
               className="px-10 py-4 glass rounded-full font-mono text-sm text-white/70 hover:text-white transition-colors"
             >
-              Discord : doomwrites
+              hello@doom.lat
             </motion.a>
             
             <motion.a
-              href="https://discord.gg/FxFpDcpGdC"
+              href="https://github.com/doom"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255, 255, 255, 0.3)' }}
               whileTap={{ scale: 0.95 }}
               className="px-10 py-4 rounded-full font-mono text-sm text-black bg-white hover:bg-white/90 transition-colors"
             >
-              My Market Server
+              GitHub
             </motion.a>
           </div>
         </motion.div>
