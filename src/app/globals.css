@@ -26,7 +26,7 @@ body {
   min-height: 100vh;
 }
 
-/* Subtle animated vignette */
+/* Simplified vignette - no animation */
 body::after {
   content: '';
   position: fixed;
@@ -83,7 +83,7 @@ body.cursor-active::before {
   color: #ffffff;
 }
 
-/* Scrollbar styling - pure black theme */
+/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -103,7 +103,7 @@ body.cursor-active::before {
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* Glass morphism utility - darker for black theme */
+/* Glass morphism utility */
 .glass {
   background: rgba(255, 255, 255, 0.02);
   backdrop-filter: blur(20px) saturate(180%);
@@ -155,27 +155,6 @@ body.cursor-active::before {
   }
 }
 
-/* Shimmer effect */
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
-}
-
-.shimmer {
-  animation: shimmer 3s infinite;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.02),
-    transparent
-  );
-  background-size: 1000px 100%;
-}
-
 /* Smooth page transitions */
 @keyframes fadeInPage {
   from {
@@ -202,4 +181,31 @@ body {
   z-index: 100;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' /%3E%3C/svg%3E");
+}
+
+/* Performance optimizations */
+.glass,
+.glass-strong {
+  will-change: auto;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Optimize animations for 60fps */
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 }
