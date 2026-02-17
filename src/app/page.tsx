@@ -115,10 +115,20 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [showFullVideo, setShowFullVideo] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Prevent body scroll when video modal is open
+  useEffect(() => {
+    if (showFullVideo) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [showFullVideo]);
 
   const currentQuote = QUOTES[currentQuoteIndex];
 
@@ -158,6 +168,143 @@ export default function Home() {
     <main className="relative bg-black">
       <CursorFollower />
       <Hero />
+
+      {/* Fullscreen Video Modal */}
+      <AnimatePresence>
+        {showFullVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8"
+            onClick={() => setShowFullVideo(false)}
+          >
+            {/* Backdrop */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 bg-black/95 backdrop-blur-sm"
+            />
+
+            {/* Video Container */}
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0, rotateX: -15 }}
+              animate={{ scale: 1, opacity: 1, rotateX: 0 }}
+              exit={{ scale: 0.8, opacity: 0, rotateX: 15 }}
+              transition={{ 
+                duration: 0.5, 
+                ease: [0.22, 1, 0.36, 1]
+              }}
+              className="relative w-full max-w-6xl z-10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Decorative corners */}
+              <div className="absolute -top-4 -left-4 w-32 h-32 border-t-2 border-l-2 border-white/30 rounded-tl-3xl" />
+              <div className="absolute -bottom-4 -right-4 w-32 h-32 border-b-2 border-r-2 border-white/30 rounded-br-3xl" />
+              
+              {/* Corner glows */}
+              <motion.div
+                animate={{
+                  opacity: [0.4, 0.7, 0.4],
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+                className="absolute -top-4 -left-4 w-8 h-8 bg-white/50 rounded-full blur-xl"
+              />
+              <motion.div
+                animate={{
+                  opacity: [0.4, 0.7, 0.4],
+                  scale: [1, 1.2, 1],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                  delay: 1.5,
+                }}
+                className="absolute -bottom-4 -right-4 w-8 h-8 bg-white/50 rounded-full blur-xl"
+              />
+
+              {/* Video frame */}
+              <div className="relative glass-strong rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl">
+                <video
+                  className="w-full h-auto"
+                  autoPlay
+                  controls
+                  controlsList="nodownload"
+                >
+                  <source src="/videos/blade-ball-full-showcase.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+
+                {/* Gradient overlay at edges */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/30 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/30 to-transparent" />
+                </div>
+              </div>
+
+              {/* Close button */}
+              <motion.button
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3 }}
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setShowFullVideo(false)}
+                className="absolute -top-12 -right-12 md:-top-16 md:-right-16 w-12 h-12 rounded-full glass-strong border border-white/20 flex items-center justify-center group"
+                aria-label="Close video"
+              >
+                <svg
+                  className="w-6 h-6 text-white/70 group-hover:text-white transition-colors"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </motion.button>
+
+              {/* Title overlay */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="absolute top-6 left-6 z-10"
+              >
+                <div className="glass-strong rounded-full px-4 py-2">
+                  <span className="font-mono text-xs tracking-[0.2em] text-white/80 uppercase">
+                    Full Showcase
+                  </span>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Press ESC hint */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="absolute bottom-8 left-1/2 -translate-x-1/2"
+            >
+              <div className="glass rounded-full px-4 py-2 font-mono text-xs text-white/40">
+                Press ESC or click outside to close
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Optimized showcase section */}
       <section id="showcase" className="min-h-screen flex items-center justify-center px-6 relative z-10 py-20">
@@ -218,6 +365,37 @@ export default function Home() {
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
               </div>
+
+              {/* Watch Full Showcase Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                viewport={{ once: true }}
+                className="mt-6 flex justify-center"
+              >
+                <motion.button
+                  whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255, 255, 255, 0.3)' }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowFullVideo(true)}
+                  className="group relative px-8 py-4 rounded-full font-mono text-sm text-black bg-white hover:bg-white/90 transition-all overflow-hidden flex items-center gap-3"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                  <span>Watch Full Showcase</span>
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0"
+                    initial={{ x: '-100%' }}
+                    whileHover={{ x: '100%' }}
+                    transition={{ duration: 0.6 }}
+                  />
+                </motion.button>
+              </motion.div>
             </motion.div>
 
             <motion.div
@@ -256,7 +434,7 @@ export default function Home() {
                 className="space-y-4"
               >
                 <p className="font-mono text-base text-white/60 leading-relaxed">
-                  An advanced detection system designed for Blade Ball, with precision timing algorithms, 
+                  An advanced detection system designed for Blade Ball, with, precision timing algorithms, 
                                     and integration with game mechanics.
                 </p>
                 <p className="font-mono text-base text-white/60 leading-relaxed">
