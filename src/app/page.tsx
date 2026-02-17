@@ -4,9 +4,8 @@ import CursorFollower from '@/components/CursorFollower';
 import Hero from '@/components/Hero';
 import MusicPlayer from '@/components/MusicPlayer';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-// Curated collection of real quotes
 const QUOTES = [
   {
     text: "The only way to do great work is to love what you do.",
@@ -116,16 +115,6 @@ export default function Home() {
 
   const currentQuote = QUOTES[currentQuoteIndex];
 
-  // Auto-advance quotes - fixed to prevent infinite loop
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setDirection(1);
-      setCurrentQuoteIndex((prev) => (prev + 1) % QUOTES.length);
-    }, 8000);
-
-    return () => clearInterval(timer);
-  }, []); // Empty deps - prevents re-creating interval
-
   const nextQuote = () => {
     setDirection(1);
     setCurrentQuoteIndex((prev) => (prev + 1) % QUOTES.length);
@@ -146,7 +135,7 @@ export default function Home() {
       x: 0,
       opacity: 1,
       filter: 'blur(0px)',
-    },
+    }),
     exit: (direction: number) => ({
       x: direction < 0 ? 1000 : -1000,
       opacity: 0,
@@ -156,13 +145,9 @@ export default function Home() {
 
   return (
     <main className="relative bg-black">
-      {/* Custom cursor */}
       <CursorFollower />
-
-      {/* Hero section */}
       <Hero />
 
-      {/* External Blade Ball AP Showcase Section */}
       <section id="showcase" className="min-h-screen flex items-center justify-center px-6 relative z-10 py-20">
         <div className="max-w-7xl w-full">
           <motion.div
@@ -172,7 +157,6 @@ export default function Home() {
             viewport={{ once: true }}
             className="grid md:grid-cols-2 gap-12 items-center"
           >
-            {/* Left side - Video with cool frame */}
             <motion.div
               initial={{ opacity: 0, x: -60 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -180,12 +164,10 @@ export default function Home() {
               viewport={{ once: true }}
               className="relative group"
             >
-              {/* Decorative frame elements */}
               <div className="absolute -inset-4 glass-strong rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="absolute -top-6 -left-6 w-24 h-24 border-t-2 border-l-2 border-white/20 rounded-tl-2xl" />
               <div className="absolute -bottom-6 -right-6 w-24 h-24 border-b-2 border-r-2 border-white/20 rounded-br-2xl" />
               
-              {/* Glowing corners */}
               <motion.div
                 animate={{
                   opacity: [0.3, 0.6, 0.3],
@@ -212,10 +194,8 @@ export default function Home() {
                 className="absolute -bottom-2 -right-2 w-4 h-4 bg-white/40 rounded-full blur-md"
               />
 
-              {/* Video container */}
               <div className="relative glass-strong rounded-xl overflow-hidden border border-white/10 shadow-2xl">
                 <div className="aspect-video bg-black/20 flex items-center justify-center">
-                  {/* Replace this with your actual video */}
                   <video
                     className="w-full h-full object-cover"
                     autoPlay
@@ -224,7 +204,6 @@ export default function Home() {
                     playsInline
                   >
                     <source src="/videos/blade-ball-showcase.mp4" type="video/mp4" />
-                    {/* Fallback content */}
                     <div className="flex flex-col items-center justify-center h-full text-white/50">
                       <svg
                         className="w-20 h-20 mb-4"
@@ -249,12 +228,9 @@ export default function Home() {
                     </div>
                   </video>
                 </div>
-
-                {/* Video overlay gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
               </div>
 
-              {/* Floating particles around video */}
               <motion.div
                 animate={{
                   y: [0, -10, 0],
@@ -282,7 +258,6 @@ export default function Home() {
               />
             </motion.div>
 
-            {/* Right side - Heading + Description */}
             <motion.div
               initial={{ opacity: 0, x: 60 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -290,7 +265,6 @@ export default function Home() {
               viewport={{ once: true }}
               className="space-y-8"
             >
-              {/* Label */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -302,7 +276,6 @@ export default function Home() {
                 </span>
               </motion.div>
 
-              {/* Heading */}
               <motion.h2
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -313,7 +286,6 @@ export default function Home() {
                 External Blade Ball AP Showcase
               </motion.h2>
 
-              {/* Description */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -331,7 +303,6 @@ export default function Home() {
                 </p>
               </motion.div>
 
-              {/* Features list */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -361,7 +332,6 @@ export default function Home() {
                 ))}
               </motion.div>
 
-              {/* CTA Button */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -386,10 +356,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Quotes section */}
       <section id="quotes" className="min-h-screen flex items-center justify-center px-6 relative z-10 py-20">
         <div className="max-w-5xl w-full">
-          {/* Section title */}
           <motion.div
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -405,7 +373,6 @@ export default function Home() {
             </p>
           </motion.div>
 
-          {/* Quote carousel */}
           <motion.div
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -413,13 +380,10 @@ export default function Home() {
             viewport={{ once: true }}
             className="relative"
           >
-            {/* Glass container */}
             <div className="glass-strong rounded-3xl p-12 md:p-16 relative overflow-hidden">
-              {/* Decorative corner elements */}
               <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-white/10 rounded-tl-3xl" />
               <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-white/10 rounded-br-3xl" />
 
-              {/* Quote content with animation */}
               <div className="relative min-h-[300px] flex flex-col justify-center">
                 <AnimatePresence mode="wait" custom={direction}>
                   <motion.div
@@ -436,7 +400,6 @@ export default function Home() {
                     }}
                     className="text-center"
                   >
-                    {/* Category badge */}
                     <motion.div
                       initial={{ opacity: 0, y: -20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -448,7 +411,6 @@ export default function Home() {
                       </span>
                     </motion.div>
 
-                    {/* Quote text */}
                     <motion.blockquote
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -460,7 +422,6 @@ export default function Home() {
                       <span className="text-white/20 text-6xl absolute -bottom-8 -right-2 md:-right-8">"</span>
                     </motion.blockquote>
 
-                    {/* Author */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -473,9 +434,7 @@ export default function Home() {
                 </AnimatePresence>
               </div>
 
-              {/* Navigation controls */}
               <div className="flex items-center justify-center gap-6 mt-12">
-                {/* Previous button */}
                 <motion.button
                   whileHover={{ scale: 1.1, backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
                   whileTap={{ scale: 0.95 }}
@@ -493,7 +452,6 @@ export default function Home() {
                   </svg>
                 </motion.button>
 
-                {/* Progress indicator */}
                 <div className="flex items-center gap-2">
                   {QUOTES.map((_, index) => (
                     <motion.button
@@ -513,7 +471,6 @@ export default function Home() {
                   ))}
                 </div>
 
-                {/* Next button */}
                 <motion.button
                   whileHover={{ scale: 1.1, backgroundColor: 'rgba(255, 255, 255, 0.08)' }}
                   whileTap={{ scale: 0.95 }}
@@ -532,7 +489,6 @@ export default function Home() {
                 </motion.button>
               </div>
 
-              {/* Quote counter */}
               <div className="text-center mt-6">
                 <span className="font-mono text-xs text-white/25">
                   {currentQuoteIndex + 1} / {QUOTES.length}
@@ -541,7 +497,6 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* Decorative floating elements */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <motion.div
               animate={{
@@ -572,7 +527,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Contact section */}
       <section id="contact" className="min-h-screen flex items-center justify-center px-6 relative z-10 mb-32">
         <motion.div
           initial={{ opacity: 0, y: 60 }}
@@ -612,10 +566,8 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Music player */}
       <MusicPlayer />
 
-      {/* Footer */}
       <footer className="relative z-10 pb-8">
         <div className="text-center">
           <p className="font-mono text-xs text-white/15">
@@ -624,7 +576,6 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Global noise overlay */}
       <div className="noise-overlay" />
     </main>
   );
