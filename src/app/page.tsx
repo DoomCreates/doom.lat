@@ -135,7 +135,7 @@ export default function Home() {
       x: 0,
       opacity: 1,
       filter: 'blur(0px)',
-    }),
+    },
     exit: (direction: number) => ({
       x: direction < 0 ? 1000 : -1000,
       opacity: 0,
