@@ -95,7 +95,7 @@ export default function Hero() {
 
         <motion.div variants={itemVariants} className="mb-6">
           <p className="font-display text-2xl md:text-3xl text-white/60 tracking-wide inline-block px-8 py-3 glass-strong rounded-2xl">
-            Enjoy My Portfolio
+            RBLX Developer, CS Enthusiast.
           </p>
         </motion.div>
 
