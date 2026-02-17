@@ -305,12 +305,12 @@ export default function Home() {
                 className="space-y-4"
               >
                 <p className="font-mono text-base text-white/60 leading-relaxed">
-                  An advanced automation platform designed for Blade Ball, featuring intelligent auto-parry mechanics, 
-                  precision timing algorithms, and seamless integration with game mechanics.
+                  An advanced detection system designed for Blade Ball, with, precision timing algorithms, 
+                  and integration with game mechanics. 
                 </p>
                 <p className="font-mono text-base text-white/60 leading-relaxed">
-                  Built with cutting-edge technology to deliver unparalleled performance and reliability, 
-                  pushing the boundaries of what's possible in game automation.
+                  This was a two-person project, little to no external
+                  involvement.
                 </p>
               </motion.div>
 
@@ -322,10 +322,10 @@ export default function Home() {
                 className="space-y-3"
               >
                 {[
-                  'Intelligent Auto-Parry System',
-                  'Real-time Performance Optimization',
-                  'Advanced Detection Evasion',
-                  'Seamless User Experience',
+                  'First of its kind.',
+                  'Real-time debug info',
+                  'VERY Advanced Detection Evasion',
+                  'Perfect User Experience',
                 ].map((feature, index) => (
                   <motion.div
                     key={feature}
