@@ -5,11 +5,10 @@ import { displayFont, monoFont } from "./fonts/fonts";
 export const metadata: Metadata = {
   title: "doom.lat",
   description: "Portfolio of doom",
-  icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-icon.png',
-  },
 };
+
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
 
 export default function RootLayout({
   children,
