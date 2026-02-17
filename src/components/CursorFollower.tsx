@@ -4,42 +4,42 @@ import { useEffect, useState, useCallback } from 'react';
 import { motion, useSpring, useMotionValue } from 'framer-motion';
 
 export default function CursorFollower() {
+  const [mounted, setMounted] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [isClicking, setIsClicking] = useState(false);
   const [trails, setTrails] = useState<Array<{ id: number; x: number; y: number }>>([]);
   const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number; timestamp: number }>>([]);
 
-  // Smooth spring animations for cursor
   const cursorX = useSpring(0, { stiffness: 400, damping: 25 });
   const cursorY = useSpring(0, { stiffness: 400, damping: 25 });
   
-  // Parallax effect for outer ring
   const outerX = useSpring(0, { stiffness: 200, damping: 30 });
   const outerY = useSpring(0, { stiffness: 200, damping: 30 });
 
   const mouseXMotion = useMotionValue(0);
   const mouseYMotion = useMotionValue(0);
 
-  // Add trail particle
-  const addTrail = useCallback((x: number, y: number) => {
-    const newTrail = { id: Date.now() + Math.random(), x, y };
-    setTrails((prev) => [...prev.slice(-8), newTrail]); // Keep last 8 trails
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
-  // Add click ripple
+  const addTrail = useCallback((x: number, y: number) => {
+    const newTrail = { id: Date.now() + Math.random(), x, y };
+    setTrails((prev) => [...prev.slice(-8), newTrail]);
+  }, []);
+
   const addRipple = useCallback((x: number, y: number) => {
     const newRipple = { id: Date.now() + Math.random(), x, y, timestamp: Date.now() };
     setRipples((prev) => [...prev, newRipple]);
     
-    // Remove ripple after animation
     setTimeout(() => {
       setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
     }, 800);
   }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || !mounted) return;
     
     document.body.classList.add('custom-cursor');
     let trailCounter = 0;
@@ -56,12 +56,10 @@ export default function CursorFollower() {
       mouseXMotion.set(x);
       mouseYMotion.set(y);
       
-      // Update CSS variable for gradient
       document.documentElement.style.setProperty('--cursor-x', `${x}px`);
       document.documentElement.style.setProperty('--cursor-y', `${y}px`);
       document.body.classList.add('cursor-active');
 
-      // Add trail every few pixels moved
       trailCounter++;
       if (trailCounter % 3 === 0) {
         addTrail(x, y);
@@ -105,11 +103,14 @@ export default function CursorFollower() {
       window.removeEventListener('mouseup', handleMouseUp);
       document.body.classList.remove('custom-cursor', 'cursor-active');
     };
-  }, [cursorX, cursorY, outerX, outerY, mouseXMotion, mouseYMotion, addTrail, addRipple]);
+  }, [mounted, cursorX, cursorY, outerX, outerY, mouseXMotion, mouseYMotion, addTrail, addRipple]);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <>
-      {/* Trail particles */}
       {trails.map((trail, index) => (
         <motion.div
           key={trail.id}
@@ -140,7 +141,6 @@ export default function CursorFollower() {
         </motion.div>
       ))}
 
-      {/* Click ripples */}
       {ripples.map((ripple) => (
         <motion.div
           key={ripple.id}
@@ -170,7 +170,6 @@ export default function CursorFollower() {
         </motion.div>
       ))}
 
-      {/* Outer ring with parallax - slower movement */}
       <motion.div
         className="fixed top-0 left-0 pointer-events-none z-50 mix-blend-difference"
         style={{
@@ -193,7 +192,6 @@ export default function CursorFollower() {
             damping: 20,
           }}
         >
-          {/* Main ring */}
           <motion.div
             className="absolute inset-0 rounded-full"
             animate={{
@@ -210,72 +208,68 @@ export default function CursorFollower() {
             }}
           />
 
-          {/* Rotating gradient border on hover */}
           {isHovering && (
-            <motion.div
-              className="absolute inset-0 rounded-full"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-              style={{
-                background: 'conic-gradient(from 0deg, transparent 0deg, rgba(255, 255, 255, 0.6) 90deg, transparent 180deg, rgba(255, 255, 255, 0.6) 270deg, transparent 360deg)',
-                mask: 'radial-gradient(circle, transparent 60%, black 61%, black 100%)',
-                WebkitMask: 'radial-gradient(circle, transparent 60%, black 61%, black 100%)',
-              }}
-            />
-          )}
+            <>
+              <motion.div
+                className="absolute inset-0 rounded-full"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                style={{
+                  background: 'conic-gradient(from 0deg, transparent 0deg, rgba(255, 255, 255, 0.6) 90deg, transparent 180deg, rgba(255, 255, 255, 0.6) 270deg, transparent 360deg)',
+                  mask: 'radial-gradient(circle, transparent 60%, black 61%, black 100%)',
+                  WebkitMask: 'radial-gradient(circle, transparent 60%, black 61%, black 100%)',
+                }}
+              />
 
-          {/* Pulsing inner glow on hover */}
-          {isHovering && (
-            <motion.div
-              className="absolute inset-2 rounded-full"
-              animate={{
-                opacity: [0.3, 0.6, 0.3],
-                scale: [0.9, 1, 0.9],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-              style={{
-                background: 'radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%)',
-                filter: 'blur(8px)',
-              }}
-            />
-          )}
+              <motion.div
+                className="absolute inset-2 rounded-full"
+                animate={{
+                  opacity: [0.3, 0.6, 0.3],
+                  scale: [0.9, 1, 0.9],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+                style={{
+                  background: 'radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%)',
+                  filter: 'blur(8px)',
+                }}
+              />
 
-          {/* Orbiting particles on hover */}
-          {isHovering && [0, 120, 240].map((angle, i) => (
-            <motion.div
-              key={i}
-              className="absolute top-1/2 left-1/2 w-2 h-2 rounded-full bg-white/80"
-              animate={{
-                rotate: [angle, angle + 360],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: 'linear',
-                delay: i * 0.1,
-              }}
-              style={{
-                transformOrigin: '0 0',
-                x: -4,
-                y: -4,
-                filter: 'blur(0.5px)',
-                boxShadow: '0 0 8px rgba(255, 255, 255, 0.8)',
-              }}
-            >
-              <div style={{ 
-                transform: `translateX(${isHovering ? 32 : 20}px)`,
-                transition: 'transform 0.3s ease',
-              }} />
-            </motion.div>
-          ))}
+              {[0, 120, 240].map((angle, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute top-1/2 left-1/2 w-2 h-2 rounded-full bg-white/80"
+                  animate={{
+                    rotate: [angle, angle + 360],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: 'linear',
+                    delay: i * 0.1,
+                  }}
+                  style={{
+                    transformOrigin: '0 0',
+                    x: -4,
+                    y: -4,
+                    filter: 'blur(0.5px)',
+                    boxShadow: '0 0 8px rgba(255, 255, 255, 0.8)',
+                  }}
+                >
+                  <div style={{ 
+                    transform: `translateX(${isHovering ? 32 : 20}px)`,
+                    transition: 'transform 0.3s ease',
+                  }} />
+                </motion.div>
+              ))}
+            </>
+          )}
         </motion.div>
       </motion.div>
 
-      {/* Inner dot - faster movement */}
       <motion.div
         className="fixed top-0 left-0 pointer-events-none z-50 mix-blend-difference"
         style={{
@@ -297,7 +291,6 @@ export default function CursorFollower() {
           }}
           className="relative"
         >
-          {/* Core dot */}
           <div 
             className="w-2 h-2 rounded-full bg-white"
             style={{
@@ -305,7 +298,6 @@ export default function CursorFollower() {
             }}
           />
           
-          {/* Pulsing glow */}
           <motion.div
             className="absolute inset-0 rounded-full bg-white"
             animate={{
@@ -324,7 +316,6 @@ export default function CursorFollower() {
         </motion.div>
       </motion.div>
 
-      {/* Magnetic field effect - only visible on hover */}
       {isHovering && (
         <motion.div
           className="fixed top-0 left-0 pointer-events-none z-40"
