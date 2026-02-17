@@ -256,12 +256,11 @@ export default function Home() {
                 className="space-y-4"
               >
                 <p className="font-mono text-base text-white/60 leading-relaxed">
-                  An advanced automation platform designed for Blade Ball, featuring intelligent auto-parry mechanics, 
-                  precision timing algorithms, and seamless integration with game mechanics.
+                  An advanced detection system designed for Blade Ball, with precision timing algorithms, 
+                                    and integration with game mechanics.
                 </p>
                 <p className="font-mono text-base text-white/60 leading-relaxed">
-                  Built with cutting-edge technology to deliver unparalleled performance and reliability, 
-                  pushing the boundaries of what's possible in game automation.
+                  This was a two-person project, little to no external involvement.
                 </p>
               </motion.div>
 
@@ -273,10 +272,10 @@ export default function Home() {
                 className="space-y-3"
               >
                 {[
-                  'Intelligent Auto-Parry System',
-                  'Real-time Performance Optimization',
-                  'Advanced Detection Evasion',
-                  'Seamless User Experience',
+                  'First of its kind',
+                  'Real-time debug info',
+                  'VERY Advanced Detection Evasion',
+                  'Perfect User Experience',
                 ].map((feature, index) => (
                   <motion.div
                     key={feature}
@@ -480,23 +479,23 @@ export default function Home() {
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <motion.a
-              href="mailto:hello@doom.lat"
+              href="https://pastebin.com/YsWnXpfF"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-10 py-4 glass rounded-full font-mono text-sm text-white/70 hover:text-white transition-colors"
             >
-              hello@doom.lat
+              Discord : doomwrites
             </motion.a>
             
             <motion.a
-              href="https://github.com/doom"
+              href="https://discord.gg/FxFpDcpGdC"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-10 py-4 rounded-full font-mono text-sm text-black bg-white hover:bg-white/90 transition-colors"
             >
-              GitHub
+              My Market Server
             </motion.a>
           </div>
         </motion.div>
