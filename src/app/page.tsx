@@ -130,6 +130,21 @@ export default function Home() {
     }
   }, [showFullVideo]);
 
+  // ESC key to close video modal
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && showFullVideo) {
+        setShowFullVideo(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, [showFullVideo]);
+
   const currentQuote = QUOTES[currentQuoteIndex];
 
   const nextQuote = () => {
@@ -169,7 +184,7 @@ export default function Home() {
       <CursorFollower />
       <Hero />
 
-      {/* Fullscreen Video Modal */}
+      {/* Fullscreen YouTube Video Modal */}
       <AnimatePresence>
         {showFullVideo && (
           <motion.div
@@ -177,7 +192,7 @@ export default function Home() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8"
+            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-8"
             onClick={() => setShowFullVideo(false)}
           >
             {/* Backdrop */}
@@ -197,12 +212,12 @@ export default function Home() {
                 duration: 0.5, 
                 ease: [0.22, 1, 0.36, 1]
               }}
-              className="relative w-full max-w-6xl z-10"
+              className="relative w-full max-w-7xl aspect-video z-10"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Decorative corners */}
-              <div className="absolute -top-4 -left-4 w-32 h-32 border-t-2 border-l-2 border-white/30 rounded-tl-3xl" />
-              <div className="absolute -bottom-4 -right-4 w-32 h-32 border-b-2 border-r-2 border-white/30 rounded-br-3xl" />
+              <div className="absolute -top-4 -left-4 w-32 h-32 border-t-2 border-l-2 border-white/30 rounded-tl-3xl pointer-events-none" />
+              <div className="absolute -bottom-4 -right-4 w-32 h-32 border-b-2 border-r-2 border-white/30 rounded-br-3xl pointer-events-none" />
               
               {/* Corner glows */}
               <motion.div
@@ -215,7 +230,7 @@ export default function Home() {
                   repeat: Infinity,
                   ease: 'easeInOut',
                 }}
-                className="absolute -top-4 -left-4 w-8 h-8 bg-white/50 rounded-full blur-xl"
+                className="absolute -top-4 -left-4 w-8 h-8 bg-white/50 rounded-full blur-xl pointer-events-none"
               />
               <motion.div
                 animate={{
@@ -228,25 +243,24 @@ export default function Home() {
                   ease: 'easeInOut',
                   delay: 1.5,
                 }}
-                className="absolute -bottom-4 -right-4 w-8 h-8 bg-white/50 rounded-full blur-xl"
+                className="absolute -bottom-4 -right-4 w-8 h-8 bg-white/50 rounded-full blur-xl pointer-events-none"
               />
 
               {/* Video frame */}
-              <div className="relative glass-strong rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl">
-                <video
-                  className="w-full h-auto"
-                  autoPlay
-                  controls
-                  controlsList="nodownload"
-                >
-                  <source src="/videos/blade-ball-full-showcase.mp4" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
+              <div className="relative glass-strong rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl w-full h-full">
+                <iframe
+                  className="w-full h-full"
+                  src="https://www.youtube.com/embed/LiY-GimrsqE?autoplay=1&quality=hd2160"
+                  title="Blade Ball Full Showcase"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
 
-                {/* Gradient overlay at edges */}
+                {/* Gradient overlay at edges - only on non-interactive areas */}
                 <div className="absolute inset-0 pointer-events-none">
-                  <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black/30 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black/30 to-transparent" />
+                  <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/20 to-transparent" />
                 </div>
               </div>
 
@@ -257,8 +271,11 @@ export default function Home() {
                 transition={{ delay: 0.3 }}
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
-                onClick={() => setShowFullVideo(false)}
-                className="absolute -top-12 -right-12 md:-top-16 md:-right-16 w-12 h-12 rounded-full glass-strong border border-white/20 flex items-center justify-center group"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowFullVideo(false);
+                }}
+                className="absolute -top-12 -right-12 md:-top-16 md:-right-16 w-12 h-12 rounded-full glass-strong border border-white/20 flex items-center justify-center group z-50"
                 aria-label="Close video"
               >
                 <svg
@@ -281,11 +298,11 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="absolute top-6 left-6 z-10"
+                className="absolute top-6 left-6 z-10 pointer-events-none"
               >
                 <div className="glass-strong rounded-full px-4 py-2">
                   <span className="font-mono text-xs tracking-[0.2em] text-white/80 uppercase">
-                    Full Showcase
+                    Full Showcase - 4K
                   </span>
                 </div>
               </motion.div>
@@ -296,7 +313,7 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="absolute bottom-8 left-1/2 -translate-x-1/2"
+              className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-none"
             >
               <div className="glass rounded-full px-4 py-2 font-mono text-xs text-white/40">
                 Press ESC or click outside to close
@@ -435,9 +452,9 @@ export default function Home() {
               >
                 <p className="font-mono text-base text-white/60 leading-relaxed">
                   An advanced detection system designed for Blade Ball, with, precision timing algorithms, 
-                                    and integration with game mechanics.
+                  and integration with game mechanics.
 
-                    This video captures the moment that we found the breakthrough we needed.
+                  This video captures the moment that we found the breakthrough we needed.
                 </p>
                 <p className="font-mono text-base text-white/60 leading-relaxed">
                   This was a two-person project, little to no external involvement.
