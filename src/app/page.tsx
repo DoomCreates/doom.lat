@@ -21,7 +21,7 @@ const PROJECTS = [
       "VERY Advanced Detection Evasion",
       "Perfect User Experience"
     ],
-    previewVideo: "/public/videos/blade-ball-showcase.mp4",
+    previewVideo: "/videos/blade-ball-showcase.mp4",
     youtubeUrl: "https://youtu.be/LiY-GimrsqE",
     githubUrl: "https://github.com/DoomCreates/Nebula.lua",
     label: "Featured Project"
@@ -44,18 +44,18 @@ const PROJECTS = [
   },
   {
     id: 3,
-    name: "Project Name 3",
-    description: "Add your project description here. Explain what it does and why it's interesting.",
+    name: "DoomTerminal",
+    description: "A tampermonkey script that serves as a web-terminal, with various useful functions!",
     secondDescription: "Add a second paragraph if needed to provide more context about the project.",
     features: [
-      "Key Feature 1",
-      "Key Feature 2",
-      "Key Feature 3",
-      "Key Feature 4"
+      "TBD",
+      "TBD",
+      "TBD",
+      "TBD"
     ],
     previewVideo: "/videos/project3-preview.mp4",
     youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
-    githubUrl: "https://github.com/yourusername/project3",
+    githubUrl: "https://github.com/DoomCreates/doomterminal",
     label: "Open Source"
   }
 ];
