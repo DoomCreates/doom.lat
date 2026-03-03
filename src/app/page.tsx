@@ -39,7 +39,7 @@ const PROJECTS = [
     ],
     previewVideo: "/videos/project2-preview.mp4",
     youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
-    githubUrl: "https://github.com/yourusername/jarvis",
+    githubUrl: "https://github.com/DoomCreates/JarvisAI",
     label: "Personal Project"
   },
   {
