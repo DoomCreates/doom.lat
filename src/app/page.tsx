@@ -46,7 +46,7 @@ const PROJECTS = [
     id: 3,
     name: "DoomTerminal",
     description: "A tampermonkey script that serves as a web-terminal, with various useful functions!",
-    secondDescription: "Add a second paragraph if needed to provide more context about the project.",
+    secondDescription: "TBD",
     features: [
       "TBD",
       "TBD",
