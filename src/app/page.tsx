@@ -8,6 +8,58 @@ import MusicPlayer from '@/components/MusicPlayer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
+// GitHub Projects Data - FILL IN YOUR PROJECT DETAILS HERE
+const PROJECTS = [
+  {
+    id: 1,
+    name: "Project Name 1",
+    description: "Add your project description here. Explain what it does and why it's interesting.",
+    secondDescription: "Add a second paragraph if needed to provide more context about the project.",
+    features: [
+      "Key Feature 1",
+      "Key Feature 2", 
+      "Key Feature 3",
+      "Key Feature 4"
+    ],
+    previewVideo: "/videos/project1-preview.mp4", // Local preview video (loop)
+    youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE", // YouTube full showcase
+    githubUrl: "https://github.com/yourusername/project1",
+    label: "Featured Project"
+  },
+  {
+    id: 2,
+    name: "Project Name 2",
+    description: "Add your project description here. Explain what it does and why it's interesting.",
+    secondDescription: "Add a second paragraph if needed to provide more context about the project.",
+    features: [
+      "Key Feature 1",
+      "Key Feature 2",
+      "Key Feature 3", 
+      "Key Feature 4"
+    ],
+    previewVideo: "/videos/project2-preview.mp4",
+    youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
+    githubUrl: "https://github.com/yourusername/project2",
+    label: "Open Source"
+  },
+  {
+    id: 3,
+    name: "Project Name 3",
+    description: "Add your project description here. Explain what it does and why it's interesting.",
+    secondDescription: "Add a second paragraph if needed to provide more context about the project.",
+    features: [
+      "Key Feature 1",
+      "Key Feature 2",
+      "Key Feature 3",
+      "Key Feature 4"
+    ],
+    previewVideo: "/videos/project3-preview.mp4",
+    youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
+    githubUrl: "https://github.com/yourusername/project3",
+    label: "Personal Project"
+  }
+];
+
 const QUOTES = [
   {
     text: "The only way to do great work is to love what you do.",
@@ -116,6 +168,7 @@ export default function Home() {
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [showFullVideo, setShowFullVideo] = useState(false);
+  const [currentVideoUrl, setCurrentVideoUrl] = useState("");
 
   useEffect(() => {
     setMounted(true);
@@ -155,6 +208,11 @@ export default function Home() {
   const previousQuote = () => {
     setDirection(-1);
     setCurrentQuoteIndex((prev) => (prev - 1 + QUOTES.length) % QUOTES.length);
+  };
+
+  const openVideoModal = (youtubeUrl: string) => {
+    setCurrentVideoUrl(youtubeUrl);
+    setShowFullVideo(true);
   };
 
   const slideVariants = {
@@ -250,14 +308,14 @@ export default function Home() {
               <div className="relative glass-strong rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl w-full h-full">
                 <iframe
                   className="w-full h-full"
-                  src="https://www.youtube.com/embed/LiY-GimrsqE?autoplay=1&quality=hd2160"
-                  title="Blade Ball Full Showcase"
+                  src={`${currentVideoUrl.replace('youtu.be/', 'youtube.com/embed/')}?autoplay=1&quality=hd2160`}
+                  title="Project Showcase"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                 />
 
-                {/* Gradient overlay at edges - only on non-interactive areas */}
+                {/* Gradient overlay at edges */}
                 <div className="absolute inset-0 pointer-events-none">
                   <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/20 to-transparent" />
@@ -323,191 +381,200 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Optimized showcase section */}
-      <section id="showcase" className="min-h-screen flex items-center justify-center px-6 relative z-10 py-20">
+      {/* GitHub Projects Showcase Section */}
+      <section id="projects" className="min-h-screen flex flex-col items-center justify-center px-6 relative z-10 py-20">
         <div className="max-w-7xl w-full">
+          {/* Section Header */}
           <motion.div
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             viewport={{ once: true }}
-            className="grid md:grid-cols-2 gap-12 items-center"
+            className="text-center mb-20"
           >
-            <motion.div
-              initial={{ opacity: 0, x: -60 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-              viewport={{ once: true }}
-              className="relative group"
-            >
-              <div className="absolute -top-6 -left-6 w-24 h-24 border-t-2 border-l-2 border-white/20 rounded-tl-2xl" />
-              <div className="absolute -bottom-6 -right-6 w-24 h-24 border-b-2 border-r-2 border-white/20 rounded-br-2xl" />
-              
-              <div className="absolute -top-2 -left-2 w-4 h-4 bg-white/40 rounded-full blur-md" />
-              <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-white/40 rounded-full blur-md" />
-
-              <div className="relative glass-strong rounded-xl overflow-hidden border border-white/10 shadow-2xl">
-                <div className="aspect-video bg-black/20 flex items-center justify-center">
-                  <video
-                    className="w-full h-full object-cover"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                  >
-                    <source src="/videos/blade-ball-showcase.mp4" type="video/mp4" />
-                    <div className="flex flex-col items-center justify-center h-full text-white/50">
-                      <svg
-                        className="w-20 h-20 mb-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      <p className="font-mono text-sm">Video Preview</p>
-                    </div>
-                  </video>
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-              </div>
-
-              {/* Watch Full Showcase Button */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
-                viewport={{ once: true }}
-                className="mt-6 flex justify-center"
-              >
-                <motion.button
-                  whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255, 255, 255, 0.3)' }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setShowFullVideo(true)}
-                  className="group relative px-8 py-4 rounded-full font-mono text-sm text-black bg-white hover:bg-white/90 transition-all overflow-hidden flex items-center gap-3"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                  <span>Watch Full Showcase</span>
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0"
-                    initial={{ x: '-100%' }}
-                    whileHover={{ x: '100%' }}
-                    transition={{ duration: 0.6 }}
-                  />
-                </motion.button>
-              </motion.div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 60 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
-              viewport={{ once: true }}
-              className="space-y-8"
-            >
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-                viewport={{ once: true }}
-              >
-                <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-white/40 uppercase">
-                  Featured Project
-                </span>
-              </motion.div>
-
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                viewport={{ once: true }}
-                className="font-display text-4xl md:text-6xl text-white font-light tracking-tight leading-tight"
-              >
-                External Blade Ball AP Showcase
-              </motion.h2>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.7 }}
-                viewport={{ once: true }}
-                className="space-y-4"
-              >
-                <p className="font-mono text-base text-white/60 leading-relaxed">
-                  An advanced detection system designed for Blade Ball, with, precision timing algorithms, 
-                  and integration with game mechanics.
-
-                  This video captures the moment that we found the breakthrough we needed.
-                </p>
-                <p className="font-mono text-base text-white/60 leading-relaxed">
-                  This was a two-person project, little to no external involvement.
-                </p>
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.8 }}
-                viewport={{ once: true }}
-                className="space-y-3"
-              >
-                {[
-                  'First of its kind',
-                  'Real-time debug info',
-                  'VERY Advanced Detection Evasion',
-                  'Perfect User Experience',
-                ].map((feature, index) => (
-                  <motion.div
-                    key={feature}
-                    initial={{ opacity: 0, x: -20 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.4, delay: 0.9 + index * 0.1 }}
-                    viewport={{ once: true }}
-                    className="flex items-center gap-3 group"
-                  >
-                    <div className="w-1.5 h-1.5 bg-white/40 rounded-full group-hover:bg-white/80 transition-colors" />
-                    <span className="font-mono text-sm text-white/50 group-hover:text-white/80 transition-colors">
-                      {feature}
-                    </span>
-                  </motion.div>
-                ))}
-              </motion.div>
-
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1.2 }}
-                viewport={{ once: true }}
-                className="pt-4"
-              >
-                <motion.a
-                  href="#contact"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="inline-block px-8 py-3 glass-strong rounded-full font-mono text-sm text-white/80 hover:text-white transition-colors"
-                >
-                  Learn More
-                </motion.a>
-              </motion.div>
-            </motion.div>
+            <h2 className="font-display text-5xl md:text-7xl text-white mb-4 font-light tracking-tight">
+              Projects
+            </h2>
+            <p className="font-mono text-xs text-white/30 tracking-[0.3em] uppercase">
+              Selected Works & Open Source
+            </p>
           </motion.div>
+
+          {/* Projects Grid */}
+          <div className="space-y-32">
+            {PROJECTS.map((project, index) => {
+              const isEven = index % 2 === 0;
+              
+              return (
+                <motion.div
+                  key={project.id}
+                  initial={{ opacity: 0, y: 60 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                  viewport={{ once: true }}
+                  className="w-full"
+                >
+                  <div className={`grid md:grid-cols-2 gap-12 items-center ${!isEven ? 'md:flex-row-reverse' : ''}`}>
+                    {/* Video Side */}
+                    <motion.div
+                      initial={{ opacity: 0, x: isEven ? -60 : 60 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
+                      viewport={{ once: true }}
+                      className={`relative group ${!isEven ? 'md:order-2' : ''}`}
+                    >
+                      <div className="absolute -top-6 -left-6 w-24 h-24 border-t-2 border-l-2 border-white/20 rounded-tl-2xl" />
+                      <div className="absolute -bottom-6 -right-6 w-24 h-24 border-b-2 border-r-2 border-white/20 rounded-br-2xl" />
+                      
+                      <div className="absolute -top-2 -left-2 w-4 h-4 bg-white/40 rounded-full blur-md" />
+                      <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-white/40 rounded-full blur-md" />
+
+                      <div className="relative glass-strong rounded-xl overflow-hidden border border-white/10 shadow-2xl">
+                        <div className="aspect-video bg-black/20 flex items-center justify-center">
+                          <video
+                            className="w-full h-full object-cover"
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                          >
+                            <source src={project.previewVideo} type="video/mp4" />
+                            <div className="flex flex-col items-center justify-center h-full text-white/50">
+                              <svg
+                                className="w-20 h-20 mb-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={1.5}
+                                  d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={1.5}
+                                  d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                />
+                              </svg>
+                              <p className="font-mono text-sm">Video Preview</p>
+                            </div>
+                          </video>
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+                      </div>
+
+                      {/* Action Buttons */}
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.4 }}
+                        viewport={{ once: true }}
+                        className="mt-6 flex gap-4 justify-center"
+                      >
+                        <motion.button
+                          whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255, 255, 255, 0.3)' }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => openVideoModal(project.youtubeUrl)}
+                          className="flex-1 relative px-6 py-3 rounded-full font-mono text-sm text-black bg-white hover:bg-white/90 transition-all overflow-hidden flex items-center justify-center gap-2"
+                        >
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
+                          <span>Watch Full</span>
+                        </motion.button>
+
+                        <motion.a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex-1 px-6 py-3 glass-strong rounded-full font-mono text-sm text-white/80 hover:text-white transition-colors flex items-center justify-center gap-2"
+                        >
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                          </svg>
+                          <span>GitHub</span>
+                        </motion.a>
+                      </motion.div>
+                    </motion.div>
+
+                    {/* Content Side */}
+                    <motion.div
+                      initial={{ opacity: 0, x: isEven ? 60 : -60 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
+                      viewport={{ once: true }}
+                      className={`space-y-8 ${!isEven ? 'md:order-1' : ''}`}
+                    >
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.5 }}
+                        viewport={{ once: true }}
+                      >
+                        <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-white/40 uppercase">
+                          {project.label}
+                        </span>
+                      </motion.div>
+
+                      <motion.h3
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.6 }}
+                        viewport={{ once: true }}
+                        className="font-display text-4xl md:text-6xl text-white font-light tracking-tight leading-tight"
+                      >
+                        {project.name}
+                      </motion.h3>
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.7 }}
+                        viewport={{ once: true }}
+                        className="space-y-4"
+                      >
+                        <p className="font-mono text-base text-white/60 leading-relaxed">
+                          {project.description}
+                        </p>
+                        <p className="font-mono text-base text-white/60 leading-relaxed">
+                          {project.secondDescription}
+                        </p>
+                      </motion.div>
+
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.8 }}
+                        viewport={{ once: true }}
+                        className="space-y-3"
+                      >
+                        {project.features.map((feature, featureIndex) => (
+                          <motion.div
+                            key={feature}
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.4, delay: 0.9 + featureIndex * 0.1 }}
+                            viewport={{ once: true }}
+                            className="flex items-center gap-3 group"
+                          >
+                            <div className="w-1.5 h-1.5 bg-white/40 rounded-full group-hover:bg-white/80 transition-colors" />
+                            <span className="font-mono text-sm text-white/50 group-hover:text-white/80 transition-colors">
+                              {feature}
+                            </span>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+                    </motion.div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -681,7 +748,7 @@ export default function Home() {
               whileTap={{ scale: 0.95 }}
               className="px-10 py-4 glass rounded-full font-mono text-sm text-white/70 hover:text-white transition-colors"
             >
-              Discord : supposings
+              Discord : doomwrites
             </motion.a>
             
             <motion.a
