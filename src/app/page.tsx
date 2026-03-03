@@ -12,34 +12,37 @@ import { useState, useEffect } from 'react';
 const PROJECTS = [
   {
     id: 1,
-    name: "Project Name 1",
-    description: "Add your project description here. Explain what it does and why it's interesting.",
-    secondDescription: "Add a second paragraph if needed to provide more context about the project.",
+    name: "External Blade Ball AP Showcase",
+    description: "An advanced detection system designed for Blade Ball, with, precision timing algorithms, and integration with game mechanics. This video captures the moment that we found the breakthrough we needed.",
+    secondDescription: "This was a two-person project, little to no external involvement.",
     features: [
-      "Key Feature 1",
-      "Key Feature 2", 
-      "Key Feature 3",
-      "Key Feature 4"
+      "First of its kind",
+      "Real-time debug info", 
+      "VERY Advanced Detection Evasion",
+      "Perfect User Experience"
     ],
-    previewVideo: "/videos/project1-preview.mp4", // Local preview video (loop)
-    youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE", // YouTube full showcase
-    githubUrl: "https://github.com/yourusername/project1",
+    previewVideo: "/public/videos/blade-ball-showcase.mp4", // Local preview video (loop)
+    youtubeUrl: "https://youtu.be/LiY-GimrsqE", // YouTube full showcase
+    githubUrl: "https://github.com/DoomCreates/Nebula.lua",
     label: "Featured Project"
   },
   {
     id: 2,
-    name: "Project Name 2",
-    description: "Add your project description here. Explain what it does and why it's interesting.",
-    secondDescription: "Add a second paragraph if needed to provide more context about the project.",
+    name: "J.A.R.V.I.S",
+    description: "JARVIS, is a locally-run AI assistant that listens to your voice, responds through whatever your audio output is, in a calm and authoritative voice, and can control your Windows PC on command. 
+    
+",
+    secondDescription: "Press a single key, speak naturally, and JARVIS handles the rest. ( the goal was to make him as similiar to the movie version of J.A.R.V.I.S as possible <3)",
     features: [
-      "Key Feature 1",
-      "Key Feature 2",
-      "Key Feature 3", 
-      "Key Feature 4"
+      "Voice activation via the ` (backtick) key",
+      "Natural speech recognition via Groq Whisper",
+      "Human-quality voice responses", 
+      "Open and close any application on your PC",
+      "Search the web, read and analyze files"
     ],
     previewVideo: "/videos/project2-preview.mp4",
     youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
-    githubUrl: "https://github.com/yourusername/project2",
+    githubUrl: "https://github.com/DoomCreates/JarvisAI",
     label: "Open Source"
   },
   {
