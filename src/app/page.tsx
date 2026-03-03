@@ -13,7 +13,7 @@ const PROJECTS = [
   {
     id: 1,
     name: "External Blade Ball AP Showcase",
-    description: "An advanced detection system designed for Blade Ball, with, precision timing algorithms, and integration with game mechanics. This video captures the moment that we found the breakthrough we needed.",
+    description: "An advanced detection system designed for Blade Ball, with, precision timing algorithms, and integration with game mechanics.",
     secondDescription: "This was a two-person project, little to no external involvement.",
     features: [
       "First of its kind",
@@ -21,29 +21,26 @@ const PROJECTS = [
       "VERY Advanced Detection Evasion",
       "Perfect User Experience"
     ],
-    previewVideo: "/public/videos/blade-ball-showcase.mp4", // Local preview video (loop)
-    youtubeUrl: "https://youtu.be/LiY-GimrsqE", // YouTube full showcase
+    previewVideo: "/public/videos/blade-ball-showcase.mp4",
+    youtubeUrl: "https://youtu.be/LiY-GimrsqE",
     githubUrl: "https://github.com/DoomCreates/Nebula.lua",
     label: "Featured Project"
   },
   {
     id: 2,
     name: "J.A.R.V.I.S",
-    description: "JARVIS, is a locally-run AI assistant that listens to your voice, responds through whatever your audio output is, in a calm and authoritative voice, and can control your Windows PC on command. 
-    
-",
-    secondDescription: "Press a single key, speak naturally, and JARVIS handles the rest. ( the goal was to make him as similiar to the movie version of J.A.R.V.I.S as possible <3)",
+    description: "JARVIS, is a locally-run AI assistant that listens to your voice, responds through whatever your audio output is, in a calm and authoritative voice, and can control your Windows PC on command.",
+    secondDescription: "Press a single key, speak naturally, and JARVIS handles the rest. (the goal was to make him as similar to the movie version of J.A.R.V.I.S as possible)",
     features: [
-      "Voice activation via the ` (backtick) key",
-      "Natural speech recognition via Groq Whisper",
-      "Human-quality voice responses", 
-      "Open and close any application on your PC",
-      "Search the web, read and analyze files"
+      "Voice activation via the backtick key",
+      "Natural language processing",
+      "Windows PC control",
+      "Movie-accurate voice and behavior"
     ],
     previewVideo: "/videos/project2-preview.mp4",
     youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
-    githubUrl: "https://github.com/DoomCreates/JarvisAI",
-    label: "Open Source"
+    githubUrl: "https://github.com/yourusername/jarvis",
+    label: "Personal Project"
   },
   {
     id: 3,
@@ -59,7 +56,7 @@ const PROJECTS = [
     previewVideo: "/videos/project3-preview.mp4",
     youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
     githubUrl: "https://github.com/yourusername/project3",
-    label: "Personal Project"
+    label: "Open Source"
   }
 ];
 
