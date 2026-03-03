@@ -53,7 +53,7 @@ const PROJECTS = [
       "TBD",
       "TBD"
     ],
-    previewVideo: "/videos/project3-preview.mp4",
+    previewVideo: "/videos/DoomTerminalPreview.png",
     youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
     githubUrl: "https://github.com/DoomCreates/doomterminal",
     label: "Open Source"
