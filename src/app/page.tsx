@@ -37,7 +37,7 @@ const PROJECTS = [
       "Windows PC control",
       "Movie-accurate voice and behavior"
     ],
-    previewVideo: "/videos/project2-preview.mp4",
+    previewVideo: "/videos/JarvisShowcasePreview.mp4",
     youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
     githubUrl: "https://github.com/DoomCreates/JarvisAI",
     label: "Personal Project"
