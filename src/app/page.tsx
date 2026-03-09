@@ -743,7 +743,7 @@ export default function Home() {
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <motion.a
-              href="https://pastebin.com/YsWnXpfF"
+              href="https://pastebin.com/eb9Haem9"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-10 py-4 glass rounded-full font-mono text-sm text-white/70 hover:text-white transition-colors"
