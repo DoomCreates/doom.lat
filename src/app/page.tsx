@@ -2,342 +2,713 @@
 
 export const dynamic = 'force-dynamic';
 
-import CursorFollower from '@/components/CursorFollower';
-import Hero from '@/components/Hero';
-import MusicPlayer from '@/components/MusicPlayer';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { saveAs } from 'file-saver';
+import Link from 'next/link';
+import * as pdfjsLib from 'pdfjs-dist';
+import { jsPDF } from 'jspdf';
+import Papa from 'papaparse';
+import yaml from 'js-yaml';
+import JSZip from 'jszip';
 
-// GitHub Projects Data - FILL IN YOUR PROJECT DETAILS HERE
-const PROJECTS = [
-  {
-    id: 1,
-    name: "External Blade Ball AP Showcase",
-    description: "An advanced detection system designed for Blade Ball, with, precision timing algorithms, and integration with game mechanics.",
-    secondDescription: "This was a two-person project, little to no external involvement.",
-    features: [
-      "First of its kind",
-      "Real-time debug info", 
-      "VERY Advanced Detection Evasion",
-      "Perfect User Experience"
-    ],
-    previewVideo: "/videos/blade-ball-showcase.mp4",
-    youtubeUrl: "https://youtu.be/LiY-GimrsqE",
-    githubUrl: "https://github.com/DoomCreates/Nebula.lua",
-    label: "Featured Project"
-  },
-  {
-    id: 2,
-    name: "J.A.R.V.I.S",
-    description: "JARVIS, is a locally-run AI assistant that listens to your voice, responds through whatever your audio output is, in a calm and authoritative voice, and can control your Windows PC on command.",
-    secondDescription: "Press a single key, speak naturally, and JARVIS handles the rest. (the goal was to make him as similar to the movie version of J.A.R.V.I.S as possible)",
-    features: [
-      "Voice activation via the backtick key",
-      "Natural language processing",
-      "Windows PC control",
-      "Movie-accurate voice and behavior"
-    ],
-    previewVideo: "/videos/JarvisShowcasePreview.mp4",
-    youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
-    githubUrl: "https://github.com/DoomCreates/JarvisAI",
-    label: "Personal Project"
-  },
-  {
-    id: 3,
-    name: "DoomTerminal",
-    description: "A tampermonkey script that serves as a web-terminal, with various useful functions!",
-    secondDescription: "TBD",
-    features: [
-      "TBD",
-      "TBD",
-      "TBD",
-      "TBD"
-    ],
-    previewVideo: "/videos/DoomTerminalPreview.png",
-    youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
-    githubUrl: "https://github.com/DoomCreates/doomterminal",
-    label: "Open Source"
-  }
+// Set PDF.js worker
+if (typeof window !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+}
+
+type ConversionType = 
+  | 'image-to-image' 
+  | 'pdf-to-images' 
+  | 'images-to-pdf'
+  | 'json-to-csv'
+  | 'csv-to-json'
+  | 'json-to-yaml'
+  | 'yaml-to-json';
+
+interface ConversionFile {
+  id: string;
+  file: File;
+  preview?: string;
+  status: 'pending' | 'processing' | 'completed' | 'error';
+  result?: Blob;
+  resultName?: string;
+  errorMessage?: string;
+}
+
+const CONVERSION_OPTIONS = [
+  { id: 'image-to-image', name: 'Image Format Converter', desc: 'Convert between PNG, JPG, WEBP' },
+  { id: 'pdf-to-images', name: 'PDF to Images', desc: 'Extract pages from PDF as images' },
+  { id: 'images-to-pdf', name: 'Images to PDF', desc: 'Combine multiple images into PDF' },
+  { id: 'json-to-csv', name: 'JSON to CSV', desc: 'Convert JSON data to CSV format' },
+  { id: 'csv-to-json', name: 'CSV to JSON', desc: 'Convert CSV data to JSON format' },
+  { id: 'json-to-yaml', name: 'JSON to YAML', desc: 'Convert JSON to YAML format' },
+  { id: 'yaml-to-json', name: 'YAML to JSON', desc: 'Convert YAML to JSON format' },
 ];
 
-const QUOTES = [
-  {
-    text: "The only way to do great work is to love what you do.",
-    author: "Steve Jobs",
-    category: "Innovation"
-  },
-  {
-    text: "Simplicity is the ultimate sophistication.",
-    author: "Leonardo da Vinci",
-    category: "Philosophy"
-  },
-  {
-    text: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
-    author: "Martin Fowler",
-    category: "Programming"
-  },
-  {
-    text: "The best way to predict the future is to invent it.",
-    author: "Alan Kay",
-    category: "Innovation"
-  },
-  {
-    text: "First, solve the problem. Then, write the code.",
-    author: "John Johnson",
-    category: "Programming"
-  },
-  {
-    text: "Innovation distinguishes between a leader and a follower.",
-    author: "Steve Jobs",
-    category: "Innovation"
-  },
-  {
-    text: "Code is like humor. When you have to explain it, it's bad.",
-    author: "Cory House",
-    category: "Programming"
-  },
-  {
-    text: "The function of good software is to make the complex appear to be simple.",
-    author: "Grady Booch",
-    category: "Philosophy"
-  },
-  {
-    text: "Perfection is achieved not when there is nothing more to add, but when there is nothing left to take away.",
-    author: "Antoine de Saint-Exupéry",
-    category: "Philosophy"
-  },
-  {
-    text: "Programs must be written for people to read, and only incidentally for machines to execute.",
-    author: "Harold Abelson",
-    category: "Programming"
-  },
-  {
-    text: "The advance of technology is based on making it fit in so that you don't really even notice it.",
-    author: "Bill Gates",
-    category: "Innovation"
-  },
-  {
-    text: "Make it work, make it right, make it fast.",
-    author: "Kent Beck",
-    category: "Programming"
-  },
-  {
-    text: "The most damaging phrase in the language is: 'We've always done it this way.'",
-    author: "Grace Hopper",
-    category: "Innovation"
-  },
-  {
-    text: "Design is not just what it looks like and feels like. Design is how it works.",
-    author: "Steve Jobs",
-    category: "Philosophy"
-  },
-  {
-    text: "Truth can only be found in one place: the code.",
-    author: "Robert C. Martin",
-    category: "Programming"
-  },
-  {
-    text: "The computer was born to solve problems that did not exist before.",
-    author: "Bill Gates",
-    category: "Philosophy"
-  },
-  {
-    text: "Talk is cheap. Show me the code.",
-    author: "Linus Torvalds",
-    category: "Programming"
-  },
-  {
-    text: "It's not a bug – it's an undocumented feature.",
-    author: "Anonymous",
-    category: "Programming"
-  },
-  {
-    text: "The only source of knowledge is experience.",
-    author: "Albert Einstein",
-    category: "Philosophy"
-  },
-  {
-    text: "Stay hungry, stay foolish.",
-    author: "Steve Jobs",
-    category: "Innovation"
-  },
-];
-
-export default function Home() {
+export default function ConvertPage() {
   const [mounted, setMounted] = useState(false);
-  const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
-  const [showFullVideo, setShowFullVideo] = useState(false);
-  const [currentVideoUrl, setCurrentVideoUrl] = useState("");
+  const [selectedConversion, setSelectedConversion] = useState<ConversionType>('image-to-image');
+  const [files, setFiles] = useState<ConversionFile[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [outputFormat, setOutputFormat] = useState('png');
+  const [imageQuality, setImageQuality] = useState(0.9);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Prevent body scroll when video modal is open
-  useEffect(() => {
-    if (showFullVideo) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
+  const getAcceptedFileTypes = () => {
+    switch (selectedConversion) {
+      case 'image-to-image':
+        return { 'image/*': ['.png', '.jpg', '.jpeg', '.webp', '.gif'] };
+      case 'pdf-to-images':
+        return { 'application/pdf': ['.pdf'] };
+      case 'images-to-pdf':
+        return { 'image/*': ['.png', '.jpg', '.jpeg'] };
+      case 'json-to-csv':
+      case 'json-to-yaml':
+        return { 'application/json': ['.json'] };
+      case 'csv-to-json':
+        return { 'text/csv': ['.csv'] };
+      case 'yaml-to-json':
+        return { 'text/yaml': ['.yaml', '.yml'] };
+      default:
+        return {};
     }
-  }, [showFullVideo]);
+  };
 
-  // ESC key to close video modal
-  useEffect(() => {
-    const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && showFullVideo) {
-        setShowFullVideo(false);
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    const newFiles = acceptedFiles.map((file) => ({
+      id: `${Date.now()}-${Math.random()}`,
+      file,
+      preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined,
+      status: 'pending' as const,
+    }));
+    
+    setFiles((prev) => [...prev, ...newFiles]);
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: getAcceptedFileTypes(),
+    multiple: selectedConversion !== 'pdf-to-images',
+  });
+
+  const removeFile = (id: string) => {
+    setFiles((prev) => {
+      const file = prev.find(f => f.id === id);
+      if (file?.preview) URL.revokeObjectURL(file.preview);
+      return prev.filter((f) => f.id !== id);
+    });
+  };
+
+  const clearAll = () => {
+    files.forEach((file) => {
+      if (file.preview) URL.revokeObjectURL(file.preview);
+    });
+    setFiles([]);
+  };
+
+  // Image conversion
+  const convertImage = async (file: File, format: string): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Failed to get canvas context'));
+          return;
+        }
+        ctx.drawImage(img, 0, 0);
+        
+        canvas.toBlob(
+          (blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error('Failed to convert image'));
+          },
+          `image/${format}`,
+          imageQuality
+        );
+      };
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
+  // PDF to Images
+  const convertPdfToImages = async (file: File): Promise<Blob[]> => {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const images: Blob[] = [];
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const viewport = page.getViewport({ scale: 2 });
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      
+      if (!context) continue;
+      
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      
+      await page.render({ canvasContext: context, viewport }).promise;
+      
+      const blob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob((b) => {
+          if (b) resolve(b);
+          else reject(new Error('Failed to create blob'));
+        }, 'image/png');
+      });
+      
+      images.push(blob);
+    }
+    
+    return images;
+  };
+
+  // Images to PDF
+  const convertImagesToPdf = async (imageFiles: ConversionFile[]): Promise<Blob> => {
+    const pdf = new jsPDF();
+    let isFirst = true;
+
+    for (const fileData of imageFiles) {
+      const img = new Image();
+      await new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = URL.createObjectURL(fileData.file);
+      });
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx?.drawImage(img, 0, 0);
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.9);
+      
+      if (!isFirst) {
+        pdf.addPage();
       }
-    };
+      isFirst = false;
 
-    window.addEventListener('keydown', handleEsc);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgRatio = img.width / img.height;
+      const pdfRatio = pdfWidth / pdfHeight;
 
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-    };
-  }, [showFullVideo]);
+      let finalWidth, finalHeight;
+      if (imgRatio > pdfRatio) {
+        finalWidth = pdfWidth;
+        finalHeight = pdfWidth / imgRatio;
+      } else {
+        finalHeight = pdfHeight;
+        finalWidth = pdfHeight * imgRatio;
+      }
 
-  const currentQuote = QUOTES[currentQuoteIndex];
+      const x = (pdfWidth - finalWidth) / 2;
+      const y = (pdfHeight - finalHeight) / 2;
 
-  const nextQuote = () => {
-    setDirection(1);
-    setCurrentQuoteIndex((prev) => (prev + 1) % QUOTES.length);
+      pdf.addImage(imgData, 'JPEG', x, y, finalWidth, finalHeight);
+    }
+
+    return pdf.output('blob');
   };
 
-  const previousQuote = () => {
-    setDirection(-1);
-    setCurrentQuoteIndex((prev) => (prev - 1 + QUOTES.length) % QUOTES.length);
+  // JSON to CSV
+  const convertJsonToCsv = async (file: File): Promise<Blob> => {
+    const text = await file.text();
+    const json = JSON.parse(text);
+    const csv = Papa.unparse(Array.isArray(json) ? json : [json]);
+    return new Blob([csv], { type: 'text/csv' });
   };
 
-  const openVideoModal = (youtubeUrl: string) => {
-    setCurrentVideoUrl(youtubeUrl);
-    setShowFullVideo(true);
+  // CSV to JSON
+  const convertCsvToJson = async (file: File): Promise<Blob> => {
+    const text = await file.text();
+    return new Promise((resolve, reject) => {
+      Papa.parse(text, {
+        header: true,
+        complete: (results) => {
+          const json = JSON.stringify(results.data, null, 2);
+          resolve(new Blob([json], { type: 'application/json' }));
+        },
+        error: reject,
+      });
+    });
   };
 
-  const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0,
-      filter: 'blur(10px)',
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-      filter: 'blur(0px)',
-    },
-    exit: (direction: number) => ({
-      x: direction < 0 ? 1000 : -1000,
-      opacity: 0,
-      filter: 'blur(10px)',
-    }),
+  // JSON to YAML
+  const convertJsonToYaml = async (file: File): Promise<Blob> => {
+    const text = await file.text();
+    const json = JSON.parse(text);
+    const yamlText = yaml.dump(json);
+    return new Blob([yamlText], { type: 'text/yaml' });
+  };
+
+  // YAML to JSON
+  const convertYamlToJson = async (file: File): Promise<Blob> => {
+    const text = await file.text();
+    const obj = yaml.load(text);
+    const json = JSON.stringify(obj, null, 2);
+    return new Blob([json], { type: 'application/json' });
+  };
+
+  const processConversions = async () => {
+    if (files.length === 0) return;
+    
+    setIsProcessing(true);
+
+    try {
+      if (selectedConversion === 'images-to-pdf') {
+        // Special case: combine all images into one PDF
+        const pendingFiles = files.filter(f => f.status === 'pending');
+        const result = await convertImagesToPdf(pendingFiles);
+        
+        setFiles((prev) =>
+          prev.map((f) => ({
+            ...f,
+            status: 'completed',
+            result,
+            resultName: 'combined.pdf',
+          }))
+        );
+      } else if (selectedConversion === 'pdf-to-images') {
+        // Special case: one PDF becomes multiple images
+        const file = files[0];
+        const images = await convertPdfToImages(file.file);
+        
+        setFiles([{
+          ...file,
+          status: 'completed',
+          result: images[0], // Store first image, we'll handle download differently
+          resultName: 'page-1.png',
+        }]);
+        
+        // Auto-download all images as ZIP
+        const zip = new JSZip();
+        images.forEach((img, i) => {
+          zip.file(`page-${i + 1}.png`, img);
+        });
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        saveAs(zipBlob, 'pdf-pages.zip');
+        
+      } else {
+        // Process each file individually
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.id === file.id ? { ...f, status: 'processing' } : f
+            )
+          );
+
+          try {
+            let result: Blob;
+            let resultName: string;
+
+            switch (selectedConversion) {
+              case 'image-to-image':
+                result = await convertImage(file.file, outputFormat);
+                resultName = file.file.name.replace(/\.[^.]+$/, `.${outputFormat}`);
+                break;
+              case 'json-to-csv':
+                result = await convertJsonToCsv(file.file);
+                resultName = file.file.name.replace(/\.json$/, '.csv');
+                break;
+              case 'csv-to-json':
+                result = await convertCsvToJson(file.file);
+                resultName = file.file.name.replace(/\.csv$/, '.json');
+                break;
+              case 'json-to-yaml':
+                result = await convertJsonToYaml(file.file);
+                resultName = file.file.name.replace(/\.json$/, '.yaml');
+                break;
+              case 'yaml-to-json':
+                result = await convertYamlToJson(file.file);
+                resultName = file.file.name.replace(/\.(yaml|yml)$/, '.json');
+                break;
+              default:
+                throw new Error('Unsupported conversion type');
+            }
+
+            setFiles((prev) =>
+              prev.map((f) =>
+                f.id === file.id
+                  ? { ...f, status: 'completed', result, resultName }
+                  : f
+              )
+            );
+          } catch (error) {
+            console.error('Conversion error:', error);
+            setFiles((prev) =>
+              prev.map((f) =>
+                f.id === file.id
+                  ? { ...f, status: 'error', errorMessage: 'Conversion failed' }
+                  : f
+              )
+            );
+          }
+        }
+      }
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const downloadFile = (file: ConversionFile) => {
+    if (file.result && file.resultName) {
+      saveAs(file.result, file.resultName);
+    }
+  };
+
+  const downloadAll = async () => {
+    const completedFiles = files.filter(f => f.status === 'completed' && f.result);
+    
+    if (completedFiles.length === 1) {
+      downloadFile(completedFiles[0]);
+      return;
+    }
+
+    const zip = new JSZip();
+    completedFiles.forEach((file) => {
+      if (file.result && file.resultName) {
+        zip.file(file.resultName, file.result);
+      }
+    });
+    
+    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    saveAs(zipBlob, 'converted-files.zip');
   };
 
   if (!mounted) {
     return <div className="min-h-screen bg-black" />;
   }
 
-  return (
-    <main className="relative bg-black">
-      <CursorFollower />
-      <Hero />
+  const completedFiles = files.filter((f) => f.status === 'completed');
+  const hasResults = completedFiles.length > 0;
 
-      {/* Fullscreen YouTube Video Modal */}
-      <AnimatePresence>
-        {showFullVideo && (
+  return (
+    <main className="relative bg-black min-h-screen">
+      {/* Header Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="font-display text-xl text-white font-light">
+              DOOM
+            </Link>
+            <div className="flex items-center gap-8">
+              <Link
+                href="/"
+                className="font-mono text-sm text-white/50 hover:text-white transition-colors"
+              >
+                Home
+              </Link>
+              <Link
+                href="/#projects"
+                className="font-mono text-sm text-white/50 hover:text-white transition-colors"
+              >
+                Projects
+              </Link>
+              <Link
+                href="/ocr"
+                className="font-mono text-sm text-white/50 hover:text-white transition-colors"
+              >
+                OCR Tool
+              </Link>
+              <Link
+                href="/convert"
+                className="font-mono text-sm text-white border-b border-white/50"
+              >
+                File Converter
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <div className="pt-24 px-6 pb-20">
+        <div className="max-w-6xl mx-auto">
+          {/* Hero Section */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-8"
-            onClick={() => setShowFullVideo(false)}
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="text-center mb-16"
           >
-            {/* Backdrop */}
+            <h1 className="font-display text-5xl md:text-7xl text-white mb-6 font-light tracking-tight">
+              File Converter
+            </h1>
+            <p className="font-mono text-sm text-white/40 max-w-2xl mx-auto">
+              Convert between different file formats instantly. All processing happens in your browser - your files never leave your device.
+            </p>
+          </motion.div>
+
+          {/* Conversion Type Selector */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="mb-12"
+          >
+            <h3 className="font-mono text-sm text-white/60 mb-4">Select Conversion Type</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {CONVERSION_OPTIONS.map((option) => (
+                <motion.button
+                  key={option.id}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    setSelectedConversion(option.id as ConversionType);
+                    clearAll();
+                  }}
+                  className={`glass-strong rounded-xl p-6 text-left transition-all ${
+                    selectedConversion === option.id
+                      ? 'border-2 border-white/40'
+                      : 'border border-white/10'
+                  }`}
+                >
+                  <h4 className="font-mono text-sm text-white mb-2">{option.name}</h4>
+                  <p className="font-mono text-xs text-white/40">{option.desc}</p>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Format Options (for image conversion) */}
+          {selectedConversion === 'image-to-image' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-8 glass-strong rounded-xl p-6"
+            >
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="font-mono text-xs text-white/60 mb-2 block">
+                    Output Format
+                  </label>
+                  <select
+                    value={outputFormat}
+                    onChange={(e) => setOutputFormat(e.target.value)}
+                    className="w-full glass rounded-lg px-4 py-2 font-mono text-sm text-white bg-transparent border border-white/10"
+                  >
+                    <option value="png" className="bg-black">PNG</option>
+                    <option value="jpeg" className="bg-black">JPEG</option>
+                    <option value="webp" className="bg-black">WEBP</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="font-mono text-xs text-white/60 mb-2 block">
+                    Quality: {Math.round(imageQuality * 100)}%
+                  </label>
+                  <input
+                    type="range"
+                    min="0.1"
+                    max="1"
+                    step="0.1"
+                    value={imageQuality}
+                    onChange={(e) => setImageQuality(parseFloat(e.target.value))}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Upload Zone */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mb-12"
+          >
+            <div
+              {...getRootProps()}
+              className={`relative glass-strong rounded-2xl border-2 border-dashed transition-all cursor-pointer overflow-hidden ${
+                isDragActive ? 'border-white/60 bg-white/5' : 'border-white/20'
+              }`}
+            >
+              <div className="p-16 text-center">
+                <input {...getInputProps()} />
+                
+                <motion.div
+                  animate={{ scale: isDragActive ? 1.1 : 1 }}
+                  className="mb-6"
+                >
+                  <svg
+                    className="w-20 h-20 mx-auto text-white/40"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    />
+                  </svg>
+                </motion.div>
+
+                <h3 className="font-display text-2xl text-white mb-3 font-light">
+                  {isDragActive ? 'Drop files here' : 'Drag & Drop Files'}
+                </h3>
+                <p className="font-mono text-sm text-white/40 mb-4">
+                  or click to browse
+                </p>
+              </div>
+
+              <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-white/10 rounded-tl-2xl pointer-events-none" />
+              <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-white/10 rounded-br-2xl pointer-events-none" />
+            </div>
+          </motion.div>
+
+          {/* Uploaded Files */}
+          {files.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-12"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="font-mono text-sm text-white/60">
+                  Files ({files.length})
+                </h3>
+                <button
+                  onClick={clearAll}
+                  className="font-mono text-xs text-white/40 hover:text-white transition-colors"
+                >
+                  Clear All
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {files.map((file, index) => (
+                  <motion.div
+                    key={file.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="glass-strong rounded-xl p-4 flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-4">
+                      {file.preview && (
+                        <div className="w-12 h-12 rounded-lg overflow-hidden border border-white/10">
+                          <img
+                            src={file.preview}
+                            alt="Preview"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      <div>
+                        <p className="font-mono text-sm text-white">{file.file.name}</p>
+                        <p className="font-mono text-xs text-white/40">
+                          {(file.file.size / 1024).toFixed(2)} KB
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {file.status === 'completed' && (
+                        <button
+                          onClick={() => downloadFile(file)}
+                          className="px-4 py-2 glass rounded-full font-mono text-xs text-white/70 hover:text-white transition-colors"
+                        >
+                          Download
+                        </button>
+                      )}
+                      {file.status === 'pending' && (
+                        <button
+                          onClick={() => removeFile(file.id)}
+                          className="px-4 py-2 glass rounded-full font-mono text-xs text-white/40 hover:text-white transition-colors"
+                        >
+                          Remove
+                        </button>
+                      )}
+                      {file.status === 'processing' && (
+                        <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                      )}
+                      {file.status === 'completed' && (
+                        <svg className="w-6 h-6 text-white/60" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Convert Button */}
+              {files.some((f) => f.status === 'pending') && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mt-8 text-center"
+                >
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={processConversions}
+                    disabled={isProcessing}
+                    className="px-10 py-4 rounded-full font-mono text-sm text-black bg-white hover:bg-white/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 mx-auto"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                        <span>Converting...</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+                        </svg>
+                        <span>Convert {files.filter(f => f.status === 'pending').length} Files</span>
+                      </>
+                    )}
+                  </motion.button>
+                </motion.div>
+              )}
+
+              {/* Download All Button */}
+              {hasResults && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mt-8 text-center"
+                >
+                  <button
+                    onClick={downloadAll}
+                    className="px-8 py-3 glass-strong rounded-full font-mono text-sm text-white/80 hover:text-white transition-colors flex items-center gap-2 mx-auto"
+                  >
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                    Download All ({completedFiles.length})
+                  </button>
+                </motion.div>
+              )}
+            </motion.div>
+          )}
+
+          {/* Empty State */}
+          {files.length === 0 && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/95 backdrop-blur-sm"
-            />
-
-            {/* Video Container */}
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0, rotateX: -15 }}
-              animate={{ scale: 1, opacity: 1, rotateX: 0 }}
-              exit={{ scale: 0.8, opacity: 0, rotateX: 15 }}
-              transition={{ 
-                duration: 0.5, 
-                ease: [0.22, 1, 0.36, 1]
-              }}
-              className="relative w-full max-w-7xl aspect-video z-10"
-              onClick={(e) => e.stopPropagation()}
+              className="text-center py-20"
             >
-              {/* Decorative corners */}
-              <div className="absolute -top-4 -left-4 w-32 h-32 border-t-2 border-l-2 border-white/30 rounded-tl-3xl pointer-events-none" />
-              <div className="absolute -bottom-4 -right-4 w-32 h-32 border-b-2 border-r-2 border-white/30 rounded-br-3xl pointer-events-none" />
-              
-              {/* Corner glows */}
-              <motion.div
-                animate={{
-                  opacity: [0.4, 0.7, 0.4],
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-                className="absolute -top-4 -left-4 w-8 h-8 bg-white/50 rounded-full blur-xl pointer-events-none"
-              />
-              <motion.div
-                animate={{
-                  opacity: [0.4, 0.7, 0.4],
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  delay: 1.5,
-                }}
-                className="absolute -bottom-4 -right-4 w-8 h-8 bg-white/50 rounded-full blur-xl pointer-events-none"
-              />
-
-              {/* Video frame */}
-              <div className="relative glass-strong rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl w-full h-full">
-                <iframe
-                  className="w-full h-full"
-                  src={`${currentVideoUrl.replace('youtu.be/', 'youtube.com/embed/')}?autoplay=1&quality=hd2160`}
-                  title="Project Showcase"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-
-                {/* Gradient overlay at edges */}
-                <div className="absolute inset-0 pointer-events-none">
-                  <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black/20 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/20 to-transparent" />
-                </div>
-              </div>
-
-              {/* Close button */}
-              <motion.button
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 }}
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowFullVideo(false);
-                }}
-                className="absolute -top-12 -right-12 md:-top-16 md:-right-16 w-12 h-12 rounded-full glass-strong border border-white/20 flex items-center justify-center group z-50"
-                aria-label="Close video"
-              >
+              <div className="glass-strong rounded-2xl p-12 max-w-md mx-auto">
                 <svg
-                  className="w-6 h-6 text-white/70 group-hover:text-white transition-colors"
+                  className="w-16 h-16 mx-auto mb-4 text-white/20"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -345,437 +716,21 @@ export default function Home() {
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
+                    strokeWidth={1.5}
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                   />
                 </svg>
-              </motion.button>
-
-              {/* Title overlay */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="absolute top-6 left-6 z-10 pointer-events-none"
-              >
-                <div className="glass-strong rounded-full px-4 py-2">
-                  <span className="font-mono text-xs tracking-[0.2em] text-white/80 uppercase">
-                    Full Showcase - 4K
-                  </span>
-                </div>
-              </motion.div>
-            </motion.div>
-
-            {/* Press ESC hint */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-none"
-            >
-              <div className="glass rounded-full px-4 py-2 font-mono text-xs text-white/40">
-                Press ESC or click outside to close
+                <h3 className="font-display text-xl text-white mb-2 font-light">
+                  No files uploaded yet
+                </h3>
+                <p className="font-mono text-sm text-white/40">
+                  Select a conversion type and upload files to get started
+                </p>
               </div>
             </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* GitHub Projects Showcase Section */}
-      <section id="projects" className="min-h-screen flex flex-col items-center justify-center px-6 relative z-10 py-20">
-        <div className="max-w-7xl w-full">
-          {/* Section Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            viewport={{ once: true }}
-            className="text-center mb-20"
-          >
-            <h2 className="font-display text-5xl md:text-7xl text-white mb-4 font-light tracking-tight">
-              Projects
-            </h2>
-            <p className="font-mono text-xs text-white/30 tracking-[0.3em] uppercase">
-              Selected Works & Open Source
-            </p>
-          </motion.div>
-
-          {/* Projects Grid */}
-          <div className="space-y-32">
-            {PROJECTS.map((project, index) => {
-              const isEven = index % 2 === 0;
-              
-              return (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, y: 60 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                  viewport={{ once: true }}
-                  className="w-full"
-                >
-                  <div className={`grid md:grid-cols-2 gap-12 items-center ${!isEven ? 'md:flex-row-reverse' : ''}`}>
-                    {/* Video Side */}
-                    <motion.div
-                      initial={{ opacity: 0, x: isEven ? -60 : 60 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-                      viewport={{ once: true }}
-                      className={`relative group ${!isEven ? 'md:order-2' : ''}`}
-                    >
-                      <div className="absolute -top-6 -left-6 w-24 h-24 border-t-2 border-l-2 border-white/20 rounded-tl-2xl" />
-                      <div className="absolute -bottom-6 -right-6 w-24 h-24 border-b-2 border-r-2 border-white/20 rounded-br-2xl" />
-                      
-                      <div className="absolute -top-2 -left-2 w-4 h-4 bg-white/40 rounded-full blur-md" />
-                      <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-white/40 rounded-full blur-md" />
-
-                      <div className="relative glass-strong rounded-xl overflow-hidden border border-white/10 shadow-2xl">
-                        <div className="aspect-video bg-black/20 flex items-center justify-center">
-                          <video
-                            className="w-full h-full object-cover"
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                          >
-                            <source src={project.previewVideo} type="video/mp4" />
-                            <div className="flex flex-col items-center justify-center h-full text-white/50">
-                              <svg
-                                className="w-20 h-20 mb-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1.5}
-                                  d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                                />
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1.5}
-                                  d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
-                              <p className="font-mono text-sm">Video Preview</p>
-                            </div>
-                          </video>
-                        </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-                      </div>
-
-                      {/* Action Buttons */}
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
-                        viewport={{ once: true }}
-                        className="mt-6 flex gap-4 justify-center"
-                      >
-                        <motion.button
-                          whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255, 255, 255, 0.3)' }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => openVideoModal(project.youtubeUrl)}
-                          className="flex-1 relative px-6 py-3 rounded-full font-mono text-sm text-black bg-white hover:bg-white/90 transition-all overflow-hidden flex items-center justify-center gap-2"
-                        >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z" />
-                          </svg>
-                          <span>Watch Full</span>
-                        </motion.button>
-
-                        <motion.a
-                          href={project.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="flex-1 px-6 py-3 glass-strong rounded-full font-mono text-sm text-white/80 hover:text-white transition-colors flex items-center justify-center gap-2"
-                        >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                          </svg>
-                          <span>GitHub</span>
-                        </motion.a>
-                      </motion.div>
-                    </motion.div>
-
-                    {/* Content Side */}
-                    <motion.div
-                      initial={{ opacity: 0, x: isEven ? 60 : -60 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
-                      viewport={{ once: true }}
-                      className={`space-y-8 ${!isEven ? 'md:order-1' : ''}`}
-                    >
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.5 }}
-                        viewport={{ once: true }}
-                      >
-                        <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-white/40 uppercase">
-                          {project.label}
-                        </span>
-                      </motion.div>
-
-                      <motion.h3
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.6 }}
-                        viewport={{ once: true }}
-                        className="font-display text-4xl md:text-6xl text-white font-light tracking-tight leading-tight"
-                      >
-                        {project.name}
-                      </motion.h3>
-
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.7 }}
-                        viewport={{ once: true }}
-                        className="space-y-4"
-                      >
-                        <p className="font-mono text-base text-white/60 leading-relaxed">
-                          {project.description}
-                        </p>
-                        <p className="font-mono text-base text-white/60 leading-relaxed">
-                          {project.secondDescription}
-                        </p>
-                      </motion.div>
-
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.8 }}
-                        viewport={{ once: true }}
-                        className="space-y-3"
-                      >
-                        {project.features.map((feature, featureIndex) => (
-                          <motion.div
-                            key={feature}
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.4, delay: 0.9 + featureIndex * 0.1 }}
-                            viewport={{ once: true }}
-                            className="flex items-center gap-3 group"
-                          >
-                            <div className="w-1.5 h-1.5 bg-white/40 rounded-full group-hover:bg-white/80 transition-colors" />
-                            <span className="font-mono text-sm text-white/50 group-hover:text-white/80 transition-colors">
-                              {feature}
-                            </span>
-                          </motion.div>
-                        ))}
-                      </motion.div>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+          )}
         </div>
-      </section>
-
-      <section id="quotes" className="min-h-screen flex items-center justify-center px-6 relative z-10 py-20">
-        <div className="max-w-5xl w-full">
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="font-display text-4xl md:text-6xl text-white mb-4 font-light tracking-tight">
-              Philosophy
-            </h2>
-            <p className="font-mono text-xs text-white/30 tracking-[0.3em] uppercase">
-              Quotes on Innovation, Programming & Design
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-            viewport={{ once: true }}
-            className="relative"
-          >
-            <div className="glass-strong rounded-3xl p-12 md:p-16 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-white/10 rounded-tl-3xl" />
-              <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-white/10 rounded-br-3xl" />
-
-              <div className="relative min-h-[300px] flex flex-col justify-center">
-                <AnimatePresence mode="wait" custom={direction}>
-                  <motion.div
-                    key={currentQuoteIndex}
-                    custom={direction}
-                    variants={slideVariants}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    transition={{
-                      x: { type: 'spring', stiffness: 300, damping: 30 },
-                      opacity: { duration: 0.4 },
-                      filter: { duration: 0.4 },
-                    }}
-                    className="text-center"
-                  >
-                    <motion.div
-                      initial={{ opacity: 0, y: -20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                      className="mb-8"
-                    >
-                      <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-white/40 uppercase">
-                        {currentQuote.category}
-                      </span>
-                    </motion.div>
-
-                    <motion.blockquote
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.3 }}
-                      className="font-display text-2xl md:text-4xl text-white/90 font-light leading-relaxed mb-8 relative"
-                    >
-                      <span className="text-white/20 text-6xl absolute -top-4 -left-2 md:-left-8">"</span>
-                      {currentQuote.text}
-                      <span className="text-white/20 text-6xl absolute -bottom-8 -right-2 md:-right-8">"</span>
-                    </motion.blockquote>
-
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="font-mono text-sm text-white/50"
-                    >
-                      — {currentQuote.author}
-                    </motion.div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-
-              <div className="flex items-center justify-center gap-6 mt-12">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={previousQuote}
-                  className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group"
-                  aria-label="Previous quote"
-                >
-                  <svg
-                    className="w-5 h-5 text-white/60 group-hover:text-white/90 transition-colors"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </motion.button>
-
-                <div className="flex items-center gap-2">
-                  {QUOTES.map((_, index) => (
-                    <motion.button
-                      key={index}
-                      whileHover={{ scale: 1.2 }}
-                      onClick={() => {
-                        setDirection(index > currentQuoteIndex ? 1 : -1);
-                        setCurrentQuoteIndex(index);
-                      }}
-                      className={`h-1.5 rounded-full transition-all ${
-                        index === currentQuoteIndex
-                          ? 'w-8 bg-white/60'
-                          : 'w-1.5 bg-white/20 hover:bg-white/40'
-                      }`}
-                      aria-label={`Go to quote ${index + 1}`}
-                    />
-                  ))}
-                </div>
-
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={nextQuote}
-                  className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group"
-                  aria-label="Next quote"
-                >
-                  <svg
-                    className="w-5 h-5 text-white/60 group-hover:text-white/90 transition-colors"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </motion.button>
-              </div>
-
-              <div className="text-center mt-6">
-                <span className="font-mono text-xs text-white/25">
-                  {currentQuoteIndex + 1} / {QUOTES.length}
-                </span>
-              </div>
-            </div>
-          </motion.div>
-
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-1/4 left-10 w-32 h-32 bg-white/[0.02] rounded-full blur-3xl" />
-            <div className="absolute bottom-1/4 right-10 w-40 h-40 bg-white/[0.01] rounded-full blur-3xl" />
-          </div>
-        </div>
-      </section>
-
-      <section id="contact" className="min-h-screen flex items-center justify-center px-6 relative z-10 mb-32">
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          viewport={{ once: true, margin: "-100px" }}
-          className="text-center max-w-4xl"
-        >
-          <h2 className="font-display text-5xl md:text-7xl text-white mb-8 font-light tracking-tight">
-            Let's Connect
-          </h2>
-          <p className="font-mono text-white/35 text-sm md:text-base mb-12">
-            Interested in working together? Feel free to reach out.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <motion.a
-              href="https://pastebin.com/eb9Haem9"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-10 py-4 glass rounded-full font-mono text-sm text-white/70 hover:text-white transition-colors"
-            >
-              Discord : doomcodes
-            </motion.a>
-            
-            <motion.a
-              href="https://discord.gg/FxFpDcpGdC"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-10 py-4 rounded-full font-mono text-sm text-black bg-white hover:bg-white/90 transition-colors"
-            >
-              My Market Server
-            </motion.a>
-          </div>
-        </motion.div>
-      </section>
-
-      <MusicPlayer />
-
-      <footer className="relative z-10 pb-8">
-        <div className="text-center">
-          <p className="font-mono text-xs text-white/15">
-            © 2026 doom.lat — Designed & Developed with care
-          </p>
-        </div>
-      </footer>
-
-      <div className="noise-overlay" />
+      </div>
     </main>
   );
 }
