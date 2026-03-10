@@ -5,7 +5,6 @@ export const dynamic = 'force-dynamic';
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDropzone } from 'react-dropzone';
-import Tesseract from 'tesseract.js';
 import { saveAs } from 'file-saver';
 import Link from 'next/link';
 
@@ -16,6 +15,7 @@ interface UploadedFile {
   status: 'pending' | 'processing' | 'completed' | 'error';
   text: string;
   progress: number;
+  errorMessage?: string;
 }
 
 export default function OCRPage() {
@@ -43,7 +43,7 @@ export default function OCRPage() {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.png', '.jpg', '.jpeg', '.webp', '.gif'],
+      'image/*': ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.bmp', '.tiff'],
     },
     multiple: true,
   });
@@ -65,31 +65,35 @@ export default function OCRPage() {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       
+      // Update status to processing
       setFiles((prev) =>
         prev.map((f) =>
-          f.id === file.id ? { ...f, status: 'processing', progress: 0 } : f
+          f.id === file.id ? { ...f, status: 'processing', progress: 50 } : f
         )
       );
 
       try {
-        const result = await Tesseract.recognize(file.file, 'eng', {
-          logger: (m) => {
-            if (m.status === 'recognizing text') {
-              setFiles((prev) =>
-                prev.map((f) =>
-                  f.id === file.id
-                    ? { ...f, progress: Math.round(m.progress * 100) }
-                    : f
-                )
-              );
-            }
-          },
+        // Create FormData and send to our API route
+        const formData = new FormData();
+        formData.append('file', file.file);
+
+        const response = await fetch('/api/ocr', {
+          method: 'POST',
+          body: formData,
         });
 
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'OCR failed');
+        }
+
+        const data = await response.json();
+
+        // Update with extracted text
         setFiles((prev) =>
           prev.map((f) =>
             f.id === file.id
-              ? { ...f, status: 'completed', text: result.data.text, progress: 100 }
+              ? { ...f, status: 'completed', text: data.text, progress: 100 }
               : f
           )
         );
@@ -98,7 +102,13 @@ export default function OCRPage() {
         setFiles((prev) =>
           prev.map((f) =>
             f.id === file.id
-              ? { ...f, status: 'error', text: 'Failed to extract text', progress: 0 }
+              ? { 
+                  ...f, 
+                  status: 'error', 
+                  text: '', 
+                  progress: 0,
+                  errorMessage: error instanceof Error ? error.message : 'Failed to extract text'
+                }
               : f
           )
         );
@@ -160,6 +170,12 @@ export default function OCRPage() {
               >
                 OCR Tool
               </Link>
+              <Link
+                href="/convert"
+                className="font-mono text-sm text-white/50 hover:text-white transition-colors"
+              >
+                File Converter
+              </Link>
             </div>
           </div>
         </div>
@@ -175,13 +191,38 @@ export default function OCRPage() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="text-center mb-16"
           >
+            <div className="inline-block mb-4">
+              <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-white/40 uppercase">
+                Powered by Google Cloud Vision AI
+              </span>
+            </div>
             <h1 className="font-display text-5xl md:text-7xl text-white mb-6 font-light tracking-tight">
               Image to Text
             </h1>
-            <p className="font-mono text-sm text-white/40 max-w-2xl mx-auto">
-              Extract text from images using AI-powered OCR. Upload multiple images and
-              get accurate text extraction in seconds.
+            <p className="font-mono text-sm text-white/40 max-w-2xl mx-auto mb-6">
+              Extract text from images using industry-leading AI with 99%+ accuracy. 
+              Supports handwriting, multiple languages, and complex documents.
             </p>
+            <div className="flex items-center justify-center gap-6 font-mono text-xs text-white/30">
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span>99%+ Accuracy</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                </svg>
+                <span>Handwriting Support</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.724 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z" clipRule="evenodd" />
+                </svg>
+                <span>100+ Languages</span>
+              </div>
+            </div>
           </motion.div>
 
           {/* Upload Zone */}
@@ -232,9 +273,11 @@ export default function OCRPage() {
                   <span>•</span>
                   <span>JPG</span>
                   <span>•</span>
-                  <span>JPEG</span>
-                  <span>•</span>
                   <span>WEBP</span>
+                  <span>•</span>
+                  <span>GIF</span>
+                  <span>•</span>
+                  <span>TIFF</span>
                 </div>
               </div>
 
@@ -289,7 +332,7 @@ export default function OCRPage() {
                           <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center">
                             <div className="w-16 h-16 border-2 border-white/20 border-t-white rounded-full animate-spin mb-2" />
                             <span className="font-mono text-xs text-white">
-                              {file.progress}%
+                              Processing...
                             </span>
                           </div>
                         )}
@@ -304,6 +347,22 @@ export default function OCRPage() {
                               <path
                                 fillRule="evenodd"
                                 d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </div>
+                        )}
+
+                        {file.status === 'error' && (
+                          <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
+                            <svg
+                              className="w-8 h-8 text-red-400"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
                                 clipRule="evenodd"
                               />
                             </svg>
@@ -352,7 +411,7 @@ export default function OCRPage() {
                     {isProcessing ? (
                       <>
                         <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
-                        <span>Processing...</span>
+                        <span>Processing with AI...</span>
                       </>
                     ) : (
                       <>
