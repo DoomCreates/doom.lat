@@ -95,7 +95,7 @@ export default function Hero() {
 
         <motion.div variants={itemVariants} className="mb-6">
           <p className="font-display text-2xl md:text-3xl text-white/60 tracking-wide inline-block px-8 py-3 glass-strong rounded-2xl">
-            RBLX Developer, CS Enthusiast.
+            Creative Developer & Designer
           </p>
         </motion.div>
 
@@ -103,9 +103,8 @@ export default function Hero() {
           variants={itemVariants}
           className="font-mono text-sm md:text-base text-white/40 max-w-2xl mx-auto leading-relaxed px-6"
         >
-                             Roblox Developer and Cyber-Security analyst. 
-          Most notably recognized for the creation of the best external Blade Ball Auto Parry, 
-                                during the widespread Roblox ban wave.
+          Crafting digital experiences at the intersection of art and technology.
+          Specializing in minimalist design, fluid animations, and immersive web experiences.
         </motion.p>
 
         {/* Bottom line */}
@@ -114,10 +113,20 @@ export default function Hero() {
           className="h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent mt-16"
         />
 
+        {/* UPDATED BUTTON SECTION - TWO BUTTONS */}
         <motion.div
           variants={itemVariants}
-          className="flex items-center justify-center mt-16"
+          className="flex items-center justify-center gap-4 mt-16"
         >
+          <motion.a
+            href="/ocr"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-10 py-4 glass-strong rounded-full font-mono text-sm text-white/80 hover:text-white transition-colors"
+          >
+            Try OCR Tool
+          </motion.a>
+          
           <motion.a
             href="#contact"
             whileHover={{ scale: 1.05 }}
