@@ -30,56 +30,63 @@ export default function ChessPage() {
     const chessGame = new Chess();
     setGame(chessGame);
 
-    // Initialize Stockfish
+    // Initialize Stockfish from public folder
     if (typeof Worker !== 'undefined') {
-      const sf = new Worker('https://cdn.jsdelivr.net/npm/stockfish.js@10.0.2/stockfish.js');
-      sf.postMessage('uci');
-      setStockfish(sf);
+      try {
+        const sf = new Worker('/stockfish.js');
+        sf.postMessage('uci');
+        setStockfish(sf);
 
-      return () => {
-        sf.terminate();
-      };
+        return () => {
+          sf.terminate();
+        };
+      } catch (error) {
+        console.error('Failed to initialize Stockfish:', error);
+      }
     }
   }, []);
 
   const updateCapturedPieces = useCallback((chessGame: Chess) => {
-    const allPieces = 'ppppppppnnbbrrqqkPPPPPPPPNNBBRRQQK';
-    const boardPieces = chessGame.board().flat().filter(Boolean).map((p) => p?.type + (p?.color === 'w' ? p.type.toUpperCase() : p?.type)).join('');
-    
-    const captured = { white: [] as string[], black: [] as string[] };
-    
-    for (const piece of allPieces) {
-      const isWhite = piece === piece.toUpperCase();
-      const pieceLower = piece.toLowerCase();
-      
-      const totalCount = allPieces.split('').filter(p => p.toLowerCase() === pieceLower).length / 2;
-      const boardCount = boardPieces.split('').filter(p => p.toLowerCase() === pieceLower && (isWhite ? p === p.toUpperCase() : p === p.toLowerCase())).length;
-      
-      const capturedCount = totalCount - boardCount;
-      
-      for (let i = 0; i < capturedCount; i++) {
-        if (isWhite) {
-          captured.black.push(getPieceSymbol(pieceLower));
-        } else {
-          captured.white.push(getPieceSymbol(pieceLower));
+    const pieceValues: { [key: string]: string } = {
+      p: '♟', n: '♞', b: '♝', r: '♜', q: '♛', k: '♚'
+    };
+
+    const startPieces = {
+      p: 8, n: 2, b: 2, r: 2, q: 1, k: 1
+    };
+
+    const currentPieces = {
+      white: { p: 0, n: 0, b: 0, r: 0, q: 0, k: 0 },
+      black: { p: 0, n: 0, b: 0, r: 0, q: 0, k: 0 }
+    };
+
+    chessGame.board().forEach(row => {
+      row.forEach(square => {
+        if (square) {
+          const color = square.color === 'w' ? 'white' : 'black';
+          const piece = square.type as keyof typeof startPieces;
+          currentPieces[color][piece]++;
         }
+      });
+    });
+
+    const captured = { white: [] as string[], black: [] as string[] };
+
+    Object.keys(startPieces).forEach(pieceType => {
+      const piece = pieceType as keyof typeof startPieces;
+      const whiteCaptured = startPieces[piece] - currentPieces.white[piece];
+      const blackCaptured = startPieces[piece] - currentPieces.black[piece];
+
+      for (let i = 0; i < whiteCaptured; i++) {
+        captured.black.push(pieceValues[piece]);
       }
-    }
-    
+      for (let i = 0; i < blackCaptured; i++) {
+        captured.white.push(pieceValues[piece]);
+      }
+    });
+
     setCapturedPieces(captured);
   }, []);
-
-  const getPieceSymbol = (piece: string): string => {
-    const symbols: { [key: string]: string } = {
-      p: '♟',
-      n: '♞',
-      b: '♝',
-      r: '♜',
-      q: '♛',
-      k: '♚',
-    };
-    return symbols[piece] || piece;
-  };
 
   const checkGameStatus = useCallback((chessGame: Chess) => {
     if (chessGame.isCheckmate()) {
@@ -280,7 +287,6 @@ export default function ChessPage() {
                   <Chessboard
                     position={fen}
                     onPieceDrop={onDrop}
-                    boardWidth={Math.min(600, typeof window !== 'undefined' ? window.innerWidth - 100 : 600)}
                     customBoardStyle={{
                       borderRadius: '8px',
                       boxShadow: '0 0 20px rgba(139, 92, 246, 0.3)',
@@ -377,7 +383,7 @@ export default function ChessPage() {
                     className="glass-strong rounded-xl p-6 border-2 border-purple-500/40 glow-purple"
                   >
                     <h3 className="font-display text-2xl text-gradient mb-2">
-                      {gameStatus === 'checkmate' && `${winner === 'white' ? 'White' : 'Black'} Wins!`}
+                      {gameStatus === 'checkmate' && `${winner === 'white' ? 'You Win!' : 'AI Wins!'}`}
                       {gameStatus === 'draw' && 'Draw!'}
                       {gameStatus === 'stalemate' && 'Stalemate!'}
                     </h3>
