@@ -15,7 +15,7 @@ export default function Hero() {
   }, []);
 
   if (!mounted) {
-    return <div className="min-h-screen bg-black" />;
+    return <div className="min-h-screen bg-[#0a0118]" />;
   }
 
   const containerVariants = {
@@ -57,13 +57,58 @@ export default function Hero() {
   return (
     <motion.div 
       style={{ opacity, scale }}
-      className="relative min-h-screen flex items-center justify-center px-6"
+      className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden"
     >
-      {/* Simplified background - static orbs */}
+      {/* Animated gradient orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/[0.015] rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-white/[0.01] rounded-full blur-3xl" />
+        {/* Purple orb */}
+        <motion.div
+          animate={{
+            x: [0, 100, 0],
+            y: [0, -100, 0],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl"
+        />
+        
+        {/* Pink orb */}
+        <motion.div
+          animate={{
+            x: [0, -100, 0],
+            y: [0, 100, 0],
+            scale: [1, 1.3, 1],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-pink-600/20 rounded-full blur-3xl"
+        />
+        
+        {/* Cyan orb */}
+        <motion.div
+          animate={{
+            x: [0, 50, 0],
+            y: [0, -50, 0],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="absolute top-1/2 right-1/3 w-80 h-80 bg-cyan-500/20 rounded-full blur-3xl"
+        />
       </div>
+
+      {/* Grid pattern overlay */}
+      <div className="absolute inset-0 grid-pattern opacity-30 pointer-events-none" />
 
       {/* Main content */}
       <motion.div
@@ -75,82 +120,97 @@ export default function Hero() {
         {/* Top line */}
         <motion.div
           variants={lineVariants}
-          className="h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent mb-16"
+          className="h-[2px] bg-gradient-to-r from-transparent via-purple-500 to-transparent mb-16"
         />
 
         <motion.div variants={itemVariants} className="mb-6">
-          <span className="inline-block font-mono text-xs tracking-[0.4em] text-white/50 uppercase px-6 py-2 glass rounded-full">
+          <span className="inline-block font-mono text-xs tracking-[0.4em] text-purple-300/80 uppercase px-6 py-2 glass rounded-full border border-purple-500/30">
             Portfolio
           </span>
         </motion.div>
 
         <motion.h1
           variants={itemVariants}
-          className="font-display font-light text-white mb-8"
+          className="font-display font-light mb-8"
         >
-          <span className="block text-7xl md:text-9xl tracking-tight text-gradient-soft">
+          <span className="block text-7xl md:text-9xl tracking-tight text-gradient">
             DOOM
           </span>
         </motion.h1>
 
         <motion.div variants={itemVariants} className="mb-6">
-          <p className="font-display text-2xl md:text-3xl text-white/60 tracking-wide inline-block px-8 py-3 glass-strong rounded-2xl">
+          <p className="font-display text-2xl md:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 tracking-wide inline-block px-8 py-3 glass-strong rounded-2xl border border-purple-500/20">
             Creative Developer & Designer
           </p>
         </motion.div>
 
         <motion.p
           variants={itemVariants}
-          className="font-mono text-sm md:text-base text-white/40 max-w-2xl mx-auto leading-relaxed px-6"
+          className="font-mono text-sm md:text-base text-purple-200/60 max-w-2xl mx-auto leading-relaxed px-6"
         >
-                                              Roblox Developer and Cyber-Security analyst. 
-                          Most notably recognized for the creation of the best external Blade Ball Auto Parry, 
-                                                during the widespread Roblox ban wave.
+          Crafting digital experiences at the intersection of art and technology.
+          Specializing in minimalist design, fluid animations, and immersive web experiences.
         </motion.p>
 
         {/* Bottom line */}
         <motion.div
           variants={lineVariants}
-          className="h-[2px] bg-gradient-to-r from-transparent via-white/40 to-transparent mt-16"
+          className="h-[2px] bg-gradient-to-r from-transparent via-pink-500 to-transparent mt-16"
         />
 
-        {/* UPDATED BUTTON SECTION - TWO BUTTONS */}
+        {/* CTA Buttons */}
         <motion.div
           variants={itemVariants}
-          className="flex items-center justify-center gap-4 mt-16"
+          className="flex flex-wrap items-center justify-center gap-4 mt-16"
         >
           <motion.a
             href="/ocr"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-10 py-4 glass-strong rounded-full font-mono text-sm text-white/80 hover:text-white transition-colors"
+            className="px-8 py-3 glass-strong rounded-full font-mono text-sm text-purple-300 hover:text-white transition-colors border border-purple-500/30 hover:border-purple-500/60 glow-purple"
           >
-            Try OCR Tool
+            OCR Tool
           </motion.a>
           
           <motion.a
             href="#contact"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-10 py-4 rounded-full font-mono text-sm text-black bg-white hover:bg-white/90 transition-all"
+            className="relative px-10 py-4 rounded-full font-mono text-sm text-white btn-gradient overflow-hidden group"
           >
-            Get in Touch
+            <span className="relative z-10">Get in Touch</span>
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600"
+              animate={{
+                x: ['-100%', '100%'],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: 'linear',
+              }}
+              style={{ opacity: 0.3 }}
+            />
           </motion.a>
         </motion.div>
 
-        {/* Simplified scroll indicator */}
+        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.5 }}
+          animate={{ opacity: 0.6 }}
           transition={{ delay: 2.5 }}
           className="absolute bottom-12 left-1/2 -translate-x-1/2"
         >
-          <div className="flex flex-col items-center gap-3 glass px-4 py-3 rounded-full">
-            <span className="font-mono text-xs text-white/30 tracking-[0.3em]">SCROLL</span>
-            <svg className="w-4 h-6 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="flex flex-col items-center gap-3 glass px-4 py-3 rounded-full border border-purple-500/20"
+          >
+            <span className="font-mono text-xs text-purple-300/50 tracking-[0.3em]">SCROLL</span>
+            <svg className="w-4 h-6 text-purple-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
-          </div>
+          </motion.div>
         </motion.div>
       </motion.div>
 
