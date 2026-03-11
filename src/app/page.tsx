@@ -82,21 +82,17 @@ export default function Home() {
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [showFullVideo, setShowFullVideo] = useState(false);
-  const [currentVideoUrl, setCurrentVideoUrl] = useState("");
+  const [currentVideoUrl, setCurrentVideoUrl] = useState('');
 
   useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
-    if (showFullVideo) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
+    document.body.style.overflow = showFullVideo ? 'hidden' : 'unset';
   }, [showFullVideo]);
 
   useEffect(() => {
-    const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && showFullVideo) setShowFullVideo(false);
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showFullVideo) setShowFullVideo(false);
     };
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
@@ -238,7 +234,7 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* Projects */}
+      {/* Projects Section */}
       <section id="projects" className="min-h-screen flex flex-col items-center justify-center px-6 relative z-10 py-20">
         <div className="max-w-7xl w-full">
           <motion.div
@@ -265,6 +261,7 @@ export default function Home() {
                   className="w-full"
                 >
                   <div className={`grid md:grid-cols-2 gap-12 items-center ${!isEven ? 'md:flex-row-reverse' : ''}`}>
+                    {/* Video Side */}
                     <motion.div
                       initial={{ opacity: 0, x: isEven ? -60 : 60 }}
                       whileInView={{ opacity: 1, x: 0 }}
@@ -281,6 +278,13 @@ export default function Home() {
                         <div className="aspect-video bg-[#0a0118]/20 flex items-center justify-center">
                           <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
                             <source src={project.previewVideo} type="video/mp4" />
+                            <div className="flex flex-col items-center justify-center h-full text-purple-300/50">
+                              <svg className="w-20 h-20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              <p className="font-mono text-sm">Video Preview</p>
+                            </div>
                           </video>
                         </div>
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0118]/50 via-transparent to-transparent pointer-events-none" />
@@ -299,7 +303,9 @@ export default function Home() {
                           onClick={() => openVideoModal(project.youtubeUrl)}
                           className="flex-1 relative px-6 py-3 rounded-full font-mono text-sm text-white btn-gradient transition-all overflow-hidden flex items-center justify-center gap-2"
                         >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                          </svg>
                           <span>Watch Full</span>
                         </motion.button>
 
@@ -312,13 +318,14 @@ export default function Home() {
                           className="flex-1 px-6 py-3 glass-strong rounded-full font-mono text-sm text-purple-300 hover:text-white transition-colors flex items-center justify-center gap-2 border border-purple-500/30 hover:border-purple-500/60"
                         >
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
                           </svg>
                           <span>GitHub</span>
                         </motion.a>
                       </motion.div>
                     </motion.div>
 
+                    {/* Content Side */}
                     <motion.div
                       initial={{ opacity: 0, x: isEven ? 60 : -60 }}
                       whileInView={{ opacity: 1, x: 0 }}
@@ -326,22 +333,45 @@ export default function Home() {
                       viewport={{ once: true }}
                       className={`space-y-8 ${!isEven ? 'md:order-1' : ''}`}
                     >
-                      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }} viewport={{ once: true }}>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.5 }}
+                        viewport={{ once: true }}
+                      >
                         <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-purple-300/70 uppercase border border-purple-500/20">
                           {project.label}
                         </span>
                       </motion.div>
 
-                      <motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }} viewport={{ once: true }} className="font-display text-4xl md:text-6xl text-gradient-soft font-light tracking-tight leading-tight">
+                      <motion.h3
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.6 }}
+                        viewport={{ once: true }}
+                        className="font-display text-4xl md:text-6xl text-gradient-soft font-light tracking-tight leading-tight"
+                      >
                         {project.name}
                       </motion.h3>
 
-                      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.7 }} viewport={{ once: true }} className="space-y-4">
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.7 }}
+                        viewport={{ once: true }}
+                        className="space-y-4"
+                      >
                         <p className="font-mono text-base text-purple-200/70 leading-relaxed">{project.description}</p>
                         <p className="font-mono text-base text-purple-200/70 leading-relaxed">{project.secondDescription}</p>
                       </motion.div>
 
-                      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.8 }} viewport={{ once: true }} className="space-y-3">
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.8 }}
+                        viewport={{ once: true }}
+                        className="space-y-3"
+                      >
                         {project.features.map((feature, featureIndex) => (
                           <motion.div
                             key={feature}
@@ -352,7 +382,9 @@ export default function Home() {
                             className="flex items-center gap-3 group"
                           >
                             <div className="w-1.5 h-1.5 bg-purple-500/60 rounded-full group-hover:bg-pink-500 transition-colors" />
-                            <span className="font-mono text-sm text-purple-300/60 group-hover:text-purple-200 transition-colors">{feature}</span>
+                            <span className="font-mono text-sm text-purple-300/60 group-hover:text-purple-200 transition-colors">
+                              {feature}
+                            </span>
                           </motion.div>
                         ))}
                       </motion.div>
@@ -365,7 +397,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Quotes */}
+      {/* Quotes Section */}
       <section id="quotes" className="min-h-screen flex items-center justify-center px-6 relative z-10 py-20">
         <div className="max-w-5xl w-full">
           <motion.div
@@ -399,7 +431,11 @@ export default function Home() {
                     initial="enter"
                     animate="center"
                     exit="exit"
-                    transition={{ x: { type: 'spring', stiffness: 300, damping: 30 }, opacity: { duration: 0.4 }, filter: { duration: 0.4 } }}
+                    transition={{
+                      x: { type: 'spring', stiffness: 300, damping: 30 },
+                      opacity: { duration: 0.4 },
+                      filter: { duration: 0.4 },
+                    }}
                     className="text-center"
                   >
                     <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-8">
@@ -408,7 +444,12 @@ export default function Home() {
                       </span>
                     </motion.div>
 
-                    <motion.blockquote initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="font-display text-2xl md:text-4xl text-purple-100 font-light leading-relaxed mb-8 relative">
+                    <motion.blockquote
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                      className="font-display text-2xl md:text-4xl text-purple-100 font-light leading-relaxed mb-8 relative"
+                    >
                       <span className="text-purple-500/20 text-6xl absolute -top-4 -left-2 md:-left-8">"</span>
                       {currentQuote.text}
                       <span className="text-purple-500/20 text-6xl absolute -bottom-8 -right-2 md:-right-8">"</span>
@@ -422,7 +463,13 @@ export default function Home() {
               </div>
 
               <div className="flex items-center justify-center gap-6 mt-12">
-                <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} onClick={previousQuote} className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group border border-purple-500/20 hover:border-purple-500/40" aria-label="Previous quote">
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={previousQuote}
+                  className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group border border-purple-500/20 hover:border-purple-500/40"
+                  aria-label="Previous quote"
+                >
                   <svg className="w-5 h-5 text-purple-400 group-hover:text-purple-200 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
@@ -433,14 +480,27 @@ export default function Home() {
                     <motion.button
                       key={index}
                       whileHover={{ scale: 1.2 }}
-                      onClick={() => { setDirection(index > currentQuoteIndex ? 1 : -1); setCurrentQuoteIndex(index); }}
-                      className={`h-1.5 rounded-full transition-all ${index === currentQuoteIndex ? 'w-8 bg-gradient-to-r from-purple-500 to-pink-500' : 'w-1.5 bg-purple-500/30 hover:bg-purple-500/50'}`}
+                      onClick={() => {
+                        setDirection(index > currentQuoteIndex ? 1 : -1);
+                        setCurrentQuoteIndex(index);
+                      }}
+                      className={`h-1.5 rounded-full transition-all ${
+                        index === currentQuoteIndex
+                          ? 'w-8 bg-gradient-to-r from-purple-500 to-pink-500'
+                          : 'w-1.5 bg-purple-500/30 hover:bg-purple-500/50'
+                      }`}
                       aria-label={`Go to quote ${index + 1}`}
                     />
                   ))}
                 </div>
 
-                <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} onClick={nextQuote} className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group border border-purple-500/20 hover:border-purple-500/40" aria-label="Next quote">
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={nextQuote}
+                  className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group border border-purple-500/20 hover:border-purple-500/40"
+                  aria-label="Next quote"
+                >
                   <svg className="w-5 h-5 text-purple-400 group-hover:text-purple-200 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
@@ -452,23 +512,27 @@ export default function Home() {
               </div>
             </div>
           </motion.div>
+
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute top-1/4 left-10 w-32 h-32 bg-purple-500/[0.03] rounded-full blur-3xl" />
+            <div className="absolute bottom-1/4 right-10 w-40 h-40 bg-pink-500/[0.02] rounded-full blur-3xl" />
+          </div>
         </div>
       </section>
 
-      {/* Contact */}
+      {/* Contact Section */}
       <section id="contact" className="min-h-screen flex items-center justify-center px-6 relative z-10 mb-32">
         <motion.div
           initial={{ opacity: 0, y: 60 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: '-100px' }}
           className="text-center max-w-4xl"
         >
           <h2 className="font-display text-5xl md:text-7xl text-gradient mb-8 font-light tracking-tight">Let's Connect</h2>
           <p className="font-mono text-purple-300/50 text-sm md:text-base mb-12">Interested in working together? Feel free to reach out.</p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            {/* ✅ FIXED: added target="_blank" and rel="noopener noreferrer" */}
             <motion.a
               href="https://pastebin.com/eb9Haem9"
               target="_blank"
