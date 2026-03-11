@@ -104,7 +104,7 @@ export default function OCRPage() {
                   status: 'error', 
                   text: '', 
                   progress: 0,
-                  errorMessage: 'Failed to extract text'
+                  errorMessage: error instanceof Error ? error.message : 'Failed to extract text'
                 }
               : f
           )
@@ -189,8 +189,8 @@ export default function OCRPage() {
             className="text-center mb-16"
           >
             <div className="inline-block mb-4">
-              <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-purple-300/70 uppercase border border-purple-500/20">
-                Powered by Tesseract OCR
+              <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-purple-300/60 uppercase border border-purple-500/20">
+                Powered by Tesseract.js
               </span>
             </div>
             <h1 className="font-display text-5xl md:text-7xl text-gradient mb-6 font-light tracking-tight">
@@ -198,28 +198,8 @@ export default function OCRPage() {
             </h1>
             <p className="font-mono text-sm text-purple-300/60 max-w-2xl mx-auto mb-6">
               Extract text from images using AI-powered OCR. Upload multiple images and
-              get accurate text extraction in seconds.
+              get text extraction in seconds.
             </p>
-            <div className="flex items-center justify-center gap-6 font-mono text-xs text-purple-400/50">
-              <div className="flex items-center gap-2">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>100% Free</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>Privacy First</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-                </svg>
-                <span>Multi-Language</span>
-              </div>
-            </div>
           </motion.div>
 
           {/* Upload Zone */}
@@ -232,7 +212,7 @@ export default function OCRPage() {
             <div
               {...getRootProps()}
               className={`relative glass-strong rounded-2xl border-2 border-dashed transition-all cursor-pointer overflow-hidden ${
-                isDragActive ? 'border-purple-500/60 bg-purple-500/10' : 'border-purple-500/30'
+                isDragActive ? 'border-purple-500/60 bg-purple-500/5' : 'border-purple-500/20'
               }`}
             >
               <div className="p-16 text-center">
@@ -245,7 +225,7 @@ export default function OCRPage() {
                   className="mb-6"
                 >
                   <svg
-                    className="w-20 h-20 mx-auto text-purple-400/60"
+                    className="w-20 h-20 mx-auto text-purple-400/50"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -279,7 +259,7 @@ export default function OCRPage() {
               </div>
 
               <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-purple-500/20 rounded-tl-2xl pointer-events-none" />
-              <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-pink-500/20 rounded-br-2xl pointer-events-none" />
+              <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-purple-500/20 rounded-br-2xl pointer-events-none" />
             </div>
           </motion.div>
 
@@ -296,7 +276,7 @@ export default function OCRPage() {
                 </h3>
                 <button
                   onClick={clearAll}
-                  className="font-mono text-xs text-purple-400/60 hover:text-purple-300 transition-colors"
+                  className="font-mono text-xs text-purple-400/50 hover:text-purple-300 transition-colors"
                 >
                   Clear All
                 </button>
@@ -320,7 +300,7 @@ export default function OCRPage() {
                         />
                         
                         <div className="absolute top-2 left-2">
-                          <div className="glass-strong rounded-full px-2 py-1 font-mono text-xs text-purple-200 border border-purple-500/30">
+                          <div className="glass-strong rounded-full px-2 py-1 font-mono text-xs text-purple-300 border border-purple-500/30">
                             {index + 1}
                           </div>
                         </div>
@@ -335,7 +315,7 @@ export default function OCRPage() {
                         )}
 
                         {file.status === 'completed' && (
-                          <div className="absolute inset-0 bg-[#0a0118]/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="absolute inset-0 bg-[#0a0118]/70 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <svg
                               className="w-8 h-8 text-purple-400"
                               fill="currentColor"
@@ -351,7 +331,7 @@ export default function OCRPage() {
                         )}
 
                         {file.status === 'error' && (
-                          <div className="absolute inset-0 bg-red-900/30 flex items-center justify-center">
+                          <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
                             <svg
                               className="w-8 h-8 text-red-400"
                               fill="currentColor"
@@ -437,7 +417,7 @@ export default function OCRPage() {
                 </h2>
                 <button
                   onClick={downloadAllAsZip}
-                  className="font-mono text-xs text-purple-400/60 hover:text-purple-300 transition-colors flex items-center gap-2"
+                  className="font-mono text-xs text-purple-300/60 hover:text-purple-200 transition-colors flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path
@@ -460,7 +440,7 @@ export default function OCRPage() {
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-lg overflow-hidden border border-purple-500/30">
+                      <div className="w-12 h-12 rounded-lg overflow-hidden border border-purple-500/20">
                         <img
                           src={file.preview}
                           alt={`Result ${index + 1}`}
@@ -468,7 +448,7 @@ export default function OCRPage() {
                         />
                       </div>
                       <div>
-                        <h3 className="font-mono text-sm text-purple-200">
+                        <h3 className="font-mono text-sm text-purple-300">
                           Image {files.findIndex((f) => f.id === file.id) + 1}
                         </h3>
                         <p className="font-mono text-xs text-purple-400/50">
@@ -480,7 +460,7 @@ export default function OCRPage() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => copyToClipboard(file.text)}
-                        className="px-4 py-2 glass rounded-full font-mono text-xs text-purple-300 hover:text-white transition-colors flex items-center gap-2 border border-purple-500/30 hover:border-purple-500/60"
+                        className="px-4 py-2 glass rounded-full font-mono text-xs text-purple-300 hover:text-white transition-colors flex items-center gap-2 border border-purple-500/20"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path
@@ -496,7 +476,7 @@ export default function OCRPage() {
                         onClick={() =>
                           downloadText(file.text, `image-${files.findIndex((f) => f.id === file.id) + 1}`)
                         }
-                        className="px-4 py-2 glass rounded-full font-mono text-xs text-purple-300 hover:text-white transition-colors flex items-center gap-2 border border-purple-500/30 hover:border-purple-500/60"
+                        className="px-4 py-2 glass rounded-full font-mono text-xs text-purple-300 hover:text-white transition-colors flex items-center gap-2 border border-purple-500/20"
                       >
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                           <path
@@ -527,7 +507,7 @@ export default function OCRPage() {
             >
               <div className="glass-strong rounded-2xl p-12 max-w-md mx-auto border border-purple-500/20">
                 <svg
-                  className="w-16 h-16 mx-auto mb-4 text-purple-400/40"
+                  className="w-16 h-16 mx-auto mb-4 text-purple-400/30"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -542,7 +522,7 @@ export default function OCRPage() {
                 <h3 className="font-display text-xl text-white mb-2 font-light">
                   No images uploaded yet
                 </h3>
-                <p className="font-mono text-sm text-purple-300/50">
+                <p className="font-mono text-sm text-purple-400/50">
                   Upload images above to get started
                 </p>
               </div>
