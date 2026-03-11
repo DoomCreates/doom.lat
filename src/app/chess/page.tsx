@@ -32,7 +32,7 @@ export default function ChessPage() {
 
     // Initialize Stockfish
     if (typeof Worker !== 'undefined') {
-      const sf = new Worker('/stockfish.js');
+      const sf = new Worker('https://cdn.jsdelivr.net/npm/stockfish.js@10.0.2/stockfish.js');
       sf.postMessage('uci');
       setStockfish(sf);
 
