@@ -15,19 +15,13 @@
     "react-dom": "^18",
     "tesseract.js": "^5.0.4",
     "react-dropzone": "^14.2.3",
-    "file-saver": "^2.0.5",
-    "pdfjs-dist": "^3.11.174",
-    "jspdf": "^2.5.1",
-    "papaparse": "^5.4.1",
-    "js-yaml": "^4.1.0",
-    "jszip": "^3.10.1"
+    "file-saver": "^2.0.5"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "@types/papaparse": "^5.3.14",
-    "@types/js-yaml": "^4.0.9",
+    "autoprefixer": "^10.4.14",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "postcss": "^8",
