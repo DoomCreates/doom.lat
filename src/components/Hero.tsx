@@ -150,9 +150,8 @@ export default function Hero() {
           variants={itemVariants}
           className="font-mono text-sm md:text-base text-purple-200/60 max-w-2xl mx-auto leading-relaxed px-6"
         >
-                            Roblox Developer and Cyber-Security analyst. 
-          Most notably recognized for the creation of the best external Blade Ball Auto Parry, 
-                               during the widespread Roblox ban wave.
+          Crafting digital experiences at the intersection of art and technology.
+          Specializing in minimalist design, fluid animations, and immersive web experiences.
         </motion.p>
 
         {/* Bottom line */}
@@ -173,6 +172,15 @@ export default function Hero() {
             className="px-8 py-3 glass-strong rounded-full font-mono text-sm text-purple-300 hover:text-white transition-colors border border-purple-500/30 hover:border-purple-500/60 glow-purple"
           >
             OCR Tool
+          </motion.a>
+          
+          <motion.a
+            href="/chess"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-8 py-3 glass-strong rounded-full font-mono text-sm text-purple-300 hover:text-white transition-colors border border-purple-500/30 hover:border-purple-500/60 glow-purple"
+          >
+            Chess
           </motion.a>
           
           <motion.a
