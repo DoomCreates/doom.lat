@@ -8,7 +8,6 @@ import MusicPlayer from '@/components/MusicPlayer';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
-// GitHub Projects Data - FILL IN YOUR PROJECT DETAILS HERE
 const PROJECTS = [
   {
     id: 1,
@@ -17,7 +16,7 @@ const PROJECTS = [
     secondDescription: "This was a two-person project, little to no external involvement.",
     features: [
       "First/Best of its kind",
-      "Real-time debug info", 
+      "Real-time debug info",
       "VERY Advanced Detection Evasion",
       "Perfect User Experience"
     ],
@@ -47,12 +46,7 @@ const PROJECTS = [
     name: "DoomTerminal",
     description: "TBD",
     secondDescription: "TBD",
-    features: [
-      "TBD",
-      "TBD",
-      "TBD",
-      "TBD"
-    ],
+    features: ["TBD", "TBD", "TBD", "TBD"],
     previewVideo: "/videos/project3-preview.mp4",
     youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
     githubUrl: "https://github.com/DoomCreates/doomterminal",
@@ -61,106 +55,26 @@ const PROJECTS = [
 ];
 
 const QUOTES = [
-  {
-    text: "The only way to do great work is to love what you do.",
-    author: "Steve Jobs",
-    category: "Innovation"
-  },
-  {
-    text: "Simplicity is the ultimate sophistication.",
-    author: "Leonardo da Vinci",
-    category: "Philosophy"
-  },
-  {
-    text: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
-    author: "Martin Fowler",
-    category: "Programming"
-  },
-  {
-    text: "The best way to predict the future is to invent it.",
-    author: "Alan Kay",
-    category: "Innovation"
-  },
-  {
-    text: "First, solve the problem. Then, write the code.",
-    author: "John Johnson",
-    category: "Programming"
-  },
-  {
-    text: "Innovation distinguishes between a leader and a follower.",
-    author: "Steve Jobs",
-    category: "Innovation"
-  },
-  {
-    text: "Code is like humor. When you have to explain it, it's bad.",
-    author: "Cory House",
-    category: "Programming"
-  },
-  {
-    text: "The function of good software is to make the complex appear to be simple.",
-    author: "Grady Booch",
-    category: "Philosophy"
-  },
-  {
-    text: "Perfection is achieved not when there is nothing more to add, but when there is nothing left to take away.",
-    author: "Antoine de Saint-Exupéry",
-    category: "Philosophy"
-  },
-  {
-    text: "Programs must be written for people to read, and only incidentally for machines to execute.",
-    author: "Harold Abelson",
-    category: "Programming"
-  },
-  {
-    text: "The advance of technology is based on making it fit in so that you don't really even notice it.",
-    author: "Bill Gates",
-    category: "Innovation"
-  },
-  {
-    text: "Make it work, make it right, make it fast.",
-    author: "Kent Beck",
-    category: "Programming"
-  },
-  {
-    text: "The most damaging phrase in the language is: 'We've always done it this way.'",
-    author: "Grace Hopper",
-    category: "Innovation"
-  },
-  {
-    text: "Design is not just what it looks like and feels like. Design is how it works.",
-    author: "Steve Jobs",
-    category: "Philosophy"
-  },
-  {
-    text: "Truth can only be found in one place: the code.",
-    author: "Robert C. Martin",
-    category: "Programming"
-  },
-  {
-    text: "The computer was born to solve problems that did not exist before.",
-    author: "Bill Gates",
-    category: "Philosophy"
-  },
-  {
-    text: "Talk is cheap. Show me the code.",
-    author: "Linus Torvalds",
-    category: "Programming"
-  },
-  {
-    text: "It's not a bug – it's an undocumented feature.",
-    author: "Anonymous",
-    category: "Programming"
-  },
-  {
-    text: "The only source of knowledge is experience.",
-    author: "Albert Einstein",
-    category: "Philosophy"
-  },
-  {
-    text: "Stay hungry, stay foolish.",
-    author: "Steve Jobs",
-    category: "Innovation"
-  },
+  { text: "The only way to do great work is to love what you do.", author: "Steve Jobs", category: "Innovation" },
+  { text: "Simplicity is the ultimate sophistication.", author: "Leonardo da Vinci", category: "Philosophy" },
+  { text: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.", author: "Martin Fowler", category: "Programming" },
+  { text: "The best way to predict the future is to invent it.", author: "Alan Kay", category: "Innovation" },
+  { text: "First, solve the problem. Then, write the code.", author: "John Johnson", category: "Programming" },
+  { text: "Innovation distinguishes between a leader and a follower.", author: "Steve Jobs", category: "Innovation" },
+  { text: "Code is like humor. When you have to explain it, it's bad.", author: "Cory House", category: "Programming" },
+  { text: "The function of good software is to make the complex appear to be simple.", author: "Grady Booch", category: "Philosophy" },
+  { text: "Perfection is achieved not when there is nothing more to add, but when there is nothing left to take away.", author: "Antoine de Saint-Exupéry", category: "Philosophy" },
+  { text: "Programs must be written for people to read, and only incidentally for machines to execute.", author: "Harold Abelson", category: "Programming" },
+  { text: "The advance of technology is based on making it fit in so that you don't really even notice it.", author: "Bill Gates", category: "Innovation" },
+  { text: "Make it work, make it right, make it fast.", author: "Kent Beck", category: "Programming" },
+  { text: "The most damaging phrase in the language is: 'We've always done it this way.'", author: "Grace Hopper", category: "Innovation" },
+  { text: "Design is not just what it looks like and feels like. Design is how it works.", author: "Steve Jobs", category: "Philosophy" },
+  { text: "Truth can only be found in one place: the code.", author: "Robert C. Martin", category: "Programming" },
+  { text: "The computer was born to solve problems that did not exist before.", author: "Bill Gates", category: "Philosophy" },
+  { text: "Talk is cheap. Show me the code.", author: "Linus Torvalds", category: "Programming" },
+  { text: "It's not a bug – it's an undocumented feature.", author: "Anonymous", category: "Programming" },
+  { text: "The only source of knowledge is experience.", author: "Albert Einstein", category: "Philosophy" },
+  { text: "Stay hungry, stay foolish.", author: "Steve Jobs", category: "Innovation" },
 ];
 
 export default function Home() {
@@ -170,11 +84,8 @@ export default function Home() {
   const [showFullVideo, setShowFullVideo] = useState(false);
   const [currentVideoUrl, setCurrentVideoUrl] = useState("");
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { setMounted(true); }, []);
 
-  // Prevent body scroll when video modal is open
   useEffect(() => {
     if (showFullVideo) {
       document.body.style.overflow = 'hidden';
@@ -183,19 +94,12 @@ export default function Home() {
     }
   }, [showFullVideo]);
 
-  // ESC key to close video modal
   useEffect(() => {
     const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && showFullVideo) {
-        setShowFullVideo(false);
-      }
+      if (event.key === 'Escape' && showFullVideo) setShowFullVideo(false);
     };
-
     window.addEventListener('keydown', handleEsc);
-
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-    };
+    return () => window.removeEventListener('keydown', handleEsc);
   }, [showFullVideo]);
 
   const currentQuote = QUOTES[currentQuoteIndex];
@@ -221,11 +125,7 @@ export default function Home() {
       opacity: 0,
       filter: 'blur(10px)',
     }),
-    center: {
-      x: 0,
-      opacity: 1,
-      filter: 'blur(0px)',
-    },
+    center: { x: 0, opacity: 1, filter: 'blur(0px)' },
     exit: (direction: number) => ({
       x: direction < 0 ? 1000 : -1000,
       opacity: 0,
@@ -253,7 +153,6 @@ export default function Home() {
             className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-8"
             onClick={() => setShowFullVideo(false)}
           >
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -261,50 +160,28 @@ export default function Home() {
               className="absolute inset-0 bg-[#0a0118]/95 backdrop-blur-sm"
             />
 
-            {/* Video Container */}
             <motion.div
               initial={{ scale: 0.8, opacity: 0, rotateX: -15 }}
               animate={{ scale: 1, opacity: 1, rotateX: 0 }}
               exit={{ scale: 0.8, opacity: 0, rotateX: 15 }}
-              transition={{ 
-                duration: 0.5, 
-                ease: [0.22, 1, 0.36, 1]
-              }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
               className="relative w-full max-w-7xl aspect-video z-10"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Decorative corners */}
               <div className="absolute -top-4 -left-4 w-32 h-32 border-t-2 border-l-2 border-purple-500/40 rounded-tl-3xl pointer-events-none" />
               <div className="absolute -bottom-4 -right-4 w-32 h-32 border-b-2 border-r-2 border-pink-500/40 rounded-br-3xl pointer-events-none" />
-              
-              {/* Corner glows */}
+
               <motion.div
-                animate={{
-                  opacity: [0.4, 0.7, 0.4],
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
+                animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.2, 1] }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
                 className="absolute -top-4 -left-4 w-8 h-8 bg-purple-500/60 rounded-full blur-xl pointer-events-none"
               />
               <motion.div
-                animate={{
-                  opacity: [0.4, 0.7, 0.4],
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  delay: 1.5,
-                }}
+                animate={{ opacity: [0.4, 0.7, 0.4], scale: [1, 1.2, 1] }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 1.5 }}
                 className="absolute -bottom-4 -right-4 w-8 h-8 bg-pink-500/60 rounded-full blur-xl pointer-events-none"
               />
 
-              {/* Video frame */}
               <div className="relative glass-strong rounded-2xl overflow-hidden border-2 border-purple-500/30 shadow-2xl w-full h-full glow-purple">
                 <iframe
                   className="w-full h-full"
@@ -314,44 +191,27 @@ export default function Home() {
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   allowFullScreen
                 />
-
-                {/* Gradient overlay at edges */}
                 <div className="absolute inset-0 pointer-events-none">
                   <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[#0a0118]/20 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#0a0118]/20 to-transparent" />
                 </div>
               </div>
 
-              {/* Close button */}
               <motion.button
                 initial={{ opacity: 0, scale: 0 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowFullVideo(false);
-                }}
+                onClick={(e) => { e.stopPropagation(); setShowFullVideo(false); }}
                 className="absolute -top-12 -right-12 md:-top-16 md:-right-16 w-12 h-12 rounded-full glass-strong border border-purple-500/30 flex items-center justify-center group z-50 hover:border-purple-500/60 transition-colors"
                 aria-label="Close video"
               >
-                <svg
-                  className="w-6 h-6 text-purple-300 group-hover:text-white transition-colors"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
+                <svg className="w-6 h-6 text-purple-300 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </motion.button>
 
-              {/* Title overlay */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -359,14 +219,11 @@ export default function Home() {
                 className="absolute top-6 left-6 z-10 pointer-events-none"
               >
                 <div className="glass-strong rounded-full px-4 py-2 border border-purple-500/20">
-                  <span className="font-mono text-xs tracking-[0.2em] text-purple-300 uppercase">
-                    Full Showcase - 4K
-                  </span>
+                  <span className="font-mono text-xs tracking-[0.2em] text-purple-300 uppercase">Full Showcase - 4K</span>
                 </div>
               </motion.div>
             </motion.div>
 
-            {/* Press ESC hint */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -381,10 +238,9 @@ export default function Home() {
         )}
       </AnimatePresence>
 
-      {/* GitHub Projects Showcase Section */}
+      {/* Projects */}
       <section id="projects" className="min-h-screen flex flex-col items-center justify-center px-6 relative z-10 py-20">
         <div className="max-w-7xl w-full">
-          {/* Section Header */}
           <motion.div
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -392,19 +248,13 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-20"
           >
-            <h2 className="font-display text-5xl md:text-7xl text-gradient mb-4 font-light tracking-tight">
-              Projects
-            </h2>
-            <p className="font-mono text-xs text-purple-400/50 tracking-[0.3em] uppercase">
-              Selected Works & Open Source
-            </p>
+            <h2 className="font-display text-5xl md:text-7xl text-gradient mb-4 font-light tracking-tight">Projects</h2>
+            <p className="font-mono text-xs text-purple-400/50 tracking-[0.3em] uppercase">Selected Works & Open Source</p>
           </motion.div>
 
-          {/* Projects Grid */}
           <div className="space-y-32">
             {PROJECTS.map((project, index) => {
               const isEven = index % 2 === 0;
-              
               return (
                 <motion.div
                   key={project.id}
@@ -415,7 +265,6 @@ export default function Home() {
                   className="w-full"
                 >
                   <div className={`grid md:grid-cols-2 gap-12 items-center ${!isEven ? 'md:flex-row-reverse' : ''}`}>
-                    {/* Video Side */}
                     <motion.div
                       initial={{ opacity: 0, x: isEven ? -60 : 60 }}
                       whileInView={{ opacity: 1, x: 0 }}
@@ -425,48 +274,18 @@ export default function Home() {
                     >
                       <div className="absolute -top-6 -left-6 w-24 h-24 border-t-2 border-l-2 border-purple-500/30 rounded-tl-2xl" />
                       <div className="absolute -bottom-6 -right-6 w-24 h-24 border-b-2 border-r-2 border-pink-500/30 rounded-br-2xl" />
-                      
                       <div className="absolute -top-2 -left-2 w-4 h-4 bg-purple-500/50 rounded-full blur-md" />
                       <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-pink-500/50 rounded-full blur-md" />
 
                       <div className="relative glass-strong rounded-xl overflow-hidden border border-purple-500/20 shadow-2xl glow-purple">
                         <div className="aspect-video bg-[#0a0118]/20 flex items-center justify-center">
-                          <video
-                            className="w-full h-full object-cover"
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                          >
+                          <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
                             <source src={project.previewVideo} type="video/mp4" />
-                            <div className="flex flex-col items-center justify-center h-full text-purple-300/50">
-                              <svg
-                                className="w-20 h-20 mb-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1.5}
-                                  d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                                />
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1.5}
-                                  d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
-                              <p className="font-mono text-sm">Video Preview</p>
-                            </div>
                           </video>
                         </div>
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0118]/50 via-transparent to-transparent pointer-events-none" />
                       </div>
 
-                      {/* Action Buttons */}
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -480,9 +299,7 @@ export default function Home() {
                           onClick={() => openVideoModal(project.youtubeUrl)}
                           className="flex-1 relative px-6 py-3 rounded-full font-mono text-sm text-white btn-gradient transition-all overflow-hidden flex items-center justify-center gap-2"
                         >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z" />
-                          </svg>
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
                           <span>Watch Full</span>
                         </motion.button>
 
@@ -502,7 +319,6 @@ export default function Home() {
                       </motion.div>
                     </motion.div>
 
-                    {/* Content Side */}
                     <motion.div
                       initial={{ opacity: 0, x: isEven ? 60 : -60 }}
                       whileInView={{ opacity: 1, x: 0 }}
@@ -510,49 +326,22 @@ export default function Home() {
                       viewport={{ once: true }}
                       className={`space-y-8 ${!isEven ? 'md:order-1' : ''}`}
                     >
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.5 }}
-                        viewport={{ once: true }}
-                      >
+                      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }} viewport={{ once: true }}>
                         <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-purple-300/70 uppercase border border-purple-500/20">
                           {project.label}
                         </span>
                       </motion.div>
 
-                      <motion.h3
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.6 }}
-                        viewport={{ once: true }}
-                        className="font-display text-4xl md:text-6xl text-gradient-soft font-light tracking-tight leading-tight"
-                      >
+                      <motion.h3 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }} viewport={{ once: true }} className="font-display text-4xl md:text-6xl text-gradient-soft font-light tracking-tight leading-tight">
                         {project.name}
                       </motion.h3>
 
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.7 }}
-                        viewport={{ once: true }}
-                        className="space-y-4"
-                      >
-                        <p className="font-mono text-base text-purple-200/70 leading-relaxed">
-                          {project.description}
-                        </p>
-                        <p className="font-mono text-base text-purple-200/70 leading-relaxed">
-                          {project.secondDescription}
-                        </p>
+                      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.7 }} viewport={{ once: true }} className="space-y-4">
+                        <p className="font-mono text-base text-purple-200/70 leading-relaxed">{project.description}</p>
+                        <p className="font-mono text-base text-purple-200/70 leading-relaxed">{project.secondDescription}</p>
                       </motion.div>
 
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.8 }}
-                        viewport={{ once: true }}
-                        className="space-y-3"
-                      >
+                      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.8 }} viewport={{ once: true }} className="space-y-3">
                         {project.features.map((feature, featureIndex) => (
                           <motion.div
                             key={feature}
@@ -563,9 +352,7 @@ export default function Home() {
                             className="flex items-center gap-3 group"
                           >
                             <div className="w-1.5 h-1.5 bg-purple-500/60 rounded-full group-hover:bg-pink-500 transition-colors" />
-                            <span className="font-mono text-sm text-purple-300/60 group-hover:text-purple-200 transition-colors">
-                              {feature}
-                            </span>
+                            <span className="font-mono text-sm text-purple-300/60 group-hover:text-purple-200 transition-colors">{feature}</span>
                           </motion.div>
                         ))}
                       </motion.div>
@@ -578,6 +365,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Quotes */}
       <section id="quotes" className="min-h-screen flex items-center justify-center px-6 relative z-10 py-20">
         <div className="max-w-5xl w-full">
           <motion.div
@@ -587,12 +375,8 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="font-display text-4xl md:text-6xl text-gradient mb-4 font-light tracking-tight">
-              Philosophy
-            </h2>
-            <p className="font-mono text-xs text-purple-400/50 tracking-[0.3em] uppercase">
-              Quotes on Innovation, Programming & Design
-            </p>
+            <h2 className="font-display text-4xl md:text-6xl text-gradient mb-4 font-light tracking-tight">Philosophy</h2>
+            <p className="font-mono text-xs text-purple-400/50 tracking-[0.3em] uppercase">Quotes on Innovation, Programming & Design</p>
           </motion.div>
 
           <motion.div
@@ -615,41 +399,22 @@ export default function Home() {
                     initial="enter"
                     animate="center"
                     exit="exit"
-                    transition={{
-                      x: { type: 'spring', stiffness: 300, damping: 30 },
-                      opacity: { duration: 0.4 },
-                      filter: { duration: 0.4 },
-                    }}
+                    transition={{ x: { type: 'spring', stiffness: 300, damping: 30 }, opacity: { duration: 0.4 }, filter: { duration: 0.4 } }}
                     className="text-center"
                   >
-                    <motion.div
-                      initial={{ opacity: 0, y: -20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                      className="mb-8"
-                    >
+                    <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mb-8">
                       <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-purple-300/70 uppercase border border-purple-500/20">
                         {currentQuote.category}
                       </span>
                     </motion.div>
 
-                    <motion.blockquote
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.3 }}
-                      className="font-display text-2xl md:text-4xl text-purple-100 font-light leading-relaxed mb-8 relative"
-                    >
+                    <motion.blockquote initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="font-display text-2xl md:text-4xl text-purple-100 font-light leading-relaxed mb-8 relative">
                       <span className="text-purple-500/20 text-6xl absolute -top-4 -left-2 md:-left-8">"</span>
                       {currentQuote.text}
                       <span className="text-purple-500/20 text-6xl absolute -bottom-8 -right-2 md:-right-8">"</span>
                     </motion.blockquote>
 
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="font-mono text-sm text-purple-300/60"
-                    >
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="font-mono text-sm text-purple-300/60">
                       — {currentQuote.author}
                     </motion.div>
                   </motion.div>
@@ -657,19 +422,8 @@ export default function Home() {
               </div>
 
               <div className="flex items-center justify-center gap-6 mt-12">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={previousQuote}
-                  className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group border border-purple-500/20 hover:border-purple-500/40"
-                  aria-label="Previous quote"
-                >
-                  <svg
-                    className="w-5 h-5 text-purple-400 group-hover:text-purple-200 transition-colors"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} onClick={previousQuote} className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group border border-purple-500/20 hover:border-purple-500/40" aria-label="Previous quote">
+                  <svg className="w-5 h-5 text-purple-400 group-hover:text-purple-200 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
                 </motion.button>
@@ -679,53 +433,29 @@ export default function Home() {
                     <motion.button
                       key={index}
                       whileHover={{ scale: 1.2 }}
-                      onClick={() => {
-                        setDirection(index > currentQuoteIndex ? 1 : -1);
-                        setCurrentQuoteIndex(index);
-                      }}
-                      className={`h-1.5 rounded-full transition-all ${
-                        index === currentQuoteIndex
-                          ? 'w-8 bg-gradient-to-r from-purple-500 to-pink-500'
-                          : 'w-1.5 bg-purple-500/30 hover:bg-purple-500/50'
-                      }`}
+                      onClick={() => { setDirection(index > currentQuoteIndex ? 1 : -1); setCurrentQuoteIndex(index); }}
+                      className={`h-1.5 rounded-full transition-all ${index === currentQuoteIndex ? 'w-8 bg-gradient-to-r from-purple-500 to-pink-500' : 'w-1.5 bg-purple-500/30 hover:bg-purple-500/50'}`}
                       aria-label={`Go to quote ${index + 1}`}
                     />
                   ))}
                 </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={nextQuote}
-                  className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group border border-purple-500/20 hover:border-purple-500/40"
-                  aria-label="Next quote"
-                >
-                  <svg
-                    className="w-5 h-5 text-purple-400 group-hover:text-purple-200 transition-colors"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }} onClick={nextQuote} className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group border border-purple-500/20 hover:border-purple-500/40" aria-label="Next quote">
+                  <svg className="w-5 h-5 text-purple-400 group-hover:text-purple-200 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </motion.button>
               </div>
 
               <div className="text-center mt-6">
-                <span className="font-mono text-xs text-purple-400/40">
-                  {currentQuoteIndex + 1} / {QUOTES.length}
-                </span>
+                <span className="font-mono text-xs text-purple-400/40">{currentQuoteIndex + 1} / {QUOTES.length}</span>
               </div>
             </div>
           </motion.div>
-
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-1/4 left-10 w-32 h-32 bg-purple-500/[0.03] rounded-full blur-3xl" />
-            <div className="absolute bottom-1/4 right-10 w-40 h-40 bg-pink-500/[0.02] rounded-full blur-3xl" />
-          </div>
         </div>
       </section>
 
+      {/* Contact */}
       <section id="contact" className="min-h-screen flex items-center justify-center px-6 relative z-10 mb-32">
         <motion.div
           initial={{ opacity: 0, y: 60 }}
@@ -734,23 +464,22 @@ export default function Home() {
           viewport={{ once: true, margin: "-100px" }}
           className="text-center max-w-4xl"
         >
-          <h2 className="font-display text-5xl md:text-7xl text-gradient mb-8 font-light tracking-tight">
-            Let's Connect
-          </h2>
-          <p className="font-mono text-purple-300/50 text-sm md:text-base mb-12">
-            Interested in working together? Feel free to reach out.
-          </p>
-          
+          <h2 className="font-display text-5xl md:text-7xl text-gradient mb-8 font-light tracking-tight">Let's Connect</h2>
+          <p className="font-mono text-purple-300/50 text-sm md:text-base mb-12">Interested in working together? Feel free to reach out.</p>
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            {/* ✅ FIXED: added target="_blank" and rel="noopener noreferrer" */}
             <motion.a
               href="https://pastebin.com/eb9Haem9"
+              target="_blank"
+              rel="noopener noreferrer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-10 py-4 glass rounded-full font-mono text-sm text-purple-300 hover:text-white transition-colors border border-purple-500/30 hover:border-purple-500/60"
             >
               Discord : doomcodes
             </motion.a>
-            
+
             <motion.a
               href="about:blank"
               target="_blank"
@@ -769,9 +498,7 @@ export default function Home() {
 
       <footer className="relative z-10 pb-8">
         <div className="text-center">
-          <p className="font-mono text-xs text-purple-400/30">
-            © 2026 doom.lat — Designed & Developed with care
-          </p>
+          <p className="font-mono text-xs text-purple-400/30">© 2026 doom.lat — Designed & Developed with care</p>
         </div>
       </footer>
 
