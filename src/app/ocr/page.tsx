@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDropzone } from 'react-dropzone';
+import Tesseract from 'tesseract.js';
 import { saveAs } from 'file-saver';
 import Link from 'next/link';
 
@@ -65,35 +66,31 @@ export default function OCRPage() {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       
-      // Update status to processing
       setFiles((prev) =>
         prev.map((f) =>
-          f.id === file.id ? { ...f, status: 'processing', progress: 50 } : f
+          f.id === file.id ? { ...f, status: 'processing', progress: 0 } : f
         )
       );
 
       try {
-        // Create FormData and send to our API route
-        const formData = new FormData();
-        formData.append('file', file.file);
-
-        const response = await fetch('/api/ocr', {
-          method: 'POST',
-          body: formData,
+        const result = await Tesseract.recognize(file.file, 'eng', {
+          logger: (m) => {
+            if (m.status === 'recognizing text') {
+              setFiles((prev) =>
+                prev.map((f) =>
+                  f.id === file.id
+                    ? { ...f, progress: Math.round(m.progress * 100) }
+                    : f
+                )
+              );
+            }
+          },
         });
 
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.error || 'OCR failed');
-        }
-
-        const data = await response.json();
-
-        // Update with extracted text
         setFiles((prev) =>
           prev.map((f) =>
             f.id === file.id
-              ? { ...f, status: 'completed', text: data.text, progress: 100 }
+              ? { ...f, status: 'completed', text: result.data.text, progress: 100 }
               : f
           )
         );
@@ -107,7 +104,7 @@ export default function OCRPage() {
                   status: 'error', 
                   text: '', 
                   progress: 0,
-                  errorMessage: error instanceof Error ? error.message : 'Failed to extract text'
+                  errorMessage: 'Failed to extract text'
                 }
               : f
           )
@@ -136,16 +133,16 @@ export default function OCRPage() {
   };
 
   if (!mounted) {
-    return <div className="min-h-screen bg-black" />;
+    return <div className="min-h-screen bg-[#0a0118]" />;
   }
 
   const completedFiles = files.filter((f) => f.status === 'completed');
   const hasResults = completedFiles.length > 0;
 
   return (
-    <main className="relative bg-black min-h-screen">
+    <main className="relative bg-[#0a0118] min-h-screen">
       {/* Header Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/10">
+      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-purple-500/20">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="font-display text-xl text-white font-light">
@@ -154,27 +151,27 @@ export default function OCRPage() {
             <div className="flex items-center gap-8">
               <Link
                 href="/"
-                className="font-mono text-sm text-white/50 hover:text-white transition-colors"
+                className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors"
               >
                 Home
               </Link>
               <Link
                 href="/#projects"
-                className="font-mono text-sm text-white/50 hover:text-white transition-colors"
+                className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors"
               >
                 Projects
               </Link>
               <Link
                 href="/ocr"
-                className="font-mono text-sm text-white border-b border-white/50"
+                className="font-mono text-sm text-purple-300 border-b border-purple-500"
               >
                 OCR Tool
               </Link>
               <Link
-                href="/convert"
-                className="font-mono text-sm text-white/50 hover:text-white transition-colors"
+                href="/chess"
+                className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors"
               >
-                File Converter
+                Chess
               </Link>
             </div>
           </div>
@@ -192,35 +189,35 @@ export default function OCRPage() {
             className="text-center mb-16"
           >
             <div className="inline-block mb-4">
-              <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-white/40 uppercase">
-                Powered by Google Cloud Vision AI
+              <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-purple-300/70 uppercase border border-purple-500/20">
+                Powered by Tesseract OCR
               </span>
             </div>
-            <h1 className="font-display text-5xl md:text-7xl text-white mb-6 font-light tracking-tight">
+            <h1 className="font-display text-5xl md:text-7xl text-gradient mb-6 font-light tracking-tight">
               Image to Text
             </h1>
-            <p className="font-mono text-sm text-white/40 max-w-2xl mx-auto mb-6">
-              Extract text from images using industry-leading AI with 99%+ accuracy. 
-              Supports handwriting, multiple languages, and complex documents.
+            <p className="font-mono text-sm text-purple-300/60 max-w-2xl mx-auto mb-6">
+              Extract text from images using AI-powered OCR. Upload multiple images and
+              get accurate text extraction in seconds.
             </p>
-            <div className="flex items-center justify-center gap-6 font-mono text-xs text-white/30">
+            <div className="flex items-center justify-center gap-6 font-mono text-xs text-purple-400/50">
               <div className="flex items-center gap-2">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span>99%+ Accuracy</span>
+                <span>100% Free</span>
               </div>
               <div className="flex items-center gap-2">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                  <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
-                <span>Handwriting Support</span>
+                <span>Privacy First</span>
               </div>
               <div className="flex items-center gap-2">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M7 2a1 1 0 011 1v1h3a1 1 0 110 2H9.578a18.87 18.87 0 01-1.724 4.78c.29.354.596.696.914 1.026a1 1 0 11-1.44 1.389c-.188-.196-.373-.396-.554-.6a19.098 19.098 0 01-3.107 3.567 1 1 0 01-1.334-1.49 17.087 17.087 0 003.13-3.733 18.992 18.992 0 01-1.487-2.494 1 1 0 111.79-.89c.234.47.489.928.764 1.372.417-.934.752-1.913.997-2.927H3a1 1 0 110-2h3V3a1 1 0 011-1zm6 6a1 1 0 01.894.553l2.991 5.982a.869.869 0 01.02.037l.99 1.98a1 1 0 11-1.79.895L15.383 16h-4.764l-.724 1.447a1 1 0 11-1.788-.894l.99-1.98.019-.038 2.99-5.982A1 1 0 0113 8zm-1.382 6h2.764L13 11.236 11.618 14z" clipRule="evenodd" />
+                  <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
                 </svg>
-                <span>100+ Languages</span>
+                <span>Multi-Language</span>
               </div>
             </div>
           </motion.div>
@@ -235,7 +232,7 @@ export default function OCRPage() {
             <div
               {...getRootProps()}
               className={`relative glass-strong rounded-2xl border-2 border-dashed transition-all cursor-pointer overflow-hidden ${
-                isDragActive ? 'border-white/60 bg-white/5' : 'border-white/20'
+                isDragActive ? 'border-purple-500/60 bg-purple-500/10' : 'border-purple-500/30'
               }`}
             >
               <div className="p-16 text-center">
@@ -248,7 +245,7 @@ export default function OCRPage() {
                   className="mb-6"
                 >
                   <svg
-                    className="w-20 h-20 mx-auto text-white/40"
+                    className="w-20 h-20 mx-auto text-purple-400/60"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -265,10 +262,10 @@ export default function OCRPage() {
                 <h3 className="font-display text-2xl text-white mb-3 font-light">
                   {isDragActive ? 'Drop images here' : 'Drag & Drop Images'}
                 </h3>
-                <p className="font-mono text-sm text-white/40 mb-4">
+                <p className="font-mono text-sm text-purple-300/50 mb-4">
                   or click to browse
                 </p>
-                <div className="flex items-center justify-center gap-4 font-mono text-xs text-white/30">
+                <div className="flex items-center justify-center gap-4 font-mono text-xs text-purple-400/40">
                   <span>PNG</span>
                   <span>•</span>
                   <span>JPG</span>
@@ -281,8 +278,8 @@ export default function OCRPage() {
                 </div>
               </div>
 
-              <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-white/10 rounded-tl-2xl pointer-events-none" />
-              <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-white/10 rounded-br-2xl pointer-events-none" />
+              <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-purple-500/20 rounded-tl-2xl pointer-events-none" />
+              <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-pink-500/20 rounded-br-2xl pointer-events-none" />
             </div>
           </motion.div>
 
@@ -294,12 +291,12 @@ export default function OCRPage() {
               className="mb-12"
             >
               <div className="flex items-center justify-between mb-6">
-                <h3 className="font-mono text-sm text-white/60">
+                <h3 className="font-mono text-sm text-purple-300/70">
                   Uploaded Files ({files.length})
                 </h3>
                 <button
                   onClick={clearAll}
-                  className="font-mono text-xs text-white/40 hover:text-white transition-colors"
+                  className="font-mono text-xs text-purple-400/60 hover:text-purple-300 transition-colors"
                 >
                   Clear All
                 </button>
@@ -315,7 +312,7 @@ export default function OCRPage() {
                       exit={{ opacity: 0, scale: 0.8 }}
                       className="relative group"
                     >
-                      <div className="relative glass-strong rounded-xl overflow-hidden border border-white/10 aspect-square">
+                      <div className="relative glass-strong rounded-xl overflow-hidden border border-purple-500/20 aspect-square">
                         <img
                           src={file.preview}
                           alt={`Preview ${index + 1}`}
@@ -323,24 +320,24 @@ export default function OCRPage() {
                         />
                         
                         <div className="absolute top-2 left-2">
-                          <div className="glass-strong rounded-full px-2 py-1 font-mono text-xs text-white">
+                          <div className="glass-strong rounded-full px-2 py-1 font-mono text-xs text-purple-200 border border-purple-500/30">
                             {index + 1}
                           </div>
                         </div>
 
                         {file.status === 'processing' && (
-                          <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center">
-                            <div className="w-16 h-16 border-2 border-white/20 border-t-white rounded-full animate-spin mb-2" />
-                            <span className="font-mono text-xs text-white">
-                              Processing...
+                          <div className="absolute inset-0 bg-[#0a0118]/90 flex flex-col items-center justify-center">
+                            <div className="w-16 h-16 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin mb-2" />
+                            <span className="font-mono text-xs text-purple-300">
+                              {file.progress}%
                             </span>
                           </div>
                         )}
 
                         {file.status === 'completed' && (
-                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="absolute inset-0 bg-[#0a0118]/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <svg
-                              className="w-8 h-8 text-white"
+                              className="w-8 h-8 text-purple-400"
                               fill="currentColor"
                               viewBox="0 0 20 20"
                             >
@@ -354,7 +351,7 @@ export default function OCRPage() {
                         )}
 
                         {file.status === 'error' && (
-                          <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
+                          <div className="absolute inset-0 bg-red-900/30 flex items-center justify-center">
                             <svg
                               className="w-8 h-8 text-red-400"
                               fill="currentColor"
@@ -372,10 +369,10 @@ export default function OCRPage() {
                         {file.status === 'pending' && (
                           <button
                             onClick={() => removeFile(file.id)}
-                            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[#0a0118]/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity border border-purple-500/30"
                           >
                             <svg
-                              className="w-4 h-4 text-white"
+                              className="w-4 h-4 text-purple-300"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -406,11 +403,11 @@ export default function OCRPage() {
                     whileTap={{ scale: 0.95 }}
                     onClick={processImages}
                     disabled={isProcessing}
-                    className="px-10 py-4 rounded-full font-mono text-sm text-black bg-white hover:bg-white/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 mx-auto"
+                    className="px-10 py-4 rounded-full font-mono text-sm text-white btn-gradient transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3 mx-auto"
                   >
                     {isProcessing ? (
                       <>
-                        <div className="w-4 h-4 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                         <span>Processing with AI...</span>
                       </>
                     ) : (
@@ -435,12 +432,12 @@ export default function OCRPage() {
               className="space-y-8"
             >
               <div className="flex items-center justify-between">
-                <h2 className="font-display text-3xl text-white font-light">
+                <h2 className="font-display text-3xl text-gradient font-light">
                   Extracted Text
                 </h2>
                 <button
                   onClick={downloadAllAsZip}
-                  className="font-mono text-xs text-white/60 hover:text-white transition-colors flex items-center gap-2"
+                  className="font-mono text-xs text-purple-400/60 hover:text-purple-300 transition-colors flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                     <path
@@ -459,11 +456,11 @@ export default function OCRPage() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="glass-strong rounded-2xl p-6 border border-white/10"
+                  className="glass-strong rounded-2xl p-6 border border-purple-500/20"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-lg overflow-hidden border border-white/10">
+                      <div className="w-12 h-12 rounded-lg overflow-hidden border border-purple-500/30">
                         <img
                           src={file.preview}
                           alt={`Result ${index + 1}`}
@@ -471,10 +468,10 @@ export default function OCRPage() {
                         />
                       </div>
                       <div>
-                        <h3 className="font-mono text-sm text-white">
+                        <h3 className="font-mono text-sm text-purple-200">
                           Image {files.findIndex((f) => f.id === file.id) + 1}
                         </h3>
-                        <p className="font-mono text-xs text-white/40">
+                        <p className="font-mono text-xs text-purple-400/50">
                           {file.text.length} characters
                         </p>
                       </div>
@@ -483,7 +480,7 @@ export default function OCRPage() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => copyToClipboard(file.text)}
-                        className="px-4 py-2 glass rounded-full font-mono text-xs text-white/70 hover:text-white transition-colors flex items-center gap-2"
+                        className="px-4 py-2 glass rounded-full font-mono text-xs text-purple-300 hover:text-white transition-colors flex items-center gap-2 border border-purple-500/30 hover:border-purple-500/60"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path
@@ -499,7 +496,7 @@ export default function OCRPage() {
                         onClick={() =>
                           downloadText(file.text, `image-${files.findIndex((f) => f.id === file.id) + 1}`)
                         }
-                        className="px-4 py-2 glass rounded-full font-mono text-xs text-white/70 hover:text-white transition-colors flex items-center gap-2"
+                        className="px-4 py-2 glass rounded-full font-mono text-xs text-purple-300 hover:text-white transition-colors flex items-center gap-2 border border-purple-500/30 hover:border-purple-500/60"
                       >
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                           <path
@@ -513,7 +510,7 @@ export default function OCRPage() {
                     </div>
                   </div>
 
-                  <div className="glass rounded-xl p-4 font-mono text-sm text-white/80 whitespace-pre-wrap max-h-96 overflow-y-auto custom-scrollbar">
+                  <div className="glass rounded-xl p-4 font-mono text-sm text-purple-200/80 whitespace-pre-wrap max-h-96 overflow-y-auto custom-scrollbar">
                     {file.text || 'No text detected in this image.'}
                   </div>
                 </motion.div>
@@ -528,9 +525,9 @@ export default function OCRPage() {
               animate={{ opacity: 1 }}
               className="text-center py-20"
             >
-              <div className="glass-strong rounded-2xl p-12 max-w-md mx-auto">
+              <div className="glass-strong rounded-2xl p-12 max-w-md mx-auto border border-purple-500/20">
                 <svg
-                  className="w-16 h-16 mx-auto mb-4 text-white/20"
+                  className="w-16 h-16 mx-auto mb-4 text-purple-400/40"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -545,7 +542,7 @@ export default function OCRPage() {
                 <h3 className="font-display text-xl text-white mb-2 font-light">
                   No images uploaded yet
                 </h3>
-                <p className="font-mono text-sm text-white/40">
+                <p className="font-mono text-sm text-purple-300/50">
                   Upload images above to get started
                 </p>
               </div>
@@ -559,15 +556,15 @@ export default function OCRPage() {
           width: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.05);
+          background: rgba(139, 92, 246, 0.1);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.2);
+          background: rgba(139, 92, 246, 0.3);
           border-radius: 10px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.3);
+          background: rgba(139, 92, 246, 0.5);
         }
       `}</style>
     </main>
