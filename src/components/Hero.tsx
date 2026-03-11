@@ -139,17 +139,20 @@ export default function Hero() {
         </motion.h1>
 
         <motion.div variants={itemVariants} className="mb-6">
-          <p className="font-display text-2xl md:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 tracking-wide inline-block px-8 py-3 glass-strong rounded-2xl border border-purple-500/20">
-            Creative Developer & Designer
-          </p>
+          <div className="inline-block px-8 py-3 glass-strong rounded-2xl border border-purple-500/20">
+            <p className="font-display text-2xl md:text-3xl text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-cyan-400 tracking-wide">
+              Creative Developer & Designer
+            </p>
+          </div>
         </motion.div>
 
         <motion.p
           variants={itemVariants}
           className="font-mono text-sm md:text-base text-purple-200/60 max-w-2xl mx-auto leading-relaxed px-6"
         >
-          Crafting digital experiences at the intersection of art and technology.
-          Specializing in minimalist design, fluid animations, and immersive web experiences.
+                            Roblox Developer and Cyber-Security analyst. 
+          Most notably recognized for the creation of the best external Blade Ball Auto Parry, 
+                               during the widespread Roblox ban wave.
         </motion.p>
 
         {/* Bottom line */}
