@@ -12,19 +12,19 @@ import { useState, useEffect } from 'react';
 const PROJECTS = [
   {
     id: 1,
-    name: "Project Name 1",
-    description: "Add your project description here. Explain what it does and why it's interesting.",
-    secondDescription: "Add a second paragraph if needed to provide more context about the project.",
+    name: "External Blade Ball AP Showcase",
+    description: "An advanced detection system designed for Blade Ball, with, precision timing algorithms, and integration with game mechanics. This video captures the moment that we found the breakthrough we needed.",
+    secondDescription: "This was a two-person project, little to no external involvement.",
     features: [
-      "Key Feature 1",
-      "Key Feature 2", 
-      "Key Feature 3",
-      "Key Feature 4"
+      "First/Best of its kind",
+      "Real-time debug info", 
+      "VERY Advanced Detection Evasion",
+      "Perfect User Experience"
     ],
-    previewVideo: "/videos/project1-preview.mp4",
-    youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
-    githubUrl: "https://github.com/yourusername/project1",
-    label: "Featured Project"
+    previewVideo: "/videos/blade-ball-showcase.mp4",
+    youtubeUrl: "https://youtu.be/LiY-GimrsqE",
+    githubUrl: "https://github.com/DoomCreates/Nebula.lua",
+    label: "Notable Project"
   },
   {
     id: 2,
@@ -37,26 +37,26 @@ const PROJECTS = [
       "Windows PC control",
       "Movie-accurate voice and behavior"
     ],
-    previewVideo: "/videos/project2-preview.mp4",
+    previewVideo: "/videos/JarvisShowcasePreview.mp4",
     youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
-    githubUrl: "https://github.com/yourusername/jarvis",
-    label: "Personal Project"
+    githubUrl: "https://github.com/DoomCreates/JarvisAI",
+    label: "Open Source"
   },
   {
     id: 3,
-    name: "Project Name 3",
-    description: "Add your project description here. Explain what it does and why it's interesting.",
-    secondDescription: "Add a second paragraph if needed to provide more context about the project.",
+    name: "DoomTerminal",
+    description: "TBD",
+    secondDescription: "TBD",
     features: [
-      "Key Feature 1",
-      "Key Feature 2",
-      "Key Feature 3",
-      "Key Feature 4"
+      "TBD",
+      "TBD",
+      "TBD",
+      "TBD"
     ],
     previewVideo: "/videos/project3-preview.mp4",
     youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
-    githubUrl: "https://github.com/yourusername/project3",
-    label: "Open Source"
+    githubUrl: "https://github.com/DoomCreates/doomterminal",
+    label: "Personal Project"
   }
 ];
 
@@ -234,11 +234,11 @@ export default function Home() {
   };
 
   if (!mounted) {
-    return <div className="min-h-screen bg-black" />;
+    return <div className="min-h-screen bg-[#0a0118]" />;
   }
 
   return (
-    <main className="relative bg-black">
+    <main className="relative bg-[#0a0118]">
       <CursorFollower />
       <Hero />
 
@@ -258,7 +258,7 @@ export default function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-black/95 backdrop-blur-sm"
+              className="absolute inset-0 bg-[#0a0118]/95 backdrop-blur-sm"
             />
 
             {/* Video Container */}
@@ -274,8 +274,8 @@ export default function Home() {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Decorative corners */}
-              <div className="absolute -top-4 -left-4 w-32 h-32 border-t-2 border-l-2 border-white/30 rounded-tl-3xl pointer-events-none" />
-              <div className="absolute -bottom-4 -right-4 w-32 h-32 border-b-2 border-r-2 border-white/30 rounded-br-3xl pointer-events-none" />
+              <div className="absolute -top-4 -left-4 w-32 h-32 border-t-2 border-l-2 border-purple-500/40 rounded-tl-3xl pointer-events-none" />
+              <div className="absolute -bottom-4 -right-4 w-32 h-32 border-b-2 border-r-2 border-pink-500/40 rounded-br-3xl pointer-events-none" />
               
               {/* Corner glows */}
               <motion.div
@@ -288,7 +288,7 @@ export default function Home() {
                   repeat: Infinity,
                   ease: 'easeInOut',
                 }}
-                className="absolute -top-4 -left-4 w-8 h-8 bg-white/50 rounded-full blur-xl pointer-events-none"
+                className="absolute -top-4 -left-4 w-8 h-8 bg-purple-500/60 rounded-full blur-xl pointer-events-none"
               />
               <motion.div
                 animate={{
@@ -301,11 +301,11 @@ export default function Home() {
                   ease: 'easeInOut',
                   delay: 1.5,
                 }}
-                className="absolute -bottom-4 -right-4 w-8 h-8 bg-white/50 rounded-full blur-xl pointer-events-none"
+                className="absolute -bottom-4 -right-4 w-8 h-8 bg-pink-500/60 rounded-full blur-xl pointer-events-none"
               />
 
               {/* Video frame */}
-              <div className="relative glass-strong rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl w-full h-full">
+              <div className="relative glass-strong rounded-2xl overflow-hidden border-2 border-purple-500/30 shadow-2xl w-full h-full glow-purple">
                 <iframe
                   className="w-full h-full"
                   src={`${currentVideoUrl.replace('youtu.be/', 'youtube.com/embed/')}?autoplay=1&quality=hd2160`}
@@ -317,8 +317,8 @@ export default function Home() {
 
                 {/* Gradient overlay at edges */}
                 <div className="absolute inset-0 pointer-events-none">
-                  <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-black/20 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/20 to-transparent" />
+                  <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[#0a0118]/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#0a0118]/20 to-transparent" />
                 </div>
               </div>
 
@@ -333,11 +333,11 @@ export default function Home() {
                   e.stopPropagation();
                   setShowFullVideo(false);
                 }}
-                className="absolute -top-12 -right-12 md:-top-16 md:-right-16 w-12 h-12 rounded-full glass-strong border border-white/20 flex items-center justify-center group z-50"
+                className="absolute -top-12 -right-12 md:-top-16 md:-right-16 w-12 h-12 rounded-full glass-strong border border-purple-500/30 flex items-center justify-center group z-50 hover:border-purple-500/60 transition-colors"
                 aria-label="Close video"
               >
                 <svg
-                  className="w-6 h-6 text-white/70 group-hover:text-white transition-colors"
+                  className="w-6 h-6 text-purple-300 group-hover:text-white transition-colors"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -358,8 +358,8 @@ export default function Home() {
                 transition={{ delay: 0.4 }}
                 className="absolute top-6 left-6 z-10 pointer-events-none"
               >
-                <div className="glass-strong rounded-full px-4 py-2">
-                  <span className="font-mono text-xs tracking-[0.2em] text-white/80 uppercase">
+                <div className="glass-strong rounded-full px-4 py-2 border border-purple-500/20">
+                  <span className="font-mono text-xs tracking-[0.2em] text-purple-300 uppercase">
                     Full Showcase - 4K
                   </span>
                 </div>
@@ -373,7 +373,7 @@ export default function Home() {
               transition={{ delay: 0.5 }}
               className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-none"
             >
-              <div className="glass rounded-full px-4 py-2 font-mono text-xs text-white/40">
+              <div className="glass rounded-full px-4 py-2 font-mono text-xs text-purple-300/60 border border-purple-500/20">
                 Press ESC or click outside to close
               </div>
             </motion.div>
@@ -392,10 +392,10 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-20"
           >
-            <h2 className="font-display text-5xl md:text-7xl text-white mb-4 font-light tracking-tight">
+            <h2 className="font-display text-5xl md:text-7xl text-gradient mb-4 font-light tracking-tight">
               Projects
             </h2>
-            <p className="font-mono text-xs text-white/30 tracking-[0.3em] uppercase">
+            <p className="font-mono text-xs text-purple-400/50 tracking-[0.3em] uppercase">
               Selected Works & Open Source
             </p>
           </motion.div>
@@ -423,14 +423,14 @@ export default function Home() {
                       viewport={{ once: true }}
                       className={`relative group ${!isEven ? 'md:order-2' : ''}`}
                     >
-                      <div className="absolute -top-6 -left-6 w-24 h-24 border-t-2 border-l-2 border-white/20 rounded-tl-2xl" />
-                      <div className="absolute -bottom-6 -right-6 w-24 h-24 border-b-2 border-r-2 border-white/20 rounded-br-2xl" />
+                      <div className="absolute -top-6 -left-6 w-24 h-24 border-t-2 border-l-2 border-purple-500/30 rounded-tl-2xl" />
+                      <div className="absolute -bottom-6 -right-6 w-24 h-24 border-b-2 border-r-2 border-pink-500/30 rounded-br-2xl" />
                       
-                      <div className="absolute -top-2 -left-2 w-4 h-4 bg-white/40 rounded-full blur-md" />
-                      <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-white/40 rounded-full blur-md" />
+                      <div className="absolute -top-2 -left-2 w-4 h-4 bg-purple-500/50 rounded-full blur-md" />
+                      <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-pink-500/50 rounded-full blur-md" />
 
-                      <div className="relative glass-strong rounded-xl overflow-hidden border border-white/10 shadow-2xl">
-                        <div className="aspect-video bg-black/20 flex items-center justify-center">
+                      <div className="relative glass-strong rounded-xl overflow-hidden border border-purple-500/20 shadow-2xl glow-purple">
+                        <div className="aspect-video bg-[#0a0118]/20 flex items-center justify-center">
                           <video
                             className="w-full h-full object-cover"
                             autoPlay
@@ -439,7 +439,7 @@ export default function Home() {
                             playsInline
                           >
                             <source src={project.previewVideo} type="video/mp4" />
-                            <div className="flex flex-col items-center justify-center h-full text-white/50">
+                            <div className="flex flex-col items-center justify-center h-full text-purple-300/50">
                               <svg
                                 className="w-20 h-20 mb-4"
                                 fill="none"
@@ -463,7 +463,7 @@ export default function Home() {
                             </div>
                           </video>
                         </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0118]/50 via-transparent to-transparent pointer-events-none" />
                       </div>
 
                       {/* Action Buttons */}
@@ -475,10 +475,10 @@ export default function Home() {
                         className="mt-6 flex gap-4 justify-center"
                       >
                         <motion.button
-                          whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(255, 255, 255, 0.3)' }}
+                          whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(139, 92, 246, 0.4)' }}
                           whileTap={{ scale: 0.95 }}
                           onClick={() => openVideoModal(project.youtubeUrl)}
-                          className="flex-1 relative px-6 py-3 rounded-full font-mono text-sm text-black bg-white hover:bg-white/90 transition-all overflow-hidden flex items-center justify-center gap-2"
+                          className="flex-1 relative px-6 py-3 rounded-full font-mono text-sm text-white btn-gradient transition-all overflow-hidden flex items-center justify-center gap-2"
                         >
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M8 5v14l11-7z" />
@@ -492,7 +492,7 @@ export default function Home() {
                           rel="noopener noreferrer"
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="flex-1 px-6 py-3 glass-strong rounded-full font-mono text-sm text-white/80 hover:text-white transition-colors flex items-center justify-center gap-2"
+                          className="flex-1 px-6 py-3 glass-strong rounded-full font-mono text-sm text-purple-300 hover:text-white transition-colors flex items-center justify-center gap-2 border border-purple-500/30 hover:border-purple-500/60"
                         >
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
@@ -516,7 +516,7 @@ export default function Home() {
                         transition={{ duration: 0.6, delay: 0.5 }}
                         viewport={{ once: true }}
                       >
-                        <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-white/40 uppercase">
+                        <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-purple-300/70 uppercase border border-purple-500/20">
                           {project.label}
                         </span>
                       </motion.div>
@@ -526,7 +526,7 @@ export default function Home() {
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.6 }}
                         viewport={{ once: true }}
-                        className="font-display text-4xl md:text-6xl text-white font-light tracking-tight leading-tight"
+                        className="font-display text-4xl md:text-6xl text-gradient-soft font-light tracking-tight leading-tight"
                       >
                         {project.name}
                       </motion.h3>
@@ -538,10 +538,10 @@ export default function Home() {
                         viewport={{ once: true }}
                         className="space-y-4"
                       >
-                        <p className="font-mono text-base text-white/60 leading-relaxed">
+                        <p className="font-mono text-base text-purple-200/70 leading-relaxed">
                           {project.description}
                         </p>
-                        <p className="font-mono text-base text-white/60 leading-relaxed">
+                        <p className="font-mono text-base text-purple-200/70 leading-relaxed">
                           {project.secondDescription}
                         </p>
                       </motion.div>
@@ -562,8 +562,8 @@ export default function Home() {
                             viewport={{ once: true }}
                             className="flex items-center gap-3 group"
                           >
-                            <div className="w-1.5 h-1.5 bg-white/40 rounded-full group-hover:bg-white/80 transition-colors" />
-                            <span className="font-mono text-sm text-white/50 group-hover:text-white/80 transition-colors">
+                            <div className="w-1.5 h-1.5 bg-purple-500/60 rounded-full group-hover:bg-pink-500 transition-colors" />
+                            <span className="font-mono text-sm text-purple-300/60 group-hover:text-purple-200 transition-colors">
                               {feature}
                             </span>
                           </motion.div>
@@ -587,10 +587,10 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="font-display text-4xl md:text-6xl text-white mb-4 font-light tracking-tight">
+            <h2 className="font-display text-4xl md:text-6xl text-gradient mb-4 font-light tracking-tight">
               Philosophy
             </h2>
-            <p className="font-mono text-xs text-white/30 tracking-[0.3em] uppercase">
+            <p className="font-mono text-xs text-purple-400/50 tracking-[0.3em] uppercase">
               Quotes on Innovation, Programming & Design
             </p>
           </motion.div>
@@ -602,9 +602,9 @@ export default function Home() {
             viewport={{ once: true }}
             className="relative"
           >
-            <div className="glass-strong rounded-3xl p-12 md:p-16 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-white/10 rounded-tl-3xl" />
-              <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-white/10 rounded-br-3xl" />
+            <div className="glass-strong rounded-3xl p-12 md:p-16 relative overflow-hidden border border-purple-500/20">
+              <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-purple-500/20 rounded-tl-3xl" />
+              <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-pink-500/20 rounded-br-3xl" />
 
               <div className="relative min-h-[300px] flex flex-col justify-center">
                 <AnimatePresence mode="wait" custom={direction}>
@@ -628,7 +628,7 @@ export default function Home() {
                       transition={{ delay: 0.2 }}
                       className="mb-8"
                     >
-                      <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-white/40 uppercase">
+                      <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-purple-300/70 uppercase border border-purple-500/20">
                         {currentQuote.category}
                       </span>
                     </motion.div>
@@ -637,18 +637,18 @@ export default function Home() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.3 }}
-                      className="font-display text-2xl md:text-4xl text-white/90 font-light leading-relaxed mb-8 relative"
+                      className="font-display text-2xl md:text-4xl text-purple-100 font-light leading-relaxed mb-8 relative"
                     >
-                      <span className="text-white/20 text-6xl absolute -top-4 -left-2 md:-left-8">"</span>
+                      <span className="text-purple-500/20 text-6xl absolute -top-4 -left-2 md:-left-8">"</span>
                       {currentQuote.text}
-                      <span className="text-white/20 text-6xl absolute -bottom-8 -right-2 md:-right-8">"</span>
+                      <span className="text-purple-500/20 text-6xl absolute -bottom-8 -right-2 md:-right-8">"</span>
                     </motion.blockquote>
 
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
-                      className="font-mono text-sm text-white/50"
+                      className="font-mono text-sm text-purple-300/60"
                     >
                       — {currentQuote.author}
                     </motion.div>
@@ -661,11 +661,11 @@ export default function Home() {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={previousQuote}
-                  className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group"
+                  className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group border border-purple-500/20 hover:border-purple-500/40"
                   aria-label="Previous quote"
                 >
                   <svg
-                    className="w-5 h-5 text-white/60 group-hover:text-white/90 transition-colors"
+                    className="w-5 h-5 text-purple-400 group-hover:text-purple-200 transition-colors"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -685,8 +685,8 @@ export default function Home() {
                       }}
                       className={`h-1.5 rounded-full transition-all ${
                         index === currentQuoteIndex
-                          ? 'w-8 bg-white/60'
-                          : 'w-1.5 bg-white/20 hover:bg-white/40'
+                          ? 'w-8 bg-gradient-to-r from-purple-500 to-pink-500'
+                          : 'w-1.5 bg-purple-500/30 hover:bg-purple-500/50'
                       }`}
                       aria-label={`Go to quote ${index + 1}`}
                     />
@@ -697,11 +697,11 @@ export default function Home() {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={nextQuote}
-                  className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group"
+                  className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group border border-purple-500/20 hover:border-purple-500/40"
                   aria-label="Next quote"
                 >
                   <svg
-                    className="w-5 h-5 text-white/60 group-hover:text-white/90 transition-colors"
+                    className="w-5 h-5 text-purple-400 group-hover:text-purple-200 transition-colors"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -712,7 +712,7 @@ export default function Home() {
               </div>
 
               <div className="text-center mt-6">
-                <span className="font-mono text-xs text-white/25">
+                <span className="font-mono text-xs text-purple-400/40">
                   {currentQuoteIndex + 1} / {QUOTES.length}
                 </span>
               </div>
@@ -720,8 +720,8 @@ export default function Home() {
           </motion.div>
 
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-1/4 left-10 w-32 h-32 bg-white/[0.02] rounded-full blur-3xl" />
-            <div className="absolute bottom-1/4 right-10 w-40 h-40 bg-white/[0.01] rounded-full blur-3xl" />
+            <div className="absolute top-1/4 left-10 w-32 h-32 bg-purple-500/[0.03] rounded-full blur-3xl" />
+            <div className="absolute bottom-1/4 right-10 w-40 h-40 bg-pink-500/[0.02] rounded-full blur-3xl" />
           </div>
         </div>
       </section>
@@ -734,32 +734,32 @@ export default function Home() {
           viewport={{ once: true, margin: "-100px" }}
           className="text-center max-w-4xl"
         >
-          <h2 className="font-display text-5xl md:text-7xl text-white mb-8 font-light tracking-tight">
+          <h2 className="font-display text-5xl md:text-7xl text-gradient mb-8 font-light tracking-tight">
             Let's Connect
           </h2>
-          <p className="font-mono text-white/35 text-sm md:text-base mb-12">
+          <p className="font-mono text-purple-300/50 text-sm md:text-base mb-12">
             Interested in working together? Feel free to reach out.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <motion.a
-              href="https://pastebin.com/YsWnXpfF"
+              href="https://pastebin.com/eb9Haem9"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-10 py-4 glass rounded-full font-mono text-sm text-white/70 hover:text-white transition-colors"
+              className="px-10 py-4 glass rounded-full font-mono text-sm text-purple-300 hover:text-white transition-colors border border-purple-500/30 hover:border-purple-500/60"
             >
-              Discord : doomwrites
+              Discord : doomcodes
             </motion.a>
             
             <motion.a
-              href="https://discord.gg/FxFpDcpGdC"
+              href="about:blank"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-10 py-4 rounded-full font-mono text-sm text-black bg-white hover:bg-white/90 transition-colors"
+              className="px-10 py-4 rounded-full font-mono text-sm text-white btn-gradient transition-colors"
             >
-              My Market Server
+              TBD
             </motion.a>
           </div>
         </motion.div>
@@ -769,7 +769,7 @@ export default function Home() {
 
       <footer className="relative z-10 pb-8">
         <div className="text-center">
-          <p className="font-mono text-xs text-white/15">
+          <p className="font-mono text-xs text-purple-400/30">
             © 2026 doom.lat — Designed & Developed with care
           </p>
         </div>
