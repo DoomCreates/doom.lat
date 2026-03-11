@@ -2,780 +2,438 @@
 
 export const dynamic = 'force-dynamic';
 
-import CursorFollower from '@/components/CursorFollower';
-import Hero from '@/components/Hero';
-import MusicPlayer from '@/components/MusicPlayer';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { Chess, Move } from 'chess.js';
+import { Chessboard } from 'react-chessboard';
+import Link from 'next/link';
 
-// GitHub Projects Data - FILL IN YOUR PROJECT DETAILS HERE
-const PROJECTS = [
-  {
-    id: 1,
-    name: "External Blade Ball AP Showcase",
-    description: "An advanced detection system designed for Blade Ball, with, precision timing algorithms, and integration with game mechanics. This video captures the moment that we found the breakthrough we needed.",
-    secondDescription: "This was a two-person project, little to no external involvement.",
-    features: [
-      "First/Best of its kind",
-      "Real-time debug info", 
-      "VERY Advanced Detection Evasion",
-      "Perfect User Experience"
-    ],
-    previewVideo: "/videos/blade-ball-showcase.mp4",
-    youtubeUrl: "https://youtu.be/LiY-GimrsqE",
-    githubUrl: "https://github.com/DoomCreates/Nebula.lua",
-    label: "Notable Project"
-  },
-  {
-    id: 2,
-    name: "J.A.R.V.I.S",
-    description: "JARVIS, is a locally-run AI assistant that listens to your voice, responds through whatever your audio output is, in a calm and authoritative voice, and can control your Windows PC on command.",
-    secondDescription: "Press a single key, speak naturally, and JARVIS handles the rest. (the goal was to make him as similar to the movie version of J.A.R.V.I.S as possible)",
-    features: [
-      "Voice activation via the backtick key",
-      "Natural language processing",
-      "Windows PC control",
-      "Movie-accurate voice and behavior"
-    ],
-    previewVideo: "/videos/JarvisShowcasePreview.mp4",
-    youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
-    githubUrl: "https://github.com/DoomCreates/JarvisAI",
-    label: "Open Source"
-  },
-  {
-    id: 3,
-    name: "DoomTerminal",
-    description: "TBD",
-    secondDescription: "TBD",
-    features: [
-      "TBD",
-      "TBD",
-      "TBD",
-      "TBD"
-    ],
-    previewVideo: "/videos/project3-preview.mp4",
-    youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
-    githubUrl: "https://github.com/DoomCreates/doomterminal",
-    label: "Personal Project"
+type Difficulty = 'easy' | 'medium' | 'hard' | 'master';
+type GameStatus = 'playing' | 'checkmate' | 'draw' | 'stalemate';
+
+const DIFFICULTY_DEPTH: Record<Difficulty, number> = {
+  easy: 1,
+  medium: 2,
+  hard: 3,
+  master: 4,
+};
+
+const DIFFICULTY_INFO: Record<Difficulty, { label: string; elo: string }> = {
+  easy:   { label: 'Easy',   elo: '~600'  },
+  medium: { label: 'Medium', elo: '~1200' },
+  hard:   { label: 'Hard',   elo: '~1800' },
+  master: { label: 'Master', elo: '~2200' },
+};
+
+const PIECE_VALUES: Record<string, number> = {
+  p: 100, n: 320, b: 330, r: 500, q: 900, k: 20000,
+};
+
+const PAWN_TABLE = [
+   0,  0,  0,  0,  0,  0,  0,  0,
+  50, 50, 50, 50, 50, 50, 50, 50,
+  10, 10, 20, 30, 30, 20, 10, 10,
+   5,  5, 10, 25, 25, 10,  5,  5,
+   0,  0,  0, 20, 20,  0,  0,  0,
+   5, -5,-10,  0,  0,-10, -5,  5,
+   5, 10, 10,-20,-20, 10, 10,  5,
+   0,  0,  0,  0,  0,  0,  0,  0,
+];
+
+const KNIGHT_TABLE = [
+  -50,-40,-30,-30,-30,-30,-40,-50,
+  -40,-20,  0,  0,  0,  0,-20,-40,
+  -30,  0, 10, 15, 15, 10,  0,-30,
+  -30,  5, 15, 20, 20, 15,  5,-30,
+  -30,  0, 15, 20, 20, 15,  0,-30,
+  -30,  5, 10, 15, 15, 10,  5,-30,
+  -40,-20,  0,  5,  5,  0,-20,-40,
+  -50,-40,-30,-30,-30,-30,-40,-50,
+];
+
+const BISHOP_TABLE = [
+  -20,-10,-10,-10,-10,-10,-10,-20,
+  -10,  0,  0,  0,  0,  0,  0,-10,
+  -10,  0,  5, 10, 10,  5,  0,-10,
+  -10,  5,  5, 10, 10,  5,  5,-10,
+  -10,  0, 10, 10, 10, 10,  0,-10,
+  -10, 10, 10, 10, 10, 10, 10,-10,
+  -10,  5,  0,  0,  0,  0,  5,-10,
+  -20,-10,-10,-10,-10,-10,-10,-20,
+];
+
+const ROOK_TABLE = [
+   0,  0,  0,  0,  0,  0,  0,  0,
+   5, 10, 10, 10, 10, 10, 10,  5,
+  -5,  0,  0,  0,  0,  0,  0, -5,
+  -5,  0,  0,  0,  0,  0,  0, -5,
+  -5,  0,  0,  0,  0,  0,  0, -5,
+  -5,  0,  0,  0,  0,  0,  0, -5,
+  -5,  0,  0,  0,  0,  0,  0, -5,
+   0,  0,  0,  5,  5,  0,  0,  0,
+];
+
+const QUEEN_TABLE = [
+  -20,-10,-10, -5, -5,-10,-10,-20,
+  -10,  0,  0,  0,  0,  0,  0,-10,
+  -10,  0,  5,  5,  5,  5,  0,-10,
+   -5,  0,  5,  5,  5,  5,  0, -5,
+    0,  0,  5,  5,  5,  5,  0, -5,
+  -10,  5,  5,  5,  5,  5,  0,-10,
+  -10,  0,  5,  0,  0,  0,  0,-10,
+  -20,-10,-10, -5, -5,-10,-10,-20,
+];
+
+const KING_TABLE = [
+  -30,-40,-40,-50,-50,-40,-40,-30,
+  -30,-40,-40,-50,-50,-40,-40,-30,
+  -30,-40,-40,-50,-50,-40,-40,-30,
+  -30,-40,-40,-50,-50,-40,-40,-30,
+  -20,-30,-30,-40,-40,-30,-30,-20,
+  -10,-20,-20,-20,-20,-20,-20,-10,
+   20, 20,  0,  0,  0,  0, 20, 20,
+   20, 30, 10,  0,  0, 10, 30, 20,
+];
+
+const TABLES: Record<string, number[]> = {
+  p: PAWN_TABLE, n: KNIGHT_TABLE, b: BISHOP_TABLE,
+  r: ROOK_TABLE, q: QUEEN_TABLE,  k: KING_TABLE,
+};
+
+function getPST(type: string, color: string, square: string): number {
+  const file = square.charCodeAt(0) - 97;
+  const rank = parseInt(square[1]) - 1;
+  const idx = color === 'w' ? (7 - rank) * 8 + file : rank * 8 + file;
+  return TABLES[type]?.[idx] ?? 0;
+}
+
+function evaluate(game: Chess): number {
+  let score = 0;
+  for (const row of game.board()) {
+    for (const piece of row) {
+      if (!piece) continue;
+      const val = PIECE_VALUES[piece.type] + getPST(piece.type, piece.color, piece.square);
+      score += piece.color === 'w' ? val : -val;
+    }
   }
-];
+  return score;
+}
 
-const QUOTES = [
-  {
-    text: "The only way to do great work is to love what you do.",
-    author: "Steve Jobs",
-    category: "Innovation"
-  },
-  {
-    text: "Simplicity is the ultimate sophistication.",
-    author: "Leonardo da Vinci",
-    category: "Philosophy"
-  },
-  {
-    text: "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
-    author: "Martin Fowler",
-    category: "Programming"
-  },
-  {
-    text: "The best way to predict the future is to invent it.",
-    author: "Alan Kay",
-    category: "Innovation"
-  },
-  {
-    text: "First, solve the problem. Then, write the code.",
-    author: "John Johnson",
-    category: "Programming"
-  },
-  {
-    text: "Innovation distinguishes between a leader and a follower.",
-    author: "Steve Jobs",
-    category: "Innovation"
-  },
-  {
-    text: "Code is like humor. When you have to explain it, it's bad.",
-    author: "Cory House",
-    category: "Programming"
-  },
-  {
-    text: "The function of good software is to make the complex appear to be simple.",
-    author: "Grady Booch",
-    category: "Philosophy"
-  },
-  {
-    text: "Perfection is achieved not when there is nothing more to add, but when there is nothing left to take away.",
-    author: "Antoine de Saint-Exupéry",
-    category: "Philosophy"
-  },
-  {
-    text: "Programs must be written for people to read, and only incidentally for machines to execute.",
-    author: "Harold Abelson",
-    category: "Programming"
-  },
-  {
-    text: "The advance of technology is based on making it fit in so that you don't really even notice it.",
-    author: "Bill Gates",
-    category: "Innovation"
-  },
-  {
-    text: "Make it work, make it right, make it fast.",
-    author: "Kent Beck",
-    category: "Programming"
-  },
-  {
-    text: "The most damaging phrase in the language is: 'We've always done it this way.'",
-    author: "Grace Hopper",
-    category: "Innovation"
-  },
-  {
-    text: "Design is not just what it looks like and feels like. Design is how it works.",
-    author: "Steve Jobs",
-    category: "Philosophy"
-  },
-  {
-    text: "Truth can only be found in one place: the code.",
-    author: "Robert C. Martin",
-    category: "Programming"
-  },
-  {
-    text: "The computer was born to solve problems that did not exist before.",
-    author: "Bill Gates",
-    category: "Philosophy"
-  },
-  {
-    text: "Talk is cheap. Show me the code.",
-    author: "Linus Torvalds",
-    category: "Programming"
-  },
-  {
-    text: "It's not a bug – it's an undocumented feature.",
-    author: "Anonymous",
-    category: "Programming"
-  },
-  {
-    text: "The only source of knowledge is experience.",
-    author: "Albert Einstein",
-    category: "Philosophy"
-  },
-  {
-    text: "Stay hungry, stay foolish.",
-    author: "Steve Jobs",
-    category: "Innovation"
-  },
-];
+function minimax(game: Chess, depth: number, alpha: number, beta: number, maximising: boolean): number {
+  if (depth === 0 || game.isGameOver()) return evaluate(game);
+  const moves = game.moves({ verbose: true });
+  if (maximising) {
+    let best = -Infinity;
+    for (const m of moves) {
+      game.move(m);
+      best = Math.max(best, minimax(game, depth - 1, alpha, beta, false));
+      game.undo();
+      alpha = Math.max(alpha, best);
+      if (beta <= alpha) break;
+    }
+    return best;
+  } else {
+    let best = Infinity;
+    for (const m of moves) {
+      game.move(m);
+      best = Math.min(best, minimax(game, depth - 1, alpha, beta, true));
+      game.undo();
+      beta = Math.min(beta, best);
+      if (beta <= alpha) break;
+    }
+    return best;
+  }
+}
 
-export default function Home() {
+function getBestMove(game: Chess, depth: number): Move | null {
+  const moves = game.moves({ verbose: true });
+  if (!moves.length) return null;
+  let bestVal = Infinity;
+  let bestMove: Move | null = null;
+  for (const m of moves) {
+    game.move(m);
+    const val = minimax(game, depth - 1, -Infinity, Infinity, true);
+    game.undo();
+    if (val < bestVal) { bestVal = val; bestMove = m; }
+  }
+  return bestMove;
+}
+
+export default function ChessPage() {
   const [mounted, setMounted] = useState(false);
-  const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
-  const [showFullVideo, setShowFullVideo] = useState(false);
-  const [currentVideoUrl, setCurrentVideoUrl] = useState("");
+  const [game, setGame] = useState<Chess>(new Chess());
+  const [fen, setFen] = useState('start');
+  const [gameStatus, setGameStatus] = useState<GameStatus>('playing');
+  const [isThinking, setIsThinking] = useState(false);
+  const [difficulty, setDifficulty] = useState<Difficulty>('medium');
+  const [moveHistory, setMoveHistory] = useState<string[]>([]);
+  const [statusMessage, setStatusMessage] = useState('Your move');
+  const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(null);
+  const historyRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
-    setMounted(true);
+    if (historyRef.current) historyRef.current.scrollTop = historyRef.current.scrollHeight;
+  }, [moveHistory]);
+
+  const updateStatus = useCallback((g: Chess) => {
+    if (g.isCheckmate()) {
+      setStatusMessage(g.turn() === 'w' ? 'Checkmate — Black wins!' : 'Checkmate — You win!');
+      setGameStatus('checkmate');
+    } else if (g.isStalemate()) {
+      setStatusMessage('Stalemate — Draw!');
+      setGameStatus('stalemate');
+    } else if (g.isDraw()) {
+      setStatusMessage('Draw!');
+      setGameStatus('draw');
+    } else if (g.inCheck()) {
+      setStatusMessage(g.turn() === 'w' ? '⚠ You are in check!' : '⚠ AI is in check!');
+    } else {
+      setStatusMessage(g.turn() === 'w' ? 'Your move' : 'AI is thinking...');
+    }
   }, []);
 
-  // Prevent body scroll when video modal is open
-  useEffect(() => {
-    if (showFullVideo) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-  }, [showFullVideo]);
-
-  // ESC key to close video modal
-  useEffect(() => {
-    const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && showFullVideo) {
-        setShowFullVideo(false);
+  const makeAIMove = useCallback((currentGame: Chess) => {
+    if (currentGame.isGameOver()) return;
+    setIsThinking(true);
+    setTimeout(() => {
+      try {
+        const depth = DIFFICULTY_DEPTH[difficulty];
+        const gameCopy = new Chess(currentGame.fen());
+        const best = getBestMove(gameCopy, depth);
+        if (best) {
+          const newGame = new Chess(currentGame.fen());
+          const result = newGame.move(best);
+          if (result) {
+            setLastMove({ from: result.from, to: result.to });
+            setGame(newGame);
+            setFen(newGame.fen());
+            setMoveHistory(prev => [...prev, result.san]);
+            updateStatus(newGame);
+          }
+        }
+      } catch (e) {
+        console.error('AI error:', e);
+      } finally {
+        setIsThinking(false);
       }
-    };
+    }, 50);
+  }, [difficulty, updateStatus]);
 
-    window.addEventListener('keydown', handleEsc);
+  const onDrop = useCallback((from: string, to: string) => {
+    if (gameStatus !== 'playing' || isThinking || game.turn() !== 'w') return false;
+    const newGame = new Chess(game.fen());
+    let result: Move | null = null;
+    try { result = newGame.move({ from, to, promotion: 'q' }); } catch { return false; }
+    if (!result) return false;
+    setLastMove({ from, to });
+    setGame(newGame);
+    setFen(newGame.fen());
+    setMoveHistory(prev => [...prev, result!.san]);
+    updateStatus(newGame);
+    if (!newGame.isGameOver()) makeAIMove(newGame);
+    return true;
+  }, [game, gameStatus, isThinking, makeAIMove, updateStatus]);
 
-    return () => {
-      window.removeEventListener('keydown', handleEsc);
-    };
-  }, [showFullVideo]);
+  const resetGame = useCallback(() => {
+    const g = new Chess();
+    setGame(g); setFen('start'); setGameStatus('playing');
+    setMoveHistory([]); setStatusMessage('Your move');
+    setLastMove(null); setIsThinking(false);
+  }, []);
 
-  const currentQuote = QUOTES[currentQuoteIndex];
-
-  const nextQuote = () => {
-    setDirection(1);
-    setCurrentQuoteIndex((prev) => (prev + 1) % QUOTES.length);
-  };
-
-  const previousQuote = () => {
-    setDirection(-1);
-    setCurrentQuoteIndex((prev) => (prev - 1 + QUOTES.length) % QUOTES.length);
-  };
-
-  const openVideoModal = (youtubeUrl: string) => {
-    setCurrentVideoUrl(youtubeUrl);
-    setShowFullVideo(true);
-  };
-
-  const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0,
-      filter: 'blur(10px)',
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-      filter: 'blur(0px)',
-    },
-    exit: (direction: number) => ({
-      x: direction < 0 ? 1000 : -1000,
-      opacity: 0,
-      filter: 'blur(10px)',
-    }),
-  };
-
-  if (!mounted) {
-    return <div className="min-h-screen bg-[#0a0118]" />;
+  const squareStyles: Record<string, React.CSSProperties> = {};
+  if (lastMove) {
+    squareStyles[lastMove.from] = { backgroundColor: 'rgba(139,92,246,0.35)' };
+    squareStyles[lastMove.to]   = { backgroundColor: 'rgba(139,92,246,0.55)' };
   }
 
+  const movePairs = moveHistory.reduce<string[][]>((acc, m, i) => {
+    if (i % 2 === 0) acc.push([m]); else acc[acc.length - 1].push(m);
+    return acc;
+  }, []);
+
+  if (!mounted) return <div className="min-h-screen bg-[#0a0118]" />;
+
   return (
-    <main className="relative bg-[#0a0118]">
-      <CursorFollower />
-      <Hero />
-
-      {/* Fullscreen YouTube Video Modal */}
-      <AnimatePresence>
-        {showFullVideo && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-8"
-            onClick={() => setShowFullVideo(false)}
-          >
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-[#0a0118]/95 backdrop-blur-sm"
-            />
-
-            {/* Video Container */}
-            <motion.div
-              initial={{ scale: 0.8, opacity: 0, rotateX: -15 }}
-              animate={{ scale: 1, opacity: 1, rotateX: 0 }}
-              exit={{ scale: 0.8, opacity: 0, rotateX: 15 }}
-              transition={{ 
-                duration: 0.5, 
-                ease: [0.22, 1, 0.36, 1]
-              }}
-              className="relative w-full max-w-7xl aspect-video z-10"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Decorative corners */}
-              <div className="absolute -top-4 -left-4 w-32 h-32 border-t-2 border-l-2 border-purple-500/40 rounded-tl-3xl pointer-events-none" />
-              <div className="absolute -bottom-4 -right-4 w-32 h-32 border-b-2 border-r-2 border-pink-500/40 rounded-br-3xl pointer-events-none" />
-              
-              {/* Corner glows */}
-              <motion.div
-                animate={{
-                  opacity: [0.4, 0.7, 0.4],
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-                className="absolute -top-4 -left-4 w-8 h-8 bg-purple-500/60 rounded-full blur-xl pointer-events-none"
-              />
-              <motion.div
-                animate={{
-                  opacity: [0.4, 0.7, 0.4],
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  delay: 1.5,
-                }}
-                className="absolute -bottom-4 -right-4 w-8 h-8 bg-pink-500/60 rounded-full blur-xl pointer-events-none"
-              />
-
-              {/* Video frame */}
-              <div className="relative glass-strong rounded-2xl overflow-hidden border-2 border-purple-500/30 shadow-2xl w-full h-full glow-purple">
-                <iframe
-                  className="w-full h-full"
-                  src={`${currentVideoUrl.replace('youtu.be/', 'youtube.com/embed/')}?autoplay=1&quality=hd2160`}
-                  title="Project Showcase"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  allowFullScreen
-                />
-
-                {/* Gradient overlay at edges */}
-                <div className="absolute inset-0 pointer-events-none">
-                  <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-[#0a0118]/20 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#0a0118]/20 to-transparent" />
-                </div>
-              </div>
-
-              {/* Close button */}
-              <motion.button
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.3 }}
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowFullVideo(false);
-                }}
-                className="absolute -top-12 -right-12 md:-top-16 md:-right-16 w-12 h-12 rounded-full glass-strong border border-purple-500/30 flex items-center justify-center group z-50 hover:border-purple-500/60 transition-colors"
-                aria-label="Close video"
-              >
-                <svg
-                  className="w-6 h-6 text-purple-300 group-hover:text-white transition-colors"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </motion.button>
-
-              {/* Title overlay */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
-                className="absolute top-6 left-6 z-10 pointer-events-none"
-              >
-                <div className="glass-strong rounded-full px-4 py-2 border border-purple-500/20">
-                  <span className="font-mono text-xs tracking-[0.2em] text-purple-300 uppercase">
-                    Full Showcase - 4K
-                  </span>
-                </div>
-              </motion.div>
-            </motion.div>
-
-            {/* Press ESC hint */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="absolute bottom-8 left-1/2 -translate-x-1/2 pointer-events-none"
-            >
-              <div className="glass rounded-full px-4 py-2 font-mono text-xs text-purple-300/60 border border-purple-500/20">
-                Press ESC or click outside to close
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* GitHub Projects Showcase Section */}
-      <section id="projects" className="min-h-screen flex flex-col items-center justify-center px-6 relative z-10 py-20">
-        <div className="max-w-7xl w-full">
-          {/* Section Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            viewport={{ once: true }}
-            className="text-center mb-20"
-          >
-            <h2 className="font-display text-5xl md:text-7xl text-gradient mb-4 font-light tracking-tight">
-              Projects
-            </h2>
-            <p className="font-mono text-xs text-purple-400/50 tracking-[0.3em] uppercase">
-              Selected Works & Open Source
-            </p>
-          </motion.div>
-
-          {/* Projects Grid */}
-          <div className="space-y-32">
-            {PROJECTS.map((project, index) => {
-              const isEven = index % 2 === 0;
-              
-              return (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, y: 60 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-                  viewport={{ once: true }}
-                  className="w-full"
-                >
-                  <div className={`grid md:grid-cols-2 gap-12 items-center ${!isEven ? 'md:flex-row-reverse' : ''}`}>
-                    {/* Video Side */}
-                    <motion.div
-                      initial={{ opacity: 0, x: isEven ? -60 : 60 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-                      viewport={{ once: true }}
-                      className={`relative group ${!isEven ? 'md:order-2' : ''}`}
-                    >
-                      <div className="absolute -top-6 -left-6 w-24 h-24 border-t-2 border-l-2 border-purple-500/30 rounded-tl-2xl" />
-                      <div className="absolute -bottom-6 -right-6 w-24 h-24 border-b-2 border-r-2 border-pink-500/30 rounded-br-2xl" />
-                      
-                      <div className="absolute -top-2 -left-2 w-4 h-4 bg-purple-500/50 rounded-full blur-md" />
-                      <div className="absolute -bottom-2 -right-2 w-4 h-4 bg-pink-500/50 rounded-full blur-md" />
-
-                      <div className="relative glass-strong rounded-xl overflow-hidden border border-purple-500/20 shadow-2xl glow-purple">
-                        <div className="aspect-video bg-[#0a0118]/20 flex items-center justify-center">
-                          <video
-                            className="w-full h-full object-cover"
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                          >
-                            <source src={project.previewVideo} type="video/mp4" />
-                            <div className="flex flex-col items-center justify-center h-full text-purple-300/50">
-                              <svg
-                                className="w-20 h-20 mb-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1.5}
-                                  d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                                />
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1.5}
-                                  d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
-                              <p className="font-mono text-sm">Video Preview</p>
-                            </div>
-                          </video>
-                        </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0118]/50 via-transparent to-transparent pointer-events-none" />
-                      </div>
-
-                      {/* Action Buttons */}
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
-                        viewport={{ once: true }}
-                        className="mt-6 flex gap-4 justify-center"
-                      >
-                        <motion.button
-                          whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(139, 92, 246, 0.4)' }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => openVideoModal(project.youtubeUrl)}
-                          className="flex-1 relative px-6 py-3 rounded-full font-mono text-sm text-white btn-gradient transition-all overflow-hidden flex items-center justify-center gap-2"
-                        >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z" />
-                          </svg>
-                          <span>Watch Full</span>
-                        </motion.button>
-
-                        <motion.a
-                          href={project.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="flex-1 px-6 py-3 glass-strong rounded-full font-mono text-sm text-purple-300 hover:text-white transition-colors flex items-center justify-center gap-2 border border-purple-500/30 hover:border-purple-500/60"
-                        >
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                          </svg>
-                          <span>GitHub</span>
-                        </motion.a>
-                      </motion.div>
-                    </motion.div>
-
-                    {/* Content Side */}
-                    <motion.div
-                      initial={{ opacity: 0, x: isEven ? 60 : -60 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
-                      viewport={{ once: true }}
-                      className={`space-y-8 ${!isEven ? 'md:order-1' : ''}`}
-                    >
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.5 }}
-                        viewport={{ once: true }}
-                      >
-                        <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-purple-300/70 uppercase border border-purple-500/20">
-                          {project.label}
-                        </span>
-                      </motion.div>
-
-                      <motion.h3
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.6 }}
-                        viewport={{ once: true }}
-                        className="font-display text-4xl md:text-6xl text-gradient-soft font-light tracking-tight leading-tight"
-                      >
-                        {project.name}
-                      </motion.h3>
-
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.7 }}
-                        viewport={{ once: true }}
-                        className="space-y-4"
-                      >
-                        <p className="font-mono text-base text-purple-200/70 leading-relaxed">
-                          {project.description}
-                        </p>
-                        <p className="font-mono text-base text-purple-200/70 leading-relaxed">
-                          {project.secondDescription}
-                        </p>
-                      </motion.div>
-
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.8 }}
-                        viewport={{ once: true }}
-                        className="space-y-3"
-                      >
-                        {project.features.map((feature, featureIndex) => (
-                          <motion.div
-                            key={feature}
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.4, delay: 0.9 + featureIndex * 0.1 }}
-                            viewport={{ once: true }}
-                            className="flex items-center gap-3 group"
-                          >
-                            <div className="w-1.5 h-1.5 bg-purple-500/60 rounded-full group-hover:bg-pink-500 transition-colors" />
-                            <span className="font-mono text-sm text-purple-300/60 group-hover:text-purple-200 transition-colors">
-                              {feature}
-                            </span>
-                          </motion.div>
-                        ))}
-                      </motion.div>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              );
-            })}
+    <main className="relative bg-[#0a0118] min-h-screen">
+      {/* Nav */}
+      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-purple-500/20">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <Link href="/" className="font-display text-xl text-white font-light">DOOM</Link>
+          <div className="flex items-center gap-8">
+            <Link href="/" className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors">Home</Link>
+            <Link href="/#projects" className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors">Projects</Link>
+            <Link href="/ocr" className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors">OCR Tool</Link>
+            <Link href="/chess" className="font-mono text-sm text-purple-300 border-b border-purple-500">Chess</Link>
           </div>
         </div>
-      </section>
+      </nav>
 
-      <section id="quotes" className="min-h-screen flex items-center justify-center px-6 relative z-10 py-20">
-        <div className="max-w-5xl w-full">
+      <div className="pt-24 px-6 pb-20">
+        <div className="max-w-7xl mx-auto">
+
+          {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
-            <h2 className="font-display text-4xl md:text-6xl text-gradient mb-4 font-light tracking-tight">
-              Philosophy
-            </h2>
-            <p className="font-mono text-xs text-purple-400/50 tracking-[0.3em] uppercase">
-              Quotes on Innovation, Programming & Design
-            </p>
+            <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-purple-300/60 uppercase border border-purple-500/20 mb-4">
+              Minimax · Alpha-Beta Pruning
+            </span>
+            <h1 className="font-display text-5xl md:text-7xl text-gradient mb-4 font-light tracking-tight">Chess</h1>
+            <p className="font-mono text-sm text-purple-300/60">You play White. The engine plays Black.</p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-            viewport={{ once: true }}
-            className="relative"
-          >
-            <div className="glass-strong rounded-3xl p-12 md:p-16 relative overflow-hidden border border-purple-500/20">
-              <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-purple-500/20 rounded-tl-3xl" />
-              <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-pink-500/20 rounded-br-3xl" />
+          <div className="grid lg:grid-cols-[1fr_320px] gap-8 items-start">
 
-              <div className="relative min-h-[300px] flex flex-col justify-center">
-                <AnimatePresence mode="wait" custom={direction}>
-                  <motion.div
-                    key={currentQuoteIndex}
-                    custom={direction}
-                    variants={slideVariants}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    transition={{
-                      x: { type: 'spring', stiffness: 300, damping: 30 },
-                      opacity: { duration: 0.4 },
-                      filter: { duration: 0.4 },
-                    }}
-                    className="text-center"
-                  >
-                    <motion.div
-                      initial={{ opacity: 0, y: -20 }}
+            {/* Board */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative"
+            >
+              <div className="absolute -top-4 -left-4 w-20 h-20 border-t-2 border-l-2 border-purple-500/30 rounded-tl-2xl pointer-events-none" />
+              <div className="absolute -bottom-4 -right-4 w-20 h-20 border-b-2 border-r-2 border-pink-500/30 rounded-br-2xl pointer-events-none" />
+
+              <div className="glass-strong rounded-2xl p-4 border border-purple-500/20 shadow-2xl">
+                {/* Status bar */}
+                <div className="flex items-center justify-between mb-4 px-2">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2 h-2 rounded-full transition-colors ${isThinking ? 'bg-yellow-400 animate-pulse' : 'bg-green-400'}`} />
+                    <span className="font-mono text-xs text-purple-300/60">
+                      {isThinking ? 'Thinking...' : 'Ready'}
+                    </span>
+                  </div>
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={statusMessage}
+                      initial={{ opacity: 0, y: -6 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                      className="mb-8"
-                    >
-                      <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-purple-300/70 uppercase border border-purple-500/20">
-                        {currentQuote.category}
-                      </span>
-                    </motion.div>
-
-                    <motion.blockquote
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.3 }}
-                      className="font-display text-2xl md:text-4xl text-purple-100 font-light leading-relaxed mb-8 relative"
-                    >
-                      <span className="text-purple-500/20 text-6xl absolute -top-4 -left-2 md:-left-8">"</span>
-                      {currentQuote.text}
-                      <span className="text-purple-500/20 text-6xl absolute -bottom-8 -right-2 md:-right-8">"</span>
-                    </motion.blockquote>
-
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 }}
-                      className="font-mono text-sm text-purple-300/60"
-                    >
-                      — {currentQuote.author}
-                    </motion.div>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-
-              <div className="flex items-center justify-center gap-6 mt-12">
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={previousQuote}
-                  className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group border border-purple-500/20 hover:border-purple-500/40"
-                  aria-label="Previous quote"
-                >
-                  <svg
-                    className="w-5 h-5 text-purple-400 group-hover:text-purple-200 transition-colors"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                </motion.button>
-
-                <div className="flex items-center gap-2">
-                  {QUOTES.map((_, index) => (
-                    <motion.button
-                      key={index}
-                      whileHover={{ scale: 1.2 }}
-                      onClick={() => {
-                        setDirection(index > currentQuoteIndex ? 1 : -1);
-                        setCurrentQuoteIndex(index);
-                      }}
-                      className={`h-1.5 rounded-full transition-all ${
-                        index === currentQuoteIndex
-                          ? 'w-8 bg-gradient-to-r from-purple-500 to-pink-500'
-                          : 'w-1.5 bg-purple-500/30 hover:bg-purple-500/50'
+                      exit={{ opacity: 0, y: 6 }}
+                      className={`font-mono text-xs ${
+                        gameStatus !== 'playing' ? 'text-pink-400' :
+                        isThinking ? 'text-yellow-400/80' : 'text-purple-300/70'
                       }`}
-                      aria-label={`Go to quote ${index + 1}`}
+                    >
+                      {statusMessage}
+                    </motion.span>
+                  </AnimatePresence>
+                </div>
+
+                {/* Thinking bar */}
+                {isThinking && (
+                  <div className="h-0.5 mb-4 rounded-full overflow-hidden bg-purple-900/30">
+                    <motion.div
+                      className="h-full w-1/2 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500"
+                      animate={{ x: ['-100%', '200%'] }}
+                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                     />
+                  </div>
+                )}
+
+                <Chessboard
+                  position={fen}
+                  onPieceDrop={onDrop}
+                  boardOrientation="white"
+                  customSquareStyles={squareStyles}
+                  customDarkSquareStyle={{ backgroundColor: '#2d1b4e' }}
+                  customLightSquareStyle={{ backgroundColor: '#1a0d33' }}
+                  customBoardStyle={{ borderRadius: '12px', boxShadow: '0 0 40px rgba(139,92,246,0.2)' }}
+                  animationDuration={150}
+                  arePiecesDraggable={!isThinking && gameStatus === 'playing'}
+                />
+              </div>
+            </motion.div>
+
+            {/* Sidebar */}
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="space-y-5"
+            >
+              {/* Difficulty */}
+              <div className="glass-strong rounded-2xl p-5 border border-purple-500/20">
+                <h3 className="font-mono text-xs text-purple-300/50 uppercase tracking-[0.2em] mb-4">Difficulty</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {(Object.keys(DIFFICULTY_DEPTH) as Difficulty[]).map(d => (
+                    <button
+                      key={d}
+                      onClick={() => { setDifficulty(d); resetGame(); }}
+                      className={`px-3 py-2.5 rounded-xl font-mono text-xs transition-all border ${
+                        difficulty === d
+                          ? 'bg-purple-500/20 border-purple-500/50 text-purple-200'
+                          : 'glass border-purple-500/10 text-purple-400/50 hover:border-purple-500/30 hover:text-purple-300'
+                      }`}
+                    >
+                      <div className="font-medium">{DIFFICULTY_INFO[d].label}</div>
+                      <div className="text-[10px] opacity-60 mt-0.5">{DIFFICULTY_INFO[d].elo}</div>
+                    </button>
                   ))}
                 </div>
+              </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={nextQuote}
-                  className="w-12 h-12 rounded-full glass flex items-center justify-center transition-colors group border border-purple-500/20 hover:border-purple-500/40"
-                  aria-label="Next quote"
+              {/* New Game */}
+              <div className="glass-strong rounded-2xl p-5 border border-purple-500/20">
+                <button
+                  onClick={resetGame}
+                  className="w-full px-4 py-3 rounded-xl font-mono text-sm text-white btn-gradient flex items-center justify-center gap-2"
                 >
-                  <svg
-                    className="w-5 h-5 text-purple-400 group-hover:text-purple-200 transition-colors"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
-                </motion.button>
+                  New Game
+                </button>
               </div>
 
-              <div className="text-center mt-6">
-                <span className="font-mono text-xs text-purple-400/40">
-                  {currentQuoteIndex + 1} / {QUOTES.length}
-                </span>
+              {/* Move History */}
+              <div className="glass-strong rounded-2xl p-5 border border-purple-500/20">
+                <h3 className="font-mono text-xs text-purple-300/50 uppercase tracking-[0.2em] mb-4">Move History</h3>
+                <div ref={historyRef} className="max-h-72 overflow-y-auto custom-scrollbar space-y-1">
+                  {movePairs.length === 0 ? (
+                    <p className="font-mono text-xs text-purple-400/30 text-center py-6">No moves yet</p>
+                  ) : movePairs.map((pair, i) => (
+                    <div key={i} className="grid grid-cols-[28px_1fr_1fr] gap-1 items-center">
+                      <span className="font-mono text-[10px] text-purple-500/40">{i + 1}.</span>
+                      <span className="font-mono text-xs text-purple-300/70 bg-purple-500/5 rounded px-2 py-0.5">{pair[0]}</span>
+                      {pair[1] && <span className="font-mono text-xs text-purple-300/40 bg-purple-500/5 rounded px-2 py-0.5">{pair[1]}</span>}
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          </motion.div>
 
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute top-1/4 left-10 w-32 h-32 bg-purple-500/[0.03] rounded-full blur-3xl" />
-            <div className="absolute bottom-1/4 right-10 w-40 h-40 bg-pink-500/[0.02] rounded-full blur-3xl" />
+              {/* Game Over */}
+              {gameStatus !== 'playing' && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="glass-strong rounded-2xl p-6 border border-pink-500/30 text-center"
+                >
+                  <p className="font-display text-2xl text-gradient mb-2 font-light">
+                    {gameStatus === 'checkmate' ? 'Game Over' : 'Draw'}
+                  </p>
+                  <p className="font-mono text-xs text-purple-300/60 mb-4">{statusMessage}</p>
+                  <button onClick={resetGame} className="px-6 py-2 rounded-full font-mono text-sm text-white btn-gradient">
+                    Play Again
+                  </button>
+                </motion.div>
+              )}
+            </motion.div>
           </div>
         </div>
-      </section>
+      </div>
 
-      <section id="contact" className="min-h-screen flex items-center justify-center px-6 relative z-10 mb-32">
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          viewport={{ once: true, margin: "-100px" }}
-          className="text-center max-w-4xl"
-        >
-          <h2 className="font-display text-5xl md:text-7xl text-gradient mb-8 font-light tracking-tight">
-            Let's Connect
-          </h2>
-          <p className="font-mono text-purple-300/50 text-sm md:text-base mb-12">
-            Interested in working together? Feel free to reach out.
-          </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <motion.a
-              href="https://pastebin.com/eb9Haem9"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-10 py-4 glass rounded-full font-mono text-sm text-purple-300 hover:text-white transition-colors border border-purple-500/30 hover:border-purple-500/60"
-            >
-              Discord : doomcodes
-            </motion.a>
-            
-            <motion.a
-              href="about:blank"
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-10 py-4 rounded-full font-mono text-sm text-white btn-gradient transition-colors"
-            >
-              TBD
-            </motion.a>
-          </div>
-        </motion.div>
-      </section>
-
-      <MusicPlayer />
-
-      <footer className="relative z-10 pb-8">
-        <div className="text-center">
-          <p className="font-mono text-xs text-purple-400/30">
-            © 2026 doom.lat — Designed & Developed with care
-          </p>
-        </div>
-      </footer>
-
-      <div className="noise-overlay" />
+      <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(139,92,246,0.05); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.2); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(139,92,246,0.4); }
+      `}</style>
     </main>
   );
 }
