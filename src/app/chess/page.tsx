@@ -267,6 +267,7 @@ export default function ChessPage() {
             <Link href="/#projects" className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors">Projects</Link>
             <Link href="/ocr" className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors">OCR Tool</Link>
             <Link href="/chess" className="font-mono text-sm text-purple-300 border-b border-purple-500">Chess</Link>
+            <Link href="/lab" className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors">Lab</Link>
           </div>
         </div>
       </nav>
