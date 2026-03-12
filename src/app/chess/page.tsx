@@ -12,10 +12,7 @@ type Difficulty = 'easy' | 'medium' | 'hard' | 'master';
 type GameStatus = 'playing' | 'checkmate' | 'draw' | 'stalemate';
 
 const DIFFICULTY_DEPTH: Record<Difficulty, number> = {
-  easy: 1,
-  medium: 2,
-  hard: 3,
-  master: 4,
+  easy: 1, medium: 2, hard: 3, master: 4,
 };
 
 const DIFFICULTY_INFO: Record<Difficulty, { label: string; elo: string }> = {
@@ -39,7 +36,6 @@ const PAWN_TABLE = [
    5, 10, 10,-20,-20, 10, 10,  5,
    0,  0,  0,  0,  0,  0,  0,  0,
 ];
-
 const KNIGHT_TABLE = [
   -50,-40,-30,-30,-30,-30,-40,-50,
   -40,-20,  0,  0,  0,  0,-20,-40,
@@ -50,7 +46,6 @@ const KNIGHT_TABLE = [
   -40,-20,  0,  5,  5,  0,-20,-40,
   -50,-40,-30,-30,-30,-30,-40,-50,
 ];
-
 const BISHOP_TABLE = [
   -20,-10,-10,-10,-10,-10,-10,-20,
   -10,  0,  0,  0,  0,  0,  0,-10,
@@ -61,7 +56,6 @@ const BISHOP_TABLE = [
   -10,  5,  0,  0,  0,  0,  5,-10,
   -20,-10,-10,-10,-10,-10,-10,-20,
 ];
-
 const ROOK_TABLE = [
    0,  0,  0,  0,  0,  0,  0,  0,
    5, 10, 10, 10, 10, 10, 10,  5,
@@ -72,7 +66,6 @@ const ROOK_TABLE = [
   -5,  0,  0,  0,  0,  0,  0, -5,
    0,  0,  0,  5,  5,  0,  0,  0,
 ];
-
 const QUEEN_TABLE = [
   -20,-10,-10, -5, -5,-10,-10,-20,
   -10,  0,  0,  0,  0,  0,  0,-10,
@@ -83,7 +76,6 @@ const QUEEN_TABLE = [
   -10,  0,  5,  0,  0,  0,  0,-10,
   -20,-10,-10, -5, -5,-10,-10,-20,
 ];
-
 const KING_TABLE = [
   -30,-40,-40,-50,-50,-40,-40,-30,
   -30,-40,-40,-50,-50,-40,-40,-30,
@@ -125,9 +117,7 @@ function minimax(game: Chess, depth: number, alpha: number, beta: number, maximi
   if (maximising) {
     let best = -Infinity;
     for (const m of moves) {
-      game.move(m);
-      best = Math.max(best, minimax(game, depth - 1, alpha, beta, false));
-      game.undo();
+      game.move(m); best = Math.max(best, minimax(game, depth - 1, alpha, beta, false)); game.undo();
       alpha = Math.max(alpha, best);
       if (beta <= alpha) break;
     }
@@ -135,9 +125,7 @@ function minimax(game: Chess, depth: number, alpha: number, beta: number, maximi
   } else {
     let best = Infinity;
     for (const m of moves) {
-      game.move(m);
-      best = Math.min(best, minimax(game, depth - 1, alpha, beta, true));
-      game.undo();
+      game.move(m); best = Math.min(best, minimax(game, depth - 1, alpha, beta, true)); game.undo();
       beta = Math.min(beta, best);
       if (beta <= alpha) break;
     }
@@ -172,7 +160,6 @@ export default function ChessPage() {
   const historyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { setMounted(true); }, []);
-
   useEffect(() => {
     if (historyRef.current) historyRef.current.scrollTop = historyRef.current.scrollHeight;
   }, [moveHistory]);
@@ -188,7 +175,7 @@ export default function ChessPage() {
       setStatusMessage('Draw!');
       setGameStatus('draw');
     } else if (g.inCheck()) {
-      setStatusMessage(g.turn() === 'w' ? '⚠ You are in check!' : '⚠ AI is in check!');
+      setStatusMessage(g.turn() === 'w' ? 'You are in check' : 'AI is in check');
     } else {
       setStatusMessage(g.turn() === 'w' ? 'Your move' : 'AI is thinking...');
     }
@@ -213,11 +200,8 @@ export default function ChessPage() {
             updateStatus(newGame);
           }
         }
-      } catch (e) {
-        console.error('AI error:', e);
-      } finally {
-        setIsThinking(false);
-      }
+      } catch (e) { console.error('AI error:', e); }
+      finally { setIsThinking(false); }
     }, 50);
   }, [difficulty, updateStatus]);
 
@@ -245,8 +229,8 @@ export default function ChessPage() {
 
   const squareStyles: Record<string, React.CSSProperties> = {};
   if (lastMove) {
-    squareStyles[lastMove.from] = { backgroundColor: 'rgba(139,92,246,0.35)' };
-    squareStyles[lastMove.to]   = { backgroundColor: 'rgba(139,92,246,0.55)' };
+    squareStyles[lastMove.from] = { backgroundColor: 'rgba(196, 169, 106, 0.28)' };
+    squareStyles[lastMove.to]   = { backgroundColor: 'rgba(196, 169, 106, 0.45)' };
   }
 
   const movePairs = moveHistory.reduce<string[][]>((acc, m, i) => {
@@ -254,20 +238,20 @@ export default function ChessPage() {
     return acc;
   }, []);
 
-  if (!mounted) return <div className="min-h-screen bg-[#0a0118]" />;
+  if (!mounted) return <div className="min-h-screen bg-[#0c0b09]" />;
 
   return (
-    <main className="relative bg-[#0a0118] min-h-screen">
+    <main className="relative bg-[#0c0b09] min-h-screen">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-purple-500/20">
+      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-[#c4a96a]/10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="font-display text-xl text-white font-light">DOOM</Link>
+          <Link href="/" className="font-display text-xl text-[#e8e1d4] font-light tracking-wide">DOOM</Link>
           <div className="flex items-center gap-8">
-            <Link href="/" className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors">Home</Link>
-            <Link href="/#projects" className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors">Projects</Link>
-            <Link href="/ocr" className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors">OCR Tool</Link>
-            <Link href="/chess" className="font-mono text-sm text-purple-300 border-b border-purple-500">Chess</Link>
-            <Link href="/lab" className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors">Lab</Link>
+            <Link href="/" className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Home</Link>
+            <Link href="/#projects" className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Projects</Link>
+            <Link href="/ocr" className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">OCR Tool</Link>
+            <Link href="/chess" className="font-mono text-sm text-[#e8e1d4] border-b border-[#c4a96a]/60 pb-px">Chess</Link>
+            <Link href="/lab" className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Lab</Link>
           </div>
         </div>
       </nav>
@@ -282,14 +266,14 @@ export default function ChessPage() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="text-center mb-12"
           >
-            <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-purple-300/60 uppercase border border-purple-500/20 mb-4">
-              Minimax · Alpha-Beta Pruning
+            <span className="inline-block px-5 py-1.5 glass border border-[#c4a96a]/15 font-mono text-xs tracking-[0.22em] text-[#9a8060] uppercase mb-5">
+              Minimax &nbsp;/&nbsp; Alpha-Beta Pruning
             </span>
             <h1 className="font-display text-5xl md:text-7xl text-gradient mb-4 font-light tracking-tight">Chess</h1>
-            <p className="font-mono text-sm text-purple-300/60">You play White. The engine plays Black.</p>
+            <p className="font-mono text-sm text-[#6a5e4e]">You play White. The engine plays Black.</p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-[1fr_320px] gap-8 items-start">
+          <div className="grid lg:grid-cols-[1fr_300px] gap-8 items-start">
 
             {/* Board */}
             <motion.div
@@ -298,27 +282,28 @@ export default function ChessPage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative"
             >
-              <div className="absolute -top-4 -left-4 w-20 h-20 border-t-2 border-l-2 border-purple-500/30 rounded-tl-2xl pointer-events-none" />
-              <div className="absolute -bottom-4 -right-4 w-20 h-20 border-b-2 border-r-2 border-pink-500/30 rounded-br-2xl pointer-events-none" />
+              {/* Corner marks */}
+              <div className="absolute -top-3 -left-3 w-14 h-14 border-t border-l border-[#c4a96a]/20 pointer-events-none" />
+              <div className="absolute -bottom-3 -right-3 w-14 h-14 border-b border-r border-[#c4a96a]/15 pointer-events-none" />
 
-              <div className="glass-strong rounded-2xl p-4 border border-purple-500/20 shadow-2xl">
+              <div className="glass-strong border border-[#c4a96a]/12 p-4 shadow-2xl">
                 {/* Status bar */}
-                <div className="flex items-center justify-between mb-4 px-2">
+                <div className="flex items-center justify-between mb-4 px-1">
                   <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full transition-colors ${isThinking ? 'bg-yellow-400 animate-pulse' : 'bg-green-400'}`} />
-                    <span className="font-mono text-xs text-purple-300/60">
+                    <div className={`w-1.5 h-1.5 transition-colors ${isThinking ? 'bg-[#c4a96a] animate-pulse' : 'bg-[#7a9a6a]'}`} />
+                    <span className="font-mono text-xs text-[#6a5e4e]">
                       {isThinking ? 'Thinking...' : 'Ready'}
                     </span>
                   </div>
                   <AnimatePresence mode="wait">
                     <motion.span
                       key={statusMessage}
-                      initial={{ opacity: 0, y: -6 }}
+                      initial={{ opacity: 0, y: -4 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 6 }}
+                      exit={{ opacity: 0, y: 4 }}
                       className={`font-mono text-xs ${
-                        gameStatus !== 'playing' ? 'text-pink-400' :
-                        isThinking ? 'text-yellow-400/80' : 'text-purple-300/70'
+                        gameStatus !== 'playing' ? 'text-[#c4a96a]' :
+                        isThinking ? 'text-[#9a8060]' : 'text-[#6a5e4e]'
                       }`}
                     >
                       {statusMessage}
@@ -328,11 +313,11 @@ export default function ChessPage() {
 
                 {/* Thinking bar */}
                 {isThinking && (
-                  <div className="h-0.5 mb-4 rounded-full overflow-hidden bg-purple-900/30">
+                  <div className="h-px mb-4 overflow-hidden bg-[#c4a96a]/10">
                     <motion.div
-                      className="h-full w-1/2 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500"
-                      animate={{ x: ['-100%', '200%'] }}
-                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                      className="h-full w-1/3 bg-gradient-to-r from-transparent via-[#c4a96a] to-transparent"
+                      animate={{ x: ['-200%', '400%'] }}
+                      transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
                     />
                   </div>
                 )}
@@ -342,9 +327,9 @@ export default function ChessPage() {
                   onPieceDrop={onDrop}
                   boardOrientation="white"
                   customSquareStyles={squareStyles}
-                  customDarkSquareStyle={{ backgroundColor: '#2d1b4e' }}
-                  customLightSquareStyle={{ backgroundColor: '#1a0d33' }}
-                  customBoardStyle={{ borderRadius: '12px', boxShadow: '0 0 40px rgba(139,92,246,0.2)' }}
+                  customDarkSquareStyle={{ backgroundColor: '#2a2218' }}
+                  customLightSquareStyle={{ backgroundColor: '#1a1510' }}
+                  customBoardStyle={{ boxShadow: '0 0 40px rgba(196,169,106,0.08)' }}
                   animationDuration={150}
                   arePiecesDraggable={!isThinking && gameStatus === 'playing'}
                 />
@@ -356,20 +341,20 @@ export default function ChessPage() {
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="space-y-5"
+              className="space-y-4"
             >
               {/* Difficulty */}
-              <div className="glass-strong rounded-2xl p-5 border border-purple-500/20">
-                <h3 className="font-mono text-xs text-purple-300/50 uppercase tracking-[0.2em] mb-4">Difficulty</h3>
+              <div className="glass-strong border border-[#c4a96a]/12 p-5">
+                <h3 className="font-mono text-xs text-[#4a4035] uppercase tracking-[0.2em] mb-4">Difficulty</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {(Object.keys(DIFFICULTY_DEPTH) as Difficulty[]).map(d => (
                     <button
                       key={d}
                       onClick={() => { setDifficulty(d); resetGame(); }}
-                      className={`px-3 py-2.5 rounded-xl font-mono text-xs transition-all border ${
+                      className={`px-3 py-2.5 font-mono text-xs transition-all border ${
                         difficulty === d
-                          ? 'bg-purple-500/20 border-purple-500/50 text-purple-200'
-                          : 'glass border-purple-500/10 text-purple-400/50 hover:border-purple-500/30 hover:text-purple-300'
+                          ? 'bg-[#c4a96a]/15 border-[#c4a96a]/40 text-[#e8e1d4]'
+                          : 'glass border-[#c4a96a]/8 text-[#6a5e4e] hover:border-[#c4a96a]/25 hover:text-[#a89880]'
                       }`}
                     >
                       <div className="font-medium">{DIFFICULTY_INFO[d].label}</div>
@@ -380,10 +365,10 @@ export default function ChessPage() {
               </div>
 
               {/* New Game */}
-              <div className="glass-strong rounded-2xl p-5 border border-purple-500/20">
+              <div className="glass-strong border border-[#c4a96a]/12 p-5">
                 <button
                   onClick={resetGame}
-                  className="w-full px-4 py-3 rounded-xl font-mono text-sm text-white btn-gradient flex items-center justify-center gap-2"
+                  className="w-full px-4 py-3 btn-gradient font-mono text-sm flex items-center justify-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -393,16 +378,16 @@ export default function ChessPage() {
               </div>
 
               {/* Move History */}
-              <div className="glass-strong rounded-2xl p-5 border border-purple-500/20">
-                <h3 className="font-mono text-xs text-purple-300/50 uppercase tracking-[0.2em] mb-4">Move History</h3>
+              <div className="glass-strong border border-[#c4a96a]/12 p-5">
+                <h3 className="font-mono text-xs text-[#4a4035] uppercase tracking-[0.2em] mb-4">Move History</h3>
                 <div ref={historyRef} className="max-h-72 overflow-y-auto custom-scrollbar space-y-1">
                   {movePairs.length === 0 ? (
-                    <p className="font-mono text-xs text-purple-400/30 text-center py-6">No moves yet</p>
+                    <p className="font-mono text-xs text-[#4a4035] text-center py-6">No moves yet</p>
                   ) : movePairs.map((pair, i) => (
-                    <div key={i} className="grid grid-cols-[28px_1fr_1fr] gap-1 items-center">
-                      <span className="font-mono text-[10px] text-purple-500/40">{i + 1}.</span>
-                      <span className="font-mono text-xs text-purple-300/70 bg-purple-500/5 rounded px-2 py-0.5">{pair[0]}</span>
-                      {pair[1] && <span className="font-mono text-xs text-purple-300/40 bg-purple-500/5 rounded px-2 py-0.5">{pair[1]}</span>}
+                    <div key={i} className="grid grid-cols-[24px_1fr_1fr] gap-1 items-center">
+                      <span className="font-mono text-[10px] text-[#4a4035]">{i + 1}.</span>
+                      <span className="font-mono text-xs text-[#a89880] bg-[#c4a96a]/5 px-2 py-0.5">{pair[0]}</span>
+                      {pair[1] && <span className="font-mono text-xs text-[#6a5e4e] bg-[#c4a96a]/5 px-2 py-0.5">{pair[1]}</span>}
                     </div>
                   ))}
                 </div>
@@ -411,15 +396,15 @@ export default function ChessPage() {
               {/* Game Over */}
               {gameStatus !== 'playing' && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="glass-strong rounded-2xl p-6 border border-pink-500/30 text-center"
+                  className="glass-strong border border-[#c4a96a]/25 p-6 text-center"
                 >
                   <p className="font-display text-2xl text-gradient mb-2 font-light">
                     {gameStatus === 'checkmate' ? 'Game Over' : 'Draw'}
                   </p>
-                  <p className="font-mono text-xs text-purple-300/60 mb-4">{statusMessage}</p>
-                  <button onClick={resetGame} className="px-6 py-2 rounded-full font-mono text-sm text-white btn-gradient">
+                  <p className="font-mono text-xs text-[#6a5e4e] mb-4">{statusMessage}</p>
+                  <button onClick={resetGame} className="px-6 py-2 btn-gradient font-mono text-sm">
                     Play Again
                   </button>
                 </motion.div>
@@ -428,13 +413,6 @@ export default function ChessPage() {
           </div>
         </div>
       </div>
-
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(139,92,246,0.05); border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.2); border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(139,92,246,0.4); }
-      `}</style>
     </main>
   );
 }
