@@ -114,6 +114,15 @@ export default function Hero() {
           </motion.a>
 
           <motion.a
+            href="/lab"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="px-8 py-3 glass-strong rounded-full font-mono text-sm text-purple-300 hover:text-white transition-colors border border-purple-500/30 hover:border-purple-500/60 glow-purple"
+          >
+            Hacker Lab
+          </motion.a>
+
+          <motion.a
             href="#contact"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -153,6 +162,13 @@ export default function Hero() {
             className="font-mono text-xs text-purple-400/40 hover:text-purple-300 transition-colors tracking-[0.15em] uppercase"
           >
             Contact
+          </Link>
+          <div className="w-1 h-1 rounded-full bg-purple-500/30" />
+          <Link
+            href="/lab"
+            className="font-mono text-xs text-purple-400/40 hover:text-purple-300 transition-colors tracking-[0.15em] uppercase"
+          >
+            Lab
           </Link>
         </motion.div>
       </motion.div>
