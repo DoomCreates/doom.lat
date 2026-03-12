@@ -7,10 +7,7 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.3,
-    },
+    transition: { staggerChildren: 0.15, delayChildren: 0.3 },
   },
 };
 
@@ -20,23 +17,23 @@ const itemVariants = {
     opacity: 1,
     y: 0,
     filter: 'blur(0px)',
-    transition: {
-      duration: 0.8,
-      ease: [0.22, 1, 0.36, 1],
-    },
+    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] },
   },
 };
 
 export default function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-6 z-10 overflow-hidden">
-      {/* Background glow orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/[0.06] rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-pink-500/[0.04] rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/[0.02] rounded-full blur-3xl pointer-events-none" />
+      {/* Ambient warmth */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#c4a96a]/[0.04] rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-[#9a7a45]/[0.03] rounded-full blur-3xl pointer-events-none" />
 
       {/* Grid pattern */}
-      <div className="absolute inset-0 grid-pattern opacity-30 pointer-events-none" />
+      <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
+
+      {/* Horizontal accent lines */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#c4a96a]/20 to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#c4a96a]/10 to-transparent pointer-events-none" />
 
       <motion.div
         variants={containerVariants}
@@ -46,8 +43,8 @@ export default function Hero() {
       >
         {/* Badge */}
         <motion.div variants={itemVariants} className="mb-8">
-          <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-purple-300/60 uppercase border border-purple-500/20">
-            Developer · Creator · Engineer
+          <span className="inline-block px-5 py-1.5 glass border border-[#c4a96a]/15 font-mono text-xs tracking-[0.25em] text-[#a89880] uppercase">
+            Developer &nbsp;/&nbsp; Creator &nbsp;/&nbsp; Engineer
           </span>
         </motion.div>
 
@@ -62,7 +59,7 @@ export default function Hero() {
         {/* Subheading */}
         <motion.p
           variants={itemVariants}
-          className="font-display text-2xl md:text-3xl text-purple-200/60 mb-4 font-light"
+          className="font-display text-2xl md:text-3xl text-[#a89880] mb-4 font-light"
         >
           doom.lat
         </motion.p>
@@ -70,16 +67,16 @@ export default function Hero() {
         {/* Description */}
         <motion.p
           variants={itemVariants}
-          className="font-mono text-sm text-purple-300/50 max-w-2xl mx-auto leading-relaxed mb-4"
+          className="font-mono text-sm text-[#6a5e4e] max-w-2xl mx-auto leading-relaxed mb-4"
         >
-          Building things that shouldn't exist. Precision tools, experimental software,
+          Building things that shouldn&apos;t exist. Precision tools, experimental software,
           and whatever else demands to be made.
         </motion.p>
 
         {/* Scroll hint */}
         <motion.p
           variants={itemVariants}
-          className="font-mono text-xs text-purple-400/30 tracking-[0.3em] uppercase mb-2"
+          className="font-mono text-xs text-[#4a4035] tracking-[0.3em] uppercase mb-2"
         >
           Scroll to explore
         </motion.p>
@@ -87,54 +84,48 @@ export default function Hero() {
         {/* Divider */}
         <motion.div
           variants={itemVariants}
-          className="w-px h-12 bg-gradient-to-b from-purple-500/40 to-transparent mx-auto mb-2"
+          className="w-px h-10 bg-gradient-to-b from-[#c4a96a]/30 to-transparent mx-auto mb-2"
         />
 
         {/* CTA Buttons */}
         <motion.div
           variants={itemVariants}
-          className="flex flex-wrap items-center justify-center gap-4 mt-16"
+          className="flex flex-wrap items-center justify-center gap-3 mt-14"
         >
           <motion.a
             href="/ocr"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-3 glass-strong rounded-full font-mono text-sm text-purple-300 hover:text-white transition-colors border border-purple-500/30 hover:border-purple-500/60 glow-purple"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="px-7 py-2.5 glass border border-[#c4a96a]/20 hover:border-[#c4a96a]/40 font-mono text-sm text-[#a89880] hover:text-[#e8e1d4] transition-colors"
           >
             OCR Tool
           </motion.a>
 
           <motion.a
             href="/chess"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-3 glass-strong rounded-full font-mono text-sm text-purple-300 hover:text-white transition-colors border border-purple-500/30 hover:border-purple-500/60 glow-purple"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="px-7 py-2.5 glass border border-[#c4a96a]/20 hover:border-[#c4a96a]/40 font-mono text-sm text-[#a89880] hover:text-[#e8e1d4] transition-colors"
           >
             Chess
           </motion.a>
 
           <motion.a
             href="/lab"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 py-3 glass-strong rounded-full font-mono text-sm text-purple-300 hover:text-white transition-colors border border-purple-500/30 hover:border-purple-500/60 glow-purple"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="px-7 py-2.5 glass border border-[#c4a96a]/20 hover:border-[#c4a96a]/40 font-mono text-sm text-[#a89880] hover:text-[#e8e1d4] transition-colors"
           >
             Hacker Lab
           </motion.a>
 
           <motion.a
             href="#contact"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="relative px-10 py-4 rounded-full font-mono text-sm text-white btn-gradient overflow-hidden group"
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="px-8 py-2.5 btn-gradient font-mono text-sm"
           >
-            <span className="relative z-10">Get in Touch</span>
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600"
-              animate={{ x: ['-100%', '100%'] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-              style={{ opacity: 0.3 }}
-            />
+            Get in Touch
           </motion.a>
         </motion.div>
 
@@ -143,31 +134,19 @@ export default function Hero() {
           variants={itemVariants}
           className="flex items-center justify-center gap-8 mt-12"
         >
-          <Link
-            href="#projects"
-            className="font-mono text-xs text-purple-400/40 hover:text-purple-300 transition-colors tracking-[0.15em] uppercase"
-          >
+          <Link href="#projects" className="font-mono text-xs text-[#4a4035] hover:text-[#a89880] transition-colors tracking-[0.15em] uppercase">
             Projects
           </Link>
-          <div className="w-1 h-1 rounded-full bg-purple-500/30" />
-          <Link
-            href="#quotes"
-            className="font-mono text-xs text-purple-400/40 hover:text-purple-300 transition-colors tracking-[0.15em] uppercase"
-          >
+          <div className="w-4 h-px bg-[#c4a96a]/20" />
+          <Link href="#quotes" className="font-mono text-xs text-[#4a4035] hover:text-[#a89880] transition-colors tracking-[0.15em] uppercase">
             Philosophy
           </Link>
-          <div className="w-1 h-1 rounded-full bg-purple-500/30" />
-          <Link
-            href="#contact"
-            className="font-mono text-xs text-purple-400/40 hover:text-purple-300 transition-colors tracking-[0.15em] uppercase"
-          >
+          <div className="w-4 h-px bg-[#c4a96a]/20" />
+          <Link href="#contact" className="font-mono text-xs text-[#4a4035] hover:text-[#a89880] transition-colors tracking-[0.15em] uppercase">
             Contact
           </Link>
-          <div className="w-1 h-1 rounded-full bg-purple-500/30" />
-          <Link
-            href="/lab"
-            className="font-mono text-xs text-purple-400/40 hover:text-purple-300 transition-colors tracking-[0.15em] uppercase"
-          >
+          <div className="w-4 h-px bg-[#c4a96a]/20" />
+          <Link href="/lab" className="font-mono text-xs text-[#4a4035] hover:text-[#a89880] transition-colors tracking-[0.15em] uppercase">
             Lab
           </Link>
         </motion.div>
