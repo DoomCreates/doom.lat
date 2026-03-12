@@ -6,7 +6,7 @@ import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Types ───────────────────────────────────────────────────────────────────
 
 type ToolId =
   | 'hash'
@@ -23,129 +23,108 @@ interface Tool {
   id: ToolId;
   label: string;
   description: string;
-  icon: string;
-  accent: string;
+  glyph: string;   // Short text glyph — no emoji
 }
 
 // ─── Tool Registry ────────────────────────────────────────────────────────────
 
 const TOOLS: Tool[] = [
-  { id: 'hash',     label: 'Hash Generator',     description: 'SHA-256 / SHA-1 / MD5 style hashing via Web Crypto', icon: '#',  accent: 'from-violet-500 to-purple-600'  },
-  { id: 'password', label: 'Password Generator',  description: 'Cryptographically random passwords with custom rules',  icon: '🔑', accent: 'from-pink-500 to-rose-600'     },
-  { id: 'qr',       label: 'QR Generator',        description: 'Generate a QR code for any URL or text string',         icon: '▦',  accent: 'from-cyan-500 to-blue-600'    },
-  { id: 'url',      label: 'URL Parser',          description: 'Dissect any URL into its components',                   icon: '⛓', accent: 'from-teal-500 to-emerald-600' },
-  { id: 'encrypt',  label: 'Text Encrypter',      description: 'AES-GCM encryption with user-set passphrase',           icon: '🔐', accent: 'from-amber-500 to-orange-600' },
-  { id: 'regex',    label: 'Regex Tester',        description: 'Live regex matching with match highlights',             icon: '.*', accent: 'from-lime-500 to-green-600'   },
-  { id: 'json',     label: 'JSON Formatter',      description: 'Prettify, minify and validate JSON instantly',          icon: '{}', accent: 'from-sky-500 to-indigo-600'   },
-  { id: 'jwt',      label: 'JWT Decoder',         description: 'Decode and inspect JWT header, payload & signature',    icon: '🪙', accent: 'from-fuchsia-500 to-pink-600' },
-  { id: 'base64',   label: 'Base64 Encoder',      description: 'Encode and decode Base64 strings instantly',           icon: '64', accent: 'from-orange-500 to-red-600'   },
+  { id: 'hash',     label: 'Hash Generator',    description: 'SHA-256 / SHA-1 / MD5 hashing via Web Crypto',        glyph: '#'   },
+  { id: 'password', label: 'Password Generator', description: 'Cryptographically random passwords with custom rules',  glyph: '**'  },
+  { id: 'qr',       label: 'QR Generator',       description: 'Generate a QR code for any URL or text string',         glyph: 'QR'  },
+  { id: 'url',      label: 'URL Parser',         description: 'Dissect any URL into its components',                   glyph: '//'  },
+  { id: 'encrypt',  label: 'Text Encrypter',     description: 'AES-GCM encryption with a user-set passphrase',         glyph: 'AES' },
+  { id: 'regex',    label: 'Regex Tester',       description: 'Live regex matching with match highlights',             glyph: '.*'  },
+  { id: 'json',     label: 'JSON Formatter',     description: 'Prettify, minify and validate JSON instantly',          glyph: '{}'  },
+  { id: 'jwt',      label: 'JWT Decoder',        description: 'Decode JWT header, payload and signature',              glyph: 'JWT' },
+  { id: 'base64',   label: 'Base64 Encoder',     description: 'Encode and decode Base64 strings instantly',            glyph: 'b64' },
 ];
 
-// ─── Utilities ────────────────────────────────────────────────────────────────
+// ─── Crypto helpers ───────────────────────────────────────────────────────────
 
-async function sha256(input: string): Promise<string> {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
+async function sha256(text: string): Promise<string> {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
-
-async function sha1(input: string): Promise<string> {
-  const buf = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(input));
+async function sha1(text: string): Promise<string> {
+  const buf = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(text));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
-
-// Simple MD5 (pure JS, not crypto-secure — just for display)
-function md5(input: string): string {
-  function safeAdd(x: number, y: number) { const lsw = (x & 0xffff) + (y & 0xffff); return ((((x >> 16) + (y >> 16) + (lsw >> 16)) << 16) | (lsw & 0xffff)) >>> 0; }
-  function bitRotateLeft(num: number, cnt: number) { return ((num << cnt) | (num >>> (32 - cnt))) >>> 0; }
+function md5(str: string): string {
+  function safeAdd(x: number, y: number) { const lsw = (x & 0xffff) + (y & 0xffff); const msw = (x >> 16) + (y >> 16) + (lsw >> 16); return (msw << 16) | (lsw & 0xffff); }
+  function bitRotateLeft(num: number, cnt: number) { return (num << cnt) | (num >>> (32 - cnt)); }
   function md5cmn(q: number, a: number, b: number, x: number, s: number, t: number) { return safeAdd(bitRotateLeft(safeAdd(safeAdd(a, q), safeAdd(x, t)), s), b); }
   function md5ff(a: number, b: number, c: number, d: number, x: number, s: number, t: number) { return md5cmn((b & c) | (~b & d), a, b, x, s, t); }
   function md5gg(a: number, b: number, c: number, d: number, x: number, s: number, t: number) { return md5cmn((b & d) | (c & ~d), a, b, x, s, t); }
   function md5hh(a: number, b: number, c: number, d: number, x: number, s: number, t: number) { return md5cmn(b ^ c ^ d, a, b, x, s, t); }
   function md5ii(a: number, b: number, c: number, d: number, x: number, s: number, t: number) { return md5cmn(c ^ (b | ~d), a, b, x, s, t); }
-  const str = unescape(encodeURIComponent(input));
-  const x: number[] = [];
-  for (let i = 0; i < str.length * 8; i += 8) x[i >> 5] = (x[i >> 5] || 0) | (str.charCodeAt(i / 8) << (i % 32));
-  const len = str.length * 8;
-  x[len >> 5] = (x[len >> 5] || 0) | (0x80 << (len % 32));
-  x[(((len + 64) >>> 9) << 4) + 14] = len;
+  const utf8 = unescape(encodeURIComponent(str));
+  const len = utf8.length;
+  const words: number[] = [];
+  for (let i = 0; i < len; i += 4) words[i >> 2] = (utf8.charCodeAt(i) & 0xff) | ((utf8.charCodeAt(i + 1) & 0xff) << 8) | ((utf8.charCodeAt(i + 2) & 0xff) << 16) | ((utf8.charCodeAt(i + 3) & 0xff) << 24);
+  words[len >> 2] |= 0x80 << (len % 4 * 8);
+  words[(((len + 8) >>> 6) << 4) + 14] = len * 8;
   let a = 1732584193, b = -271733879, c = -1732584194, d = 271733878;
-  for (let i = 0; i < x.length; i += 16) {
+  for (let i = 0; i < words.length; i += 16) {
     const [oa, ob, oc, od] = [a, b, c, d];
-    a = md5ff(a,b,c,d,x[i+0]||0,7,-680876936);  d = md5ff(d,a,b,c,x[i+1]||0,12,-389564586); c = md5ff(c,d,a,b,x[i+2]||0,17,606105819);  b = md5ff(b,c,d,a,x[i+3]||0,22,-1044525330);
-    a = md5ff(a,b,c,d,x[i+4]||0,7,-176418897);  d = md5ff(d,a,b,c,x[i+5]||0,12,1200080426);  c = md5ff(c,d,a,b,x[i+6]||0,17,-1473231341); b = md5ff(b,c,d,a,x[i+7]||0,22,-45705983);
-    a = md5ff(a,b,c,d,x[i+8]||0,7,1770035416);  d = md5ff(d,a,b,c,x[i+9]||0,12,-1958414417); c = md5ff(c,d,a,b,x[i+10]||0,17,-42063);     b = md5ff(b,c,d,a,x[i+11]||0,22,-1990404162);
-    a = md5ff(a,b,c,d,x[i+12]||0,7,1804603682); d = md5ff(d,a,b,c,x[i+13]||0,12,-40341101);  c = md5ff(c,d,a,b,x[i+14]||0,17,-1502002290);b = md5ff(b,c,d,a,x[i+15]||0,22,1236535329);
-    a = md5gg(a,b,c,d,x[i+1]||0,5,-165796510);  d = md5gg(d,a,b,c,x[i+6]||0,9,-1069501632); c = md5gg(c,d,a,b,x[i+11]||0,14,643717713);  b = md5gg(b,c,d,a,x[i+0]||0,20,-373897302);
-    a = md5gg(a,b,c,d,x[i+5]||0,5,-701558691);  d = md5gg(d,a,b,c,x[i+10]||0,9,38016083);   c = md5gg(c,d,a,b,x[i+15]||0,14,-660478335); b = md5gg(b,c,d,a,x[i+4]||0,20,-405537848);
-    a = md5gg(a,b,c,d,x[i+9]||0,5,568446438);   d = md5gg(d,a,b,c,x[i+14]||0,9,-1019803690);c = md5gg(c,d,a,b,x[i+3]||0,14,-187363961);  b = md5gg(b,c,d,a,x[i+8]||0,20,1163531501);
-    a = md5gg(a,b,c,d,x[i+13]||0,5,-1444681467);d = md5gg(d,a,b,c,x[i+2]||0,9,-51403784);   c = md5gg(c,d,a,b,x[i+7]||0,14,1735328473);  b = md5gg(b,c,d,a,x[i+12]||0,20,-1926607734);
-    a = md5hh(a,b,c,d,x[i+5]||0,4,-378558);     d = md5hh(d,a,b,c,x[i+8]||0,11,-2022574463);c = md5hh(c,d,a,b,x[i+11]||0,16,1839030562); b = md5hh(b,c,d,a,x[i+14]||0,23,-35309556);
-    a = md5hh(a,b,c,d,x[i+1]||0,4,-1530992060); d = md5hh(d,a,b,c,x[i+4]||0,11,1272893353);  c = md5hh(c,d,a,b,x[i+7]||0,16,-155497632);  b = md5hh(b,c,d,a,x[i+10]||0,23,-1094730640);
-    a = md5hh(a,b,c,d,x[i+13]||0,4,681279174);  d = md5hh(d,a,b,c,x[i+0]||0,11,-358537222);  c = md5hh(c,d,a,b,x[i+3]||0,16,-722521979);  b = md5hh(b,c,d,a,x[i+6]||0,23,76029189);
-    a = md5hh(a,b,c,d,x[i+9]||0,4,-640364487);  d = md5hh(d,a,b,c,x[i+12]||0,11,-421815835); c = md5hh(c,d,a,b,x[i+15]||0,16,530742520);  b = md5hh(b,c,d,a,x[i+2]||0,23,-995338651);
-    a = md5ii(a,b,c,d,x[i+0]||0,6,-198630844);  d = md5ii(d,a,b,c,x[i+7]||0,10,1126891415);  c = md5ii(c,d,a,b,x[i+14]||0,15,-1416354905);b = md5ii(b,c,d,a,x[i+5]||0,21,-57434055);
-    a = md5ii(a,b,c,d,x[i+12]||0,6,1700485571); d = md5ii(d,a,b,c,x[i+3]||0,10,-1894986606); c = md5ii(c,d,a,b,x[i+10]||0,15,-1051523);   b = md5ii(b,c,d,a,x[i+1]||0,21,-2054922799);
-    a = md5ii(a,b,c,d,x[i+8]||0,6,1873313359);  d = md5ii(d,a,b,c,x[i+15]||0,10,-30611744);  c = md5ii(c,d,a,b,x[i+6]||0,15,-1560198380); b = md5ii(b,c,d,a,x[i+13]||0,21,1309151649);
-    a = md5ii(a,b,c,d,x[i+4]||0,6,-145523070);  d = md5ii(d,a,b,c,x[i+11]||0,10,-1120210379);c = md5ii(c,d,a,b,x[i+2]||0,15,718787259);   b = md5ii(b,c,d,a,x[i+9]||0,21,-343485551);
-    a = safeAdd(a,oa); b = safeAdd(b,ob); c = safeAdd(c,oc); d = safeAdd(d,od);
+    a = md5ff(a,b,c,d,words[i+0],7,-680876936);d=md5ff(d,a,b,c,words[i+1],12,-389564586);c=md5ff(c,d,a,b,words[i+2],17,606105819);b=md5ff(b,c,d,a,words[i+3],22,-1044525330);
+    a = md5ff(a,b,c,d,words[i+4],7,-176418897);d=md5ff(d,a,b,c,words[i+5],12,1200080426);c=md5ff(c,d,a,b,words[i+6],17,-1473231341);b=md5ff(b,c,d,a,words[i+7],22,-45705983);
+    a = md5ff(a,b,c,d,words[i+8],7,1770035416);d=md5ff(d,a,b,c,words[i+9],12,-1958414417);c=md5ff(c,d,a,b,words[i+10],17,-42063);b=md5ff(b,c,d,a,words[i+11],22,-1990404162);
+    a = md5ff(a,b,c,d,words[i+12],7,1804603682);d=md5ff(d,a,b,c,words[i+13],12,-40341101);c=md5ff(c,d,a,b,words[i+14],17,-1502002290);b=md5ff(b,c,d,a,words[i+15],22,1236535329);
+    a = md5gg(a,b,c,d,words[i+1],5,-165796510);d=md5gg(d,a,b,c,words[i+6],9,-1069501632);c=md5gg(c,d,a,b,words[i+11],14,643717713);b=md5gg(b,c,d,a,words[i+0],20,-373897302);
+    a = md5gg(a,b,c,d,words[i+5],5,-701558691);d=md5gg(d,a,b,c,words[i+10],9,38016083);c=md5gg(c,d,a,b,words[i+15],14,-660478335);b=md5gg(b,c,d,a,words[i+4],20,-405537848);
+    a = md5gg(a,b,c,d,words[i+9],5,568446438);d=md5gg(d,a,b,c,words[i+14],9,-1019803690);c=md5gg(c,d,a,b,words[i+3],14,-187363961);b=md5gg(b,c,d,a,words[i+8],20,1163531501);
+    a = md5gg(a,b,c,d,words[i+13],5,-1444681467);d=md5gg(d,a,b,c,words[i+2],9,-51403784);c=md5gg(c,d,a,b,words[i+7],14,1735328473);b=md5gg(b,c,d,a,words[i+12],20,-1926607734);
+    a = md5hh(a,b,c,d,words[i+5],4,-378558);d=md5hh(d,a,b,c,words[i+8],11,-2022574463);c=md5hh(c,d,a,b,words[i+11],16,1839030562);b=md5hh(b,c,d,a,words[i+14],23,-35309556);
+    a = md5hh(a,b,c,d,words[i+1],4,-1530992060);d=md5hh(d,a,b,c,words[i+4],11,1272893353);c=md5hh(c,d,a,b,words[i+7],16,-155497632);b=md5hh(b,c,d,a,words[i+10],23,-1094730640);
+    a = md5hh(a,b,c,d,words[i+13],4,681279174);d=md5hh(d,a,b,c,words[i+0],11,-358537222);c=md5hh(c,d,a,b,words[i+3],16,-722521979);b=md5hh(b,c,d,a,words[i+6],23,76029189);
+    a = md5hh(a,b,c,d,words[i+9],4,-640364487);d=md5hh(d,a,b,c,words[i+12],11,-421815835);c=md5hh(c,d,a,b,words[i+15],16,530742520);b=md5hh(b,c,d,a,words[i+2],23,-995338651);
+    a = md5ii(a,b,c,d,words[i+0],6,-198630844);d=md5ii(d,a,b,c,words[i+7],10,1126891415);c=md5ii(c,d,a,b,words[i+14],15,-1416354905);b=md5ii(b,c,d,a,words[i+5],21,-57434055);
+    a = md5ii(a,b,c,d,words[i+12],6,1700485571);d=md5ii(d,a,b,c,words[i+3],10,-1894986606);c=md5ii(c,d,a,b,words[i+10],15,-1051523);b=md5ii(b,c,d,a,words[i+1],21,-2054922799);
+    a = md5ii(a,b,c,d,words[i+8],6,1873313359);d=md5ii(d,a,b,c,words[i+15],10,-30611744);c=md5ii(c,d,a,b,words[i+6],15,-1560198380);b=md5ii(b,c,d,a,words[i+13],21,1309151649);
+    a = md5ii(a,b,c,d,words[i+4],6,-145523070);d=md5ii(d,a,b,c,words[i+11],10,-1120210379);c=md5ii(c,d,a,b,words[i+2],15,718787259);b=md5ii(b,c,d,a,words[i+9],21,-343485551);
+    a=safeAdd(a,oa);b=safeAdd(b,ob);c=safeAdd(c,oc);d=safeAdd(d,od);
   }
-  return [a,b,c,d].map(n => { const h = (n >>> 0).toString(16).padStart(8,'0'); return h.match(/../g)!.map(x => x[1]+x[0]).join(''); }).join('');
+  return [a,b,c,d].map(n => { let s=''; for (let i=0;i<4;i++) s+=('0'+((n>>>(i*8))&0xff).toString(16)).slice(-2); return s; }).join('');
 }
 
 async function encryptText(text: string, passphrase: string): Promise<string> {
   const enc = new TextEncoder();
-  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(passphrase), { name: 'PBKDF2' }, false, ['deriveKey']);
   const salt = crypto.getRandomValues(new Uint8Array(16));
-  const key = await crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
-    keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt']
-  );
+  const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' }, keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt']);
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(text));
-  const result = new Uint8Array(salt.length + iv.length + encrypted.byteLength);
-  result.set(salt, 0); result.set(iv, 16); result.set(new Uint8Array(encrypted), 28);
-  return btoa(String.fromCharCode(...result));
+  const combined = new Uint8Array(salt.byteLength + iv.byteLength + encrypted.byteLength);
+  combined.set(salt, 0); combined.set(iv, salt.byteLength); combined.set(new Uint8Array(encrypted), salt.byteLength + iv.byteLength);
+  return btoa(String.fromCharCode(...combined));
 }
 
 async function decryptText(ciphertext: string, passphrase: string): Promise<string> {
   const enc = new TextEncoder();
-  const data = new Uint8Array(atob(ciphertext).split('').map(c => c.charCodeAt(0)));
-  const salt = data.slice(0, 16), iv = data.slice(16, 28), encrypted = data.slice(28);
-  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(passphrase), 'PBKDF2', false, ['deriveKey']);
-  const key = await crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
-    keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['decrypt']
-  );
-  const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, encrypted);
+  const combined = Uint8Array.from(atob(ciphertext), c => c.charCodeAt(0));
+  const salt = combined.slice(0, 16); const iv = combined.slice(16, 28); const data = combined.slice(28);
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(passphrase), { name: 'PBKDF2' }, false, ['deriveKey']);
+  const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' }, keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+  const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
   return new TextDecoder().decode(decrypted);
 }
 
-// ─── Shared UI Bits ───────────────────────────────────────────────────────────
-
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-  const copy = () => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
-  return (
-    <button onClick={copy} className="px-3 py-1.5 glass rounded-lg font-mono text-xs text-purple-300 hover:text-white border border-purple-500/20 hover:border-purple-500/40 transition-all flex items-center gap-1.5">
-      {copied ? '✓ Copied' : 'Copy'}
-    </button>
-  );
-}
+// ─── Shared UI Primitives ─────────────────────────────────────────────────────
 
 function OutputBox({ value, label }: { value: string; label?: string }) {
+  const copy = () => navigator.clipboard.writeText(value);
   if (!value) return null;
   return (
-    <div className="mt-4">
-      {label && <p className="font-mono text-[10px] text-purple-400/50 uppercase tracking-widest mb-1">{label}</p>}
-      <div className="flex items-start gap-2">
-        <div className="flex-1 glass rounded-xl p-3 font-mono text-xs text-purple-200/80 break-all whitespace-pre-wrap max-h-48 overflow-y-auto custom-scrollbar">
+    <div className="mt-2">
+      {label && <p className="font-mono text-[10px] text-[#9a8060] uppercase tracking-widest mb-1">{label}</p>}
+      <div className="flex gap-2 items-start">
+        <div className="flex-1 glass border border-[#c4a96a]/12 p-3 font-mono text-xs text-[#a89880] break-all whitespace-pre-wrap max-h-48 overflow-y-auto custom-scrollbar">
           {value}
         </div>
-        <CopyButton text={value} />
+        <button onClick={copy} className="px-3 py-2 glass border border-[#c4a96a]/12 hover:border-[#c4a96a]/30 font-mono text-xs text-[#9a8060] hover:text-[#e8e1d4] transition-all flex items-center gap-1.5 shrink-0">
+          Copy
+        </button>
       </div>
     </div>
   );
@@ -158,7 +137,7 @@ function InputArea({ value, onChange, placeholder, rows = 3 }: { value: string; 
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
       rows={rows}
-      className="w-full glass rounded-xl p-3 font-mono text-xs text-purple-200/80 placeholder:text-purple-400/30 border border-purple-500/20 focus:border-purple-500/50 focus:outline-none resize-none transition-colors bg-transparent"
+      className="w-full glass border border-[#c4a96a]/12 focus:border-[#c4a96a]/35 p-3 font-mono text-xs text-[#a89880] placeholder:text-[#4a4035] focus:outline-none resize-none transition-colors bg-transparent"
     />
   );
 }
@@ -170,20 +149,20 @@ function InputField({ value, onChange, placeholder, type = 'text' }: { value: st
       value={value}
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full glass rounded-xl px-3 py-2.5 font-mono text-xs text-purple-200/80 placeholder:text-purple-400/30 border border-purple-500/20 focus:border-purple-500/50 focus:outline-none transition-colors bg-transparent"
+      className="w-full glass border border-[#c4a96a]/12 focus:border-[#c4a96a]/35 px-3 py-2.5 font-mono text-xs text-[#a89880] placeholder:text-[#4a4035] focus:outline-none transition-colors bg-transparent"
     />
   );
 }
 
 function ActionButton({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
   return (
-    <button onClick={onClick} className="px-5 py-2 rounded-xl font-mono text-xs text-white btn-gradient transition-all hover:opacity-90 active:scale-95">
+    <button onClick={onClick} className="px-5 py-2 btn-gradient font-mono text-xs transition-all hover:opacity-90 active:scale-[0.98]">
       {children}
     </button>
   );
 }
 
-// ─── Individual Tools ─────────────────────────────────────────────────────────
+// ─── Tool Components ──────────────────────────────────────────────────────────
 
 function HashTool() {
   const [input, setInput] = useState('');
@@ -197,7 +176,7 @@ function HashTool() {
 
   return (
     <div className="space-y-3">
-      <InputArea value={input} onChange={setInput} placeholder="Enter text to hash..." rows={2} />
+      <InputArea value={input} onChange={setInput} placeholder="Enter text to hash..." rows={3} />
       <ActionButton onClick={generate}>Generate Hashes</ActionButton>
       {results && (
         <div className="space-y-2 mt-2">
@@ -232,7 +211,7 @@ function PasswordTool() {
   const Toggle = ({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) => (
     <button
       onClick={() => onChange(!value)}
-      className={`px-3 py-1.5 rounded-lg font-mono text-xs border transition-all ${value ? 'bg-purple-500/20 border-purple-500/50 text-purple-200' : 'glass border-purple-500/10 text-purple-400/40'}`}
+      className={`px-3 py-1.5 font-mono text-xs border transition-all ${value ? 'bg-[#c4a96a]/15 border-[#c4a96a]/40 text-[#e8e1d4]' : 'glass border-[#c4a96a]/8 text-[#4a4035]'}`}
     >
       {label}
     </button>
@@ -241,9 +220,9 @@ function PasswordTool() {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3">
-        <span className="font-mono text-xs text-purple-300/50 w-16">Length: {length}</span>
+        <span className="font-mono text-xs text-[#6a5e4e] w-20 shrink-0">Length: {length}</span>
         <input type="range" min={8} max={64} value={length} onChange={e => setLength(+e.target.value)}
-          className="flex-1 accent-purple-500" />
+          className="flex-1 accent-[#c4a96a]" />
       </div>
       <div className="flex flex-wrap gap-2">
         <Toggle label="A–Z" value={useUpper}   onChange={setUseUpper}   />
@@ -264,7 +243,7 @@ function QRTool() {
   const generate = () => {
     if (!input) return;
     const encoded = encodeURIComponent(input);
-    setQrUrl(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encoded}&bgcolor=0a0118&color=a78bfa&margin=10`);
+    setQrUrl(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encoded}&bgcolor=0c0b09&color=c4a96a&margin=10`);
   };
 
   return (
@@ -273,11 +252,11 @@ function QRTool() {
       <ActionButton onClick={generate}>Generate QR</ActionButton>
       {qrUrl && (
         <div className="mt-3 flex flex-col items-center gap-3">
-          <div className="p-3 glass rounded-xl border border-purple-500/20">
-            <img src={qrUrl} alt="QR Code" className="w-40 h-40 rounded-lg" />
+          <div className="p-3 glass border border-[#c4a96a]/15">
+            <img src={qrUrl} alt="QR Code" className="w-40 h-40" />
           </div>
-          <a href={qrUrl} download="qr.png" className="font-mono text-xs text-purple-400/60 hover:text-purple-300 transition-colors">
-            ↓ Download PNG
+          <a href={qrUrl} download="qr.png" className="font-mono text-xs text-[#9a8060] hover:text-[#e8e1d4] transition-colors">
+            Save PNG
           </a>
         </div>
       )}
@@ -317,13 +296,13 @@ function URLTool() {
     <div className="space-y-3">
       <InputField value={input} onChange={setInput} placeholder="https://example.com/path?foo=bar#hash" />
       <ActionButton onClick={parse}>Parse URL</ActionButton>
-      {error && <p className="font-mono text-xs text-red-400">{error}</p>}
+      {error && <p className="font-mono text-xs text-red-400/80">{error}</p>}
       {parsed && (
         <div className="mt-3 space-y-1.5">
           {Object.entries(parsed).map(([k, v]) => (
-            <div key={k} className="grid grid-cols-[120px_1fr] gap-2 items-start">
-              <span className="font-mono text-[10px] text-purple-400/50 uppercase tracking-wider pt-0.5">{k}</span>
-              <span className="font-mono text-xs text-purple-200/80 glass rounded-lg px-2 py-1 break-all">{v}</span>
+            <div key={k} className="grid grid-cols-[110px_1fr] gap-2 items-start">
+              <span className="font-mono text-[10px] text-[#9a8060] uppercase tracking-wider pt-0.5">{k}</span>
+              <span className="font-mono text-xs text-[#a89880] glass border border-[#c4a96a]/10 px-2 py-1 break-all">{v}</span>
             </div>
           ))}
         </div>
@@ -358,7 +337,7 @@ function EncryptTool() {
       <div className="flex gap-2">
         {(['encrypt', 'decrypt'] as const).map(m => (
           <button key={m} onClick={() => { setMode(m); setOutput(''); setError(''); }}
-            className={`flex-1 py-2 rounded-xl font-mono text-xs border transition-all capitalize ${mode === m ? 'bg-purple-500/20 border-purple-500/50 text-purple-200' : 'glass border-purple-500/10 text-purple-400/40'}`}>
+            className={`flex-1 py-2 font-mono text-xs border transition-all capitalize ${mode === m ? 'bg-[#c4a96a]/15 border-[#c4a96a]/40 text-[#e8e1d4]' : 'glass border-[#c4a96a]/8 text-[#4a4035]'}`}>
             {m}
           </button>
         ))}
@@ -366,7 +345,7 @@ function EncryptTool() {
       <InputArea value={text} onChange={setText} placeholder={mode === 'encrypt' ? 'Text to encrypt...' : 'Ciphertext to decrypt...'} rows={3} />
       <InputField value={passphrase} onChange={setPassphrase} placeholder="Passphrase / key..." type="password" />
       <ActionButton onClick={run}>{mode === 'encrypt' ? 'Encrypt' : 'Decrypt'}</ActionButton>
-      {error && <p className="font-mono text-xs text-red-400 mt-2">{error}</p>}
+      {error && <p className="font-mono text-xs text-red-400/80 mt-2">{error}</p>}
       <OutputBox value={output} label={mode === 'encrypt' ? 'Encrypted (AES-GCM)' : 'Decrypted Text'} />
     </div>
   );
@@ -386,7 +365,7 @@ function RegexTool() {
       const matches = [...testStr.matchAll(re)];
       matchCount = matches.length;
       highlighted = testStr.replace(re, m => `@@${m}@@`);
-      setError('');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Invalid regex');
     }
@@ -405,16 +384,16 @@ function RegexTool() {
         </div>
       </div>
       <InputArea value={testStr} onChange={setTestStr} placeholder="Test string..." rows={4} />
-      {error && <p className="font-mono text-xs text-red-400">{error}</p>}
+      {error && <p className="font-mono text-xs text-red-400/80">{error}</p>}
       {pattern && testStr && !error && (
         <div className="mt-2">
-          <p className="font-mono text-[10px] text-purple-400/50 uppercase tracking-widest mb-1">
+          <p className="font-mono text-[10px] text-[#9a8060] uppercase tracking-widest mb-1">
             {matchCount} match{matchCount !== 1 ? 'es' : ''}
           </p>
-          <div className="glass rounded-xl p-3 font-mono text-xs text-purple-200/70 leading-relaxed break-all">
+          <div className="glass border border-[#c4a96a]/10 p-3 font-mono text-xs text-[#a89880] leading-relaxed break-all">
             {parts.map((part, i) =>
               i % 2 === 1
-                ? <mark key={i} className="bg-purple-500/30 text-purple-100 rounded px-0.5">{part}</mark>
+                ? <mark key={i} className="bg-[#c4a96a]/25 text-[#e8e1d4] px-0.5">{part}</mark>
                 : <span key={i}>{part}</span>
             )}
           </div>
@@ -445,7 +424,7 @@ function JSONTool() {
         <ActionButton onClick={format}>Prettify</ActionButton>
         <ActionButton onClick={minify}>Minify</ActionButton>
       </div>
-      {error && <p className="font-mono text-xs text-red-400">{error}</p>}
+      {error && <p className="font-mono text-xs text-red-400/80">{error}</p>}
       <OutputBox value={output} label="Output" />
     </div>
   );
@@ -474,7 +453,7 @@ function JWTTool() {
   return (
     <div className="space-y-3">
       <InputArea value={input} onChange={setInput} placeholder="Paste JWT token here..." rows={3} />
-      {parseError && <p className="font-mono text-xs text-red-400">{parseError}</p>}
+      {parseError && <p className="font-mono text-xs text-red-400/80">{parseError}</p>}
       {header  && <OutputBox value={header}  label="Header"    />}
       {payload && <OutputBox value={payload} label="Payload"   />}
       {sigNote && <OutputBox value={sigNote} label="Signature" />}
@@ -506,14 +485,14 @@ function Base64Tool() {
       <div className="flex gap-2">
         {(['encode', 'decode'] as const).map(m => (
           <button key={m} onClick={() => { setMode(m); setOutput(''); setError(''); }}
-            className={`flex-1 py-2 rounded-xl font-mono text-xs border transition-all capitalize ${mode === m ? 'bg-purple-500/20 border-purple-500/50 text-purple-200' : 'glass border-purple-500/10 text-purple-400/40'}`}>
+            className={`flex-1 py-2 font-mono text-xs border transition-all capitalize ${mode === m ? 'bg-[#c4a96a]/15 border-[#c4a96a]/40 text-[#e8e1d4]' : 'glass border-[#c4a96a]/8 text-[#4a4035]'}`}>
             {m}
           </button>
         ))}
       </div>
       <InputArea value={input} onChange={v => { setInput(v); setOutput(''); }} placeholder={mode === 'encode' ? 'Text to encode...' : 'Base64 to decode...'} rows={3} />
       <ActionButton onClick={run}>{mode === 'encode' ? 'Encode' : 'Decode'}</ActionButton>
-      {error && <p className="font-mono text-xs text-red-400">{error}</p>}
+      {error && <p className="font-mono text-xs text-red-400/80">{error}</p>}
       <OutputBox value={output} label="Result" />
     </div>
   );
@@ -537,21 +516,20 @@ const TOOL_COMPONENTS: Record<ToolId, React.ReactNode> = {
 
 export default function LabPage() {
   const [activeId, setActiveId] = useState<ToolId | null>(null);
-  const activeTool = TOOLS.find(t => t.id === activeId) ?? null;
 
   return (
-    <main className="relative bg-[#0a0118] min-h-screen">
+    <main className="relative bg-[#0c0b09] min-h-screen">
 
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-purple-500/20">
+      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-[#c4a96a]/10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="font-display text-xl text-white font-light">DOOM</Link>
-          <div className="flex items-center gap-6">
-            <Link href="/"      className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors">Home</Link>
-            <Link href="/#projects" className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors">Projects</Link>
-            <Link href="/ocr"   className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors">OCR</Link>
-            <Link href="/chess" className="font-mono text-sm text-purple-300/70 hover:text-purple-200 transition-colors">Chess</Link>
-            <Link href="/lab"   className="font-mono text-sm text-purple-300 border-b border-purple-500">Lab</Link>
+          <Link href="/" className="font-display text-xl text-[#e8e1d4] font-light tracking-wide">DOOM</Link>
+          <div className="flex items-center gap-8">
+            <Link href="/"          className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Home</Link>
+            <Link href="/#projects" className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Projects</Link>
+            <Link href="/ocr"       className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">OCR</Link>
+            <Link href="/chess"     className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Chess</Link>
+            <Link href="/lab"       className="font-mono text-sm text-[#e8e1d4] border-b border-[#c4a96a]/60 pb-px">Lab</Link>
           </div>
         </div>
       </nav>
@@ -566,75 +544,77 @@ export default function LabPage() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="text-center mb-14"
           >
-            <span className="inline-block px-4 py-1.5 glass rounded-full font-mono text-xs tracking-[0.2em] text-purple-300/60 uppercase border border-purple-500/20 mb-4">
-              Client-side · No data leaves your browser
+            <span className="inline-block px-5 py-1.5 glass border border-[#c4a96a]/15 font-mono text-xs tracking-[0.22em] text-[#9a8060] uppercase mb-5">
+              Client-side &nbsp;/&nbsp; No data leaves your browser
             </span>
             <h1 className="font-display text-5xl md:text-7xl text-gradient mb-4 font-light tracking-tight">
               Hacker Lab
             </h1>
-            <p className="font-mono text-sm text-purple-300/60 max-w-lg mx-auto">
+            <p className="font-mono text-sm text-[#6a5e4e] max-w-lg mx-auto">
               A toolbox of mini utilities. Click any card to expand it.
             </p>
           </motion.div>
 
           {/* Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {TOOLS.map((tool, i) => {
               const isOpen = activeId === tool.id;
               return (
                 <motion.div
                   key={tool.id}
                   layout
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
-                  className={`glass-strong rounded-2xl border transition-colors overflow-hidden ${
-                    isOpen ? 'border-purple-500/40' : 'border-purple-500/10 hover:border-purple-500/25'
+                  className={`glass-strong border transition-colors overflow-hidden ${
+                    isOpen
+                      ? 'border-[#c4a96a]/35'
+                      : 'border-[#c4a96a]/8 hover:border-[#c4a96a]/22'
                   }`}
                 >
-                  {/* Card header — always visible */}
+                  {/* Card header */}
                   <button
                     onClick={() => setActiveId(isOpen ? null : tool.id)}
                     className="w-full flex items-center gap-4 p-5 text-left group"
                   >
-                    {/* Icon */}
-                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${tool.accent} flex items-center justify-center font-mono text-white text-sm font-bold shrink-0 shadow-lg`}>
-                      {tool.icon}
+                    {/* Glyph badge */}
+                    <div className={`w-10 h-10 border flex items-center justify-center font-mono text-xs font-bold shrink-0 transition-colors ${
+                      isOpen
+                        ? 'bg-[#c4a96a]/15 border-[#c4a96a]/40 text-[#e8e1d4]'
+                        : 'glass border-[#c4a96a]/12 text-[#9a8060] group-hover:border-[#c4a96a]/28'
+                    }`}>
+                      {tool.glyph}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <p className="font-mono text-sm text-purple-200 group-hover:text-white transition-colors truncate">
+                      <p className={`font-mono text-sm transition-colors truncate ${isOpen ? 'text-[#e8e1d4]' : 'text-[#a89880] group-hover:text-[#e8e1d4]'}`}>
                         {tool.label}
                       </p>
-                      <p className="font-mono text-[11px] text-purple-400/50 truncate mt-0.5">
+                      <p className="font-mono text-[11px] text-[#4a4035] truncate mt-0.5">
                         {tool.description}
                       </p>
                     </div>
 
-                    {/* Chevron */}
-                    <motion.div
-                      animate={{ rotate: isOpen ? 180 : 0 }}
-                      transition={{ duration: 0.25 }}
-                      className="shrink-0"
+                    {/* Expand indicator */}
+                    <svg
+                      className={`w-4 h-4 text-[#4a4035] shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                      fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     >
-                      <svg className="w-4 h-4 text-purple-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </motion.div>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
+                    </svg>
                   </button>
 
                   {/* Expanded content */}
-                  <AnimatePresence initial={false}>
+                  <AnimatePresence>
                     {isOpen && (
                       <motion.div
-                        key="content"
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                        className="overflow-hidden"
+                        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                        style={{ overflow: 'hidden' }}
                       >
-                        <div className="px-5 pb-5 border-t border-purple-500/10 pt-4">
+                        <div className="px-5 pb-5 border-t border-[#c4a96a]/8 pt-4">
                           {TOOL_COMPONENTS[tool.id]}
                         </div>
                       </motion.div>
@@ -646,13 +626,6 @@ export default function LabPage() {
           </div>
         </div>
       </div>
-
-      <style jsx global>{`
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(139,92,246,0.05); border-radius:10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(139,92,246,0.2); border-radius:10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(139,92,246,0.4); }
-      `}</style>
     </main>
   );
 }
