@@ -6,7 +6,7 @@ import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 type ToolId =
   | 'hash'
@@ -23,7 +23,7 @@ interface Tool {
   id: ToolId;
   label: string;
   description: string;
-  glyph: string;   // Short text glyph — no emoji
+  glyph: string;
 }
 
 // ─── Tool Registry ────────────────────────────────────────────────────────────
@@ -117,12 +117,12 @@ function OutputBox({ value, label }: { value: string; label?: string }) {
   if (!value) return null;
   return (
     <div className="mt-2">
-      {label && <p className="font-mono text-[10px] text-[#9a8060] uppercase tracking-widest mb-1">{label}</p>}
+      {label && <p className="font-mono text-[10px] text-white/25 uppercase tracking-widest mb-1">{label}</p>}
       <div className="flex gap-2 items-start">
-        <div className="flex-1 glass border border-[#c4a96a]/12 p-3 font-mono text-xs text-[#a89880] break-all whitespace-pre-wrap max-h-48 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 glass border border-white/7 p-3 font-mono text-xs text-white/55 break-all whitespace-pre-wrap max-h-48 overflow-y-auto custom-scrollbar">
           {value}
         </div>
-        <button onClick={copy} className="px-3 py-2 glass border border-[#c4a96a]/12 hover:border-[#c4a96a]/30 font-mono text-xs text-[#9a8060] hover:text-[#e8e1d4] transition-all flex items-center gap-1.5 shrink-0">
+        <button onClick={copy} className="px-3 py-2 glass border border-white/7 hover:border-white/18 font-mono text-xs text-white/30 hover:text-white transition-all flex items-center gap-1.5 shrink-0">
           Copy
         </button>
       </div>
@@ -137,7 +137,7 @@ function InputArea({ value, onChange, placeholder, rows = 3 }: { value: string; 
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
       rows={rows}
-      className="w-full glass border border-[#c4a96a]/12 focus:border-[#c4a96a]/35 p-3 font-mono text-xs text-[#a89880] placeholder:text-[#4a4035] focus:outline-none resize-none transition-colors bg-transparent"
+      className="w-full glass border border-white/7 focus:border-white/20 p-3 font-mono text-xs text-white/60 placeholder:text-white/20 focus:outline-none resize-none transition-colors bg-transparent"
     />
   );
 }
@@ -149,14 +149,14 @@ function InputField({ value, onChange, placeholder, type = 'text' }: { value: st
       value={value}
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
-      className="w-full glass border border-[#c4a96a]/12 focus:border-[#c4a96a]/35 px-3 py-2.5 font-mono text-xs text-[#a89880] placeholder:text-[#4a4035] focus:outline-none transition-colors bg-transparent"
+      className="w-full glass border border-white/7 focus:border-white/20 px-3 py-2.5 font-mono text-xs text-white/60 placeholder:text-white/20 focus:outline-none transition-colors bg-transparent"
     />
   );
 }
 
 function ActionButton({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
   return (
-    <button onClick={onClick} className="px-5 py-2 btn-gradient font-mono text-xs transition-all hover:opacity-90 active:scale-[0.98]">
+    <button onClick={onClick} className="px-5 py-2 btn-gradient font-mono text-xs transition-all hover:opacity-88 active:scale-[0.98]">
       {children}
     </button>
   );
@@ -211,7 +211,7 @@ function PasswordTool() {
   const Toggle = ({ label, value, onChange }: { label: string; value: boolean; onChange: (v: boolean) => void }) => (
     <button
       onClick={() => onChange(!value)}
-      className={`px-3 py-1.5 font-mono text-xs border transition-all ${value ? 'bg-[#c4a96a]/15 border-[#c4a96a]/40 text-[#e8e1d4]' : 'glass border-[#c4a96a]/8 text-[#4a4035]'}`}
+      className={`px-3 py-1.5 font-mono text-xs border transition-all ${value ? 'bg-white/10 border-white/25 text-white' : 'glass border-white/6 text-white/25'}`}
     >
       {label}
     </button>
@@ -220,9 +220,9 @@ function PasswordTool() {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3">
-        <span className="font-mono text-xs text-[#6a5e4e] w-20 shrink-0">Length: {length}</span>
+        <span className="font-mono text-xs text-white/30 w-20 shrink-0">Length: {length}</span>
         <input type="range" min={8} max={64} value={length} onChange={e => setLength(+e.target.value)}
-          className="flex-1 accent-[#c4a96a]" />
+          className="flex-1 accent-white" />
       </div>
       <div className="flex flex-wrap gap-2">
         <Toggle label="A–Z" value={useUpper}   onChange={setUseUpper}   />
@@ -243,7 +243,7 @@ function QRTool() {
   const generate = () => {
     if (!input) return;
     const encoded = encodeURIComponent(input);
-    setQrUrl(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encoded}&bgcolor=0c0b09&color=c4a96a&margin=10`);
+    setQrUrl(`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encoded}&bgcolor=000000&color=ffffff&margin=10`);
   };
 
   return (
@@ -252,10 +252,10 @@ function QRTool() {
       <ActionButton onClick={generate}>Generate QR</ActionButton>
       {qrUrl && (
         <div className="mt-3 flex flex-col items-center gap-3">
-          <div className="p-3 glass border border-[#c4a96a]/15">
+          <div className="p-3 glass border border-white/8">
             <img src={qrUrl} alt="QR Code" className="w-40 h-40" />
           </div>
-          <a href={qrUrl} download="qr.png" className="font-mono text-xs text-[#9a8060] hover:text-[#e8e1d4] transition-colors">
+          <a href={qrUrl} download="qr.png" className="font-mono text-xs text-white/30 hover:text-white transition-colors">
             Save PNG
           </a>
         </div>
@@ -296,13 +296,13 @@ function URLTool() {
     <div className="space-y-3">
       <InputField value={input} onChange={setInput} placeholder="https://example.com/path?foo=bar#hash" />
       <ActionButton onClick={parse}>Parse URL</ActionButton>
-      {error && <p className="font-mono text-xs text-red-400/80">{error}</p>}
+      {error && <p className="font-mono text-xs text-red-400/70">{error}</p>}
       {parsed && (
         <div className="mt-3 space-y-1.5">
           {Object.entries(parsed).map(([k, v]) => (
             <div key={k} className="grid grid-cols-[110px_1fr] gap-2 items-start">
-              <span className="font-mono text-[10px] text-[#9a8060] uppercase tracking-wider pt-0.5">{k}</span>
-              <span className="font-mono text-xs text-[#a89880] glass border border-[#c4a96a]/10 px-2 py-1 break-all">{v}</span>
+              <span className="font-mono text-[10px] text-white/25 uppercase tracking-wider pt-0.5">{k}</span>
+              <span className="font-mono text-xs text-white/55 glass border border-white/6 px-2 py-1 break-all">{v}</span>
             </div>
           ))}
         </div>
@@ -337,7 +337,7 @@ function EncryptTool() {
       <div className="flex gap-2">
         {(['encrypt', 'decrypt'] as const).map(m => (
           <button key={m} onClick={() => { setMode(m); setOutput(''); setError(''); }}
-            className={`flex-1 py-2 font-mono text-xs border transition-all capitalize ${mode === m ? 'bg-[#c4a96a]/15 border-[#c4a96a]/40 text-[#e8e1d4]' : 'glass border-[#c4a96a]/8 text-[#4a4035]'}`}>
+            className={`flex-1 py-2 font-mono text-xs border transition-all capitalize ${mode === m ? 'bg-white/10 border-white/25 text-white' : 'glass border-white/6 text-white/25'}`}>
             {m}
           </button>
         ))}
@@ -345,7 +345,7 @@ function EncryptTool() {
       <InputArea value={text} onChange={setText} placeholder={mode === 'encrypt' ? 'Text to encrypt...' : 'Ciphertext to decrypt...'} rows={3} />
       <InputField value={passphrase} onChange={setPassphrase} placeholder="Passphrase / key..." type="password" />
       <ActionButton onClick={run}>{mode === 'encrypt' ? 'Encrypt' : 'Decrypt'}</ActionButton>
-      {error && <p className="font-mono text-xs text-red-400/80 mt-2">{error}</p>}
+      {error && <p className="font-mono text-xs text-red-400/70 mt-2">{error}</p>}
       <OutputBox value={output} label={mode === 'encrypt' ? 'Encrypted (AES-GCM)' : 'Decrypted Text'} />
     </div>
   );
@@ -384,16 +384,16 @@ function RegexTool() {
         </div>
       </div>
       <InputArea value={testStr} onChange={setTestStr} placeholder="Test string..." rows={4} />
-      {error && <p className="font-mono text-xs text-red-400/80">{error}</p>}
+      {error && <p className="font-mono text-xs text-red-400/70">{error}</p>}
       {pattern && testStr && !error && (
         <div className="mt-2">
-          <p className="font-mono text-[10px] text-[#9a8060] uppercase tracking-widest mb-1">
+          <p className="font-mono text-[10px] text-white/25 uppercase tracking-widest mb-1">
             {matchCount} match{matchCount !== 1 ? 'es' : ''}
           </p>
-          <div className="glass border border-[#c4a96a]/10 p-3 font-mono text-xs text-[#a89880] leading-relaxed break-all">
+          <div className="glass border border-white/6 p-3 font-mono text-xs text-white/55 leading-relaxed break-all">
             {parts.map((part, i) =>
               i % 2 === 1
-                ? <mark key={i} className="bg-[#c4a96a]/25 text-[#e8e1d4] px-0.5">{part}</mark>
+                ? <mark key={i} className="bg-white/15 text-white px-0.5">{part}</mark>
                 : <span key={i}>{part}</span>
             )}
           </div>
@@ -424,7 +424,7 @@ function JSONTool() {
         <ActionButton onClick={format}>Prettify</ActionButton>
         <ActionButton onClick={minify}>Minify</ActionButton>
       </div>
-      {error && <p className="font-mono text-xs text-red-400/80">{error}</p>}
+      {error && <p className="font-mono text-xs text-red-400/70">{error}</p>}
       <OutputBox value={output} label="Output" />
     </div>
   );
@@ -453,7 +453,7 @@ function JWTTool() {
   return (
     <div className="space-y-3">
       <InputArea value={input} onChange={setInput} placeholder="Paste JWT token here..." rows={3} />
-      {parseError && <p className="font-mono text-xs text-red-400/80">{parseError}</p>}
+      {parseError && <p className="font-mono text-xs text-red-400/70">{parseError}</p>}
       {header  && <OutputBox value={header}  label="Header"    />}
       {payload && <OutputBox value={payload} label="Payload"   />}
       {sigNote && <OutputBox value={sigNote} label="Signature" />}
@@ -485,14 +485,14 @@ function Base64Tool() {
       <div className="flex gap-2">
         {(['encode', 'decode'] as const).map(m => (
           <button key={m} onClick={() => { setMode(m); setOutput(''); setError(''); }}
-            className={`flex-1 py-2 font-mono text-xs border transition-all capitalize ${mode === m ? 'bg-[#c4a96a]/15 border-[#c4a96a]/40 text-[#e8e1d4]' : 'glass border-[#c4a96a]/8 text-[#4a4035]'}`}>
+            className={`flex-1 py-2 font-mono text-xs border transition-all capitalize ${mode === m ? 'bg-white/10 border-white/25 text-white' : 'glass border-white/6 text-white/25'}`}>
             {m}
           </button>
         ))}
       </div>
       <InputArea value={input} onChange={v => { setInput(v); setOutput(''); }} placeholder={mode === 'encode' ? 'Text to encode...' : 'Base64 to decode...'} rows={3} />
       <ActionButton onClick={run}>{mode === 'encode' ? 'Encode' : 'Decode'}</ActionButton>
-      {error && <p className="font-mono text-xs text-red-400/80">{error}</p>}
+      {error && <p className="font-mono text-xs text-red-400/70">{error}</p>}
       <OutputBox value={output} label="Result" />
     </div>
   );
@@ -518,18 +518,18 @@ export default function LabPage() {
   const [activeId, setActiveId] = useState<ToolId | null>(null);
 
   return (
-    <main className="relative bg-[#0c0b09] min-h-screen">
+    <main className="relative bg-black min-h-screen">
 
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-[#c4a96a]/10">
+      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/6">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="font-display text-xl text-[#e8e1d4] font-light tracking-wide">DOOM</Link>
+          <Link href="/" className="font-display text-xl text-white font-light tracking-wide">DOOM</Link>
           <div className="flex items-center gap-8">
-            <Link href="/"          className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Home</Link>
-            <Link href="/#projects" className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Projects</Link>
-            <Link href="/ocr"       className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">OCR</Link>
-            <Link href="/chess"     className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Chess</Link>
-            <Link href="/lab"       className="font-mono text-sm text-[#e8e1d4] border-b border-[#c4a96a]/60 pb-px">Lab</Link>
+            <Link href="/"          className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Home</Link>
+            <Link href="/#projects" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Projects</Link>
+            <Link href="/ocr"       className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">OCR</Link>
+            <Link href="/chess"     className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Chess</Link>
+            <Link href="/lab"       className="font-mono text-sm text-white border-b border-white/50 pb-px">Lab</Link>
           </div>
         </div>
       </nav>
@@ -544,13 +544,13 @@ export default function LabPage() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="text-center mb-14"
           >
-            <span className="inline-block px-5 py-1.5 glass border border-[#c4a96a]/15 font-mono text-xs tracking-[0.22em] text-[#9a8060] uppercase mb-5">
+            <span className="inline-block px-5 py-1.5 glass border border-white/8 font-mono text-xs tracking-[0.22em] text-white/30 uppercase mb-5">
               Client-side &nbsp;/&nbsp; No data leaves your browser
             </span>
             <h1 className="font-display text-5xl md:text-7xl text-gradient mb-4 font-light tracking-tight">
               Hacker Lab
             </h1>
-            <p className="font-mono text-sm text-[#6a5e4e] max-w-lg mx-auto">
+            <p className="font-mono text-sm text-white/30 max-w-lg mx-auto">
               A toolbox of mini utilities. Click any card to expand it.
             </p>
           </motion.div>
@@ -568,8 +568,8 @@ export default function LabPage() {
                   transition={{ duration: 0.5, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
                   className={`glass-strong border transition-colors overflow-hidden ${
                     isOpen
-                      ? 'border-[#c4a96a]/35'
-                      : 'border-[#c4a96a]/8 hover:border-[#c4a96a]/22'
+                      ? 'border-white/20'
+                      : 'border-white/6 hover:border-white/13'
                   }`}
                 >
                   {/* Card header */}
@@ -580,24 +580,24 @@ export default function LabPage() {
                     {/* Glyph badge */}
                     <div className={`w-10 h-10 border flex items-center justify-center font-mono text-xs font-bold shrink-0 transition-colors ${
                       isOpen
-                        ? 'bg-[#c4a96a]/15 border-[#c4a96a]/40 text-[#e8e1d4]'
-                        : 'glass border-[#c4a96a]/12 text-[#9a8060] group-hover:border-[#c4a96a]/28'
+                        ? 'bg-white/10 border-white/25 text-white'
+                        : 'glass border-white/8 text-white/30 group-hover:border-white/18'
                     }`}>
                       {tool.glyph}
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <p className={`font-mono text-sm transition-colors truncate ${isOpen ? 'text-[#e8e1d4]' : 'text-[#a89880] group-hover:text-[#e8e1d4]'}`}>
+                      <p className={`font-mono text-sm transition-colors truncate ${isOpen ? 'text-white' : 'text-white/55 group-hover:text-white'}`}>
                         {tool.label}
                       </p>
-                      <p className="font-mono text-[11px] text-[#4a4035] truncate mt-0.5">
+                      <p className="font-mono text-[11px] text-white/20 truncate mt-0.5">
                         {tool.description}
                       </p>
                     </div>
 
-                    {/* Expand indicator */}
+                    {/* Chevron */}
                     <svg
-                      className={`w-4 h-4 text-[#4a4035] shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                      className={`w-4 h-4 text-white/20 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
                       fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 9l-7 7-7-7" />
@@ -614,7 +614,7 @@ export default function LabPage() {
                         transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                         style={{ overflow: 'hidden' }}
                       >
-                        <div className="px-5 pb-5 border-t border-[#c4a96a]/8 pt-4">
+                        <div className="px-5 pb-5 border-t border-white/5 pt-4">
                           {TOOL_COMPONENTS[tool.id]}
                         </div>
                       </motion.div>
