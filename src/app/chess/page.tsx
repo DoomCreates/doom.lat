@@ -229,8 +229,8 @@ export default function ChessPage() {
 
   const squareStyles: Record<string, React.CSSProperties> = {};
   if (lastMove) {
-    squareStyles[lastMove.from] = { backgroundColor: 'rgba(196, 169, 106, 0.28)' };
-    squareStyles[lastMove.to]   = { backgroundColor: 'rgba(196, 169, 106, 0.45)' };
+    squareStyles[lastMove.from] = { backgroundColor: 'rgba(255, 255, 255, 0.12)' };
+    squareStyles[lastMove.to]   = { backgroundColor: 'rgba(255, 255, 255, 0.20)' };
   }
 
   const movePairs = moveHistory.reduce<string[][]>((acc, m, i) => {
@@ -238,20 +238,20 @@ export default function ChessPage() {
     return acc;
   }, []);
 
-  if (!mounted) return <div className="min-h-screen bg-[#0c0b09]" />;
+  if (!mounted) return <div className="min-h-screen bg-black" />;
 
   return (
-    <main className="relative bg-[#0c0b09] min-h-screen">
+    <main className="relative bg-black min-h-screen">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-[#c4a96a]/10">
+      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/6">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="font-display text-xl text-[#e8e1d4] font-light tracking-wide">DOOM</Link>
+          <Link href="/" className="font-display text-xl text-white font-light tracking-wide">DOOM</Link>
           <div className="flex items-center gap-8">
-            <Link href="/" className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Home</Link>
-            <Link href="/#projects" className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Projects</Link>
-            <Link href="/ocr" className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">OCR Tool</Link>
-            <Link href="/chess" className="font-mono text-sm text-[#e8e1d4] border-b border-[#c4a96a]/60 pb-px">Chess</Link>
-            <Link href="/lab" className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Lab</Link>
+            <Link href="/" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Home</Link>
+            <Link href="/#projects" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Projects</Link>
+            <Link href="/ocr" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">OCR Tool</Link>
+            <Link href="/chess" className="font-mono text-sm text-white border-b border-white/50 pb-px">Chess</Link>
+            <Link href="/lab" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Lab</Link>
           </div>
         </div>
       </nav>
@@ -266,11 +266,11 @@ export default function ChessPage() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="text-center mb-12"
           >
-            <span className="inline-block px-5 py-1.5 glass border border-[#c4a96a]/15 font-mono text-xs tracking-[0.22em] text-[#9a8060] uppercase mb-5">
+            <span className="inline-block px-5 py-1.5 glass border border-white/8 font-mono text-xs tracking-[0.22em] text-white/30 uppercase mb-5">
               Minimax &nbsp;/&nbsp; Alpha-Beta Pruning
             </span>
             <h1 className="font-display text-5xl md:text-7xl text-gradient mb-4 font-light tracking-tight">Chess</h1>
-            <p className="font-mono text-sm text-[#6a5e4e]">You play White. The engine plays Black.</p>
+            <p className="font-mono text-sm text-white/30">You play White. The engine plays Black.</p>
           </motion.div>
 
           <div className="grid lg:grid-cols-[1fr_300px] gap-8 items-start">
@@ -283,15 +283,15 @@ export default function ChessPage() {
               className="relative"
             >
               {/* Corner marks */}
-              <div className="absolute -top-3 -left-3 w-14 h-14 border-t border-l border-[#c4a96a]/20 pointer-events-none" />
-              <div className="absolute -bottom-3 -right-3 w-14 h-14 border-b border-r border-[#c4a96a]/15 pointer-events-none" />
+              <div className="absolute -top-3 -left-3 w-14 h-14 border-t border-l border-white/10 pointer-events-none" />
+              <div className="absolute -bottom-3 -right-3 w-14 h-14 border-b border-r border-white/8 pointer-events-none" />
 
-              <div className="glass-strong border border-[#c4a96a]/12 p-4 shadow-2xl">
+              <div className="glass-strong border border-white/7 p-4 shadow-2xl">
                 {/* Status bar */}
                 <div className="flex items-center justify-between mb-4 px-1">
                   <div className="flex items-center gap-2">
-                    <div className={`w-1.5 h-1.5 transition-colors ${isThinking ? 'bg-[#c4a96a] animate-pulse' : 'bg-[#7a9a6a]'}`} />
-                    <span className="font-mono text-xs text-[#6a5e4e]">
+                    <div className={`w-1.5 h-1.5 transition-colors ${isThinking ? 'bg-white/60 animate-pulse' : 'bg-white/30'}`} />
+                    <span className="font-mono text-xs text-white/25">
                       {isThinking ? 'Thinking...' : 'Ready'}
                     </span>
                   </div>
@@ -302,8 +302,8 @@ export default function ChessPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 4 }}
                       className={`font-mono text-xs ${
-                        gameStatus !== 'playing' ? 'text-[#c4a96a]' :
-                        isThinking ? 'text-[#9a8060]' : 'text-[#6a5e4e]'
+                        gameStatus !== 'playing' ? 'text-white/80' :
+                        isThinking ? 'text-white/40' : 'text-white/30'
                       }`}
                     >
                       {statusMessage}
@@ -313,9 +313,9 @@ export default function ChessPage() {
 
                 {/* Thinking bar */}
                 {isThinking && (
-                  <div className="h-px mb-4 overflow-hidden bg-[#c4a96a]/10">
+                  <div className="h-px mb-4 overflow-hidden bg-white/8">
                     <motion.div
-                      className="h-full w-1/3 bg-gradient-to-r from-transparent via-[#c4a96a] to-transparent"
+                      className="h-full w-1/3 bg-gradient-to-r from-transparent via-white/50 to-transparent"
                       animate={{ x: ['-200%', '400%'] }}
                       transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
                     />
@@ -327,9 +327,9 @@ export default function ChessPage() {
                   onPieceDrop={onDrop}
                   boardOrientation="white"
                   customSquareStyles={squareStyles}
-                  customDarkSquareStyle={{ backgroundColor: '#2a2218' }}
-                  customLightSquareStyle={{ backgroundColor: '#1a1510' }}
-                  customBoardStyle={{ boxShadow: '0 0 40px rgba(196,169,106,0.08)' }}
+                  customDarkSquareStyle={{ backgroundColor: '#1a1a1a' }}
+                  customLightSquareStyle={{ backgroundColor: '#0d0d0d' }}
+                  customBoardStyle={{ boxShadow: 'none' }}
                   animationDuration={150}
                   arePiecesDraggable={!isThinking && gameStatus === 'playing'}
                 />
@@ -344,8 +344,8 @@ export default function ChessPage() {
               className="space-y-4"
             >
               {/* Difficulty */}
-              <div className="glass-strong border border-[#c4a96a]/12 p-5">
-                <h3 className="font-mono text-xs text-[#4a4035] uppercase tracking-[0.2em] mb-4">Difficulty</h3>
+              <div className="glass-strong border border-white/7 p-5">
+                <h3 className="font-mono text-xs text-white/20 uppercase tracking-[0.2em] mb-4">Difficulty</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {(Object.keys(DIFFICULTY_DEPTH) as Difficulty[]).map(d => (
                     <button
@@ -353,19 +353,19 @@ export default function ChessPage() {
                       onClick={() => { setDifficulty(d); resetGame(); }}
                       className={`px-3 py-2.5 font-mono text-xs transition-all border ${
                         difficulty === d
-                          ? 'bg-[#c4a96a]/15 border-[#c4a96a]/40 text-[#e8e1d4]'
-                          : 'glass border-[#c4a96a]/8 text-[#6a5e4e] hover:border-[#c4a96a]/25 hover:text-[#a89880]'
+                          ? 'bg-white/10 border-white/25 text-white'
+                          : 'glass border-white/6 text-white/30 hover:border-white/15 hover:text-white/60'
                       }`}
                     >
                       <div className="font-medium">{DIFFICULTY_INFO[d].label}</div>
-                      <div className="text-[10px] opacity-60 mt-0.5">{DIFFICULTY_INFO[d].elo}</div>
+                      <div className="text-[10px] opacity-50 mt-0.5">{DIFFICULTY_INFO[d].elo}</div>
                     </button>
                   ))}
                 </div>
               </div>
 
               {/* New Game */}
-              <div className="glass-strong border border-[#c4a96a]/12 p-5">
+              <div className="glass-strong border border-white/7 p-5">
                 <button
                   onClick={resetGame}
                   className="w-full px-4 py-3 btn-gradient font-mono text-sm flex items-center justify-center gap-2"
@@ -378,16 +378,16 @@ export default function ChessPage() {
               </div>
 
               {/* Move History */}
-              <div className="glass-strong border border-[#c4a96a]/12 p-5">
-                <h3 className="font-mono text-xs text-[#4a4035] uppercase tracking-[0.2em] mb-4">Move History</h3>
+              <div className="glass-strong border border-white/7 p-5">
+                <h3 className="font-mono text-xs text-white/20 uppercase tracking-[0.2em] mb-4">Move History</h3>
                 <div ref={historyRef} className="max-h-72 overflow-y-auto custom-scrollbar space-y-1">
                   {movePairs.length === 0 ? (
-                    <p className="font-mono text-xs text-[#4a4035] text-center py-6">No moves yet</p>
+                    <p className="font-mono text-xs text-white/20 text-center py-6">No moves yet</p>
                   ) : movePairs.map((pair, i) => (
                     <div key={i} className="grid grid-cols-[24px_1fr_1fr] gap-1 items-center">
-                      <span className="font-mono text-[10px] text-[#4a4035]">{i + 1}.</span>
-                      <span className="font-mono text-xs text-[#a89880] bg-[#c4a96a]/5 px-2 py-0.5">{pair[0]}</span>
-                      {pair[1] && <span className="font-mono text-xs text-[#6a5e4e] bg-[#c4a96a]/5 px-2 py-0.5">{pair[1]}</span>}
+                      <span className="font-mono text-[10px] text-white/20">{i + 1}.</span>
+                      <span className="font-mono text-xs text-white/55 bg-white/4 px-2 py-0.5">{pair[0]}</span>
+                      {pair[1] && <span className="font-mono text-xs text-white/30 bg-white/4 px-2 py-0.5">{pair[1]}</span>}
                     </div>
                   ))}
                 </div>
@@ -398,12 +398,12 @@ export default function ChessPage() {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="glass-strong border border-[#c4a96a]/25 p-6 text-center"
+                  className="glass-strong border border-white/15 p-6 text-center"
                 >
                   <p className="font-display text-2xl text-gradient mb-2 font-light">
                     {gameStatus === 'checkmate' ? 'Game Over' : 'Draw'}
                   </p>
-                  <p className="font-mono text-xs text-[#6a5e4e] mb-4">{statusMessage}</p>
+                  <p className="font-mono text-xs text-white/30 mb-4">{statusMessage}</p>
                   <button onClick={resetGame} className="px-6 py-2 btn-gradient font-mono text-sm">
                     Play Again
                   </button>
