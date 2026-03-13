@@ -78,17 +78,17 @@ export default function OCRPage() {
   };
 
   return (
-    <main className="relative bg-[#0c0b09] min-h-screen">
+    <main className="relative bg-black min-h-screen">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-[#c4a96a]/10">
+      <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/6">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="font-display text-xl text-[#e8e1d4] font-light tracking-wide">DOOM</Link>
+          <Link href="/" className="font-display text-xl text-white font-light tracking-wide">DOOM</Link>
           <div className="flex items-center gap-8">
-            <Link href="/" className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Home</Link>
-            <Link href="/#projects" className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Projects</Link>
-            <Link href="/ocr" className="font-mono text-sm text-[#e8e1d4] border-b border-[#c4a96a]/60 pb-px">OCR Tool</Link>
-            <Link href="/chess" className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Chess</Link>
-            <Link href="/lab" className="font-mono text-sm text-[#6a5e4e] hover:text-[#a89880] transition-colors">Lab</Link>
+            <Link href="/" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Home</Link>
+            <Link href="/#projects" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Projects</Link>
+            <Link href="/ocr" className="font-mono text-sm text-white border-b border-white/50 pb-px">OCR Tool</Link>
+            <Link href="/chess" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Chess</Link>
+            <Link href="/lab" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Lab</Link>
           </div>
         </div>
       </nav>
@@ -103,11 +103,11 @@ export default function OCRPage() {
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="text-center mb-12"
           >
-            <span className="inline-block px-5 py-1.5 glass border border-[#c4a96a]/15 font-mono text-xs tracking-[0.22em] text-[#9a8060] uppercase mb-5">
+            <span className="inline-block px-5 py-1.5 glass border border-white/8 font-mono text-xs tracking-[0.22em] text-white/30 uppercase mb-5">
               Client-side &nbsp;/&nbsp; No uploads &nbsp;/&nbsp; Tesseract.js
             </span>
             <h1 className="font-display text-5xl md:text-7xl text-gradient mb-4 font-light tracking-tight">OCR Tool</h1>
-            <p className="font-mono text-sm text-[#6a5e4e]">
+            <p className="font-mono text-sm text-white/30">
               Drop images to extract text. Everything runs in your browser.
             </p>
           </motion.div>
@@ -122,28 +122,28 @@ export default function OCRPage() {
               {...getRootProps()}
               className={`relative glass-strong border transition-all cursor-pointer p-12 text-center
                 ${isDragActive
-                  ? 'border-[#c4a96a]/50 bg-[#c4a96a]/5'
-                  : 'border-[#c4a96a]/12 hover:border-[#c4a96a]/28 hover:bg-[#c4a96a]/3'
+                  ? 'border-white/30 bg-white/5'
+                  : 'border-white/8 hover:border-white/18 hover:bg-white/3'
                 }`}
             >
               <input {...getInputProps()} />
 
               {/* Corner accents */}
-              <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-[#c4a96a]/20 pointer-events-none" />
-              <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-[#c4a96a]/15 pointer-events-none" />
+              <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-white/12 pointer-events-none" />
+              <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-white/8 pointer-events-none" />
 
               <div className="flex flex-col items-center gap-4">
-                <div className="w-14 h-14 glass border border-[#c4a96a]/15 flex items-center justify-center">
-                  <svg className="w-7 h-7 text-[#9a8060]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-14 h-14 glass border border-white/8 flex items-center justify-center">
+                  <svg className="w-7 h-7 text-white/25" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2}
                       d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="font-mono text-sm text-[#a89880] mb-1">
+                  <p className="font-mono text-sm text-white/45 mb-1">
                     {isDragActive ? 'Drop your images here' : 'Drag & drop images, or click to browse'}
                   </p>
-                  <p className="font-mono text-xs text-[#4a4035]">
+                  <p className="font-mono text-xs text-white/20">
                     PNG / JPG / WEBP / BMP / TIFF &mdash; Multiple files supported
                   </p>
                 </div>
@@ -165,21 +165,21 @@ export default function OCRPage() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.97 }}
-                    className="glass-strong border border-[#c4a96a]/12 overflow-hidden"
+                    className="glass-strong border border-white/7 overflow-hidden"
                   >
                     {/* Card header */}
-                    <div className="flex items-center justify-between px-5 py-4 border-b border-[#c4a96a]/8">
+                    <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
                       <div className="flex items-center gap-3">
                         <img
                           src={result.preview}
                           alt={result.file.name}
-                          className="w-10 h-10 object-cover border border-[#c4a96a]/15"
+                          className="w-10 h-10 object-cover border border-white/8"
                         />
                         <div>
-                          <p className="font-mono text-sm text-[#e8e1d4] truncate max-w-[200px] md:max-w-sm">
+                          <p className="font-mono text-sm text-white/70 truncate max-w-[200px] md:max-w-sm">
                             {result.file.name}
                           </p>
-                          <p className="font-mono text-[10px] text-[#4a4035] mt-0.5">
+                          <p className="font-mono text-[10px] text-white/20 mt-0.5">
                             {(result.file.size / 1024).toFixed(1)} KB
                           </p>
                         </div>
@@ -189,13 +189,13 @@ export default function OCRPage() {
                           <>
                             <button
                               onClick={() => copyText(result.text)}
-                              className="px-3 py-1.5 glass border border-[#c4a96a]/15 hover:border-[#c4a96a]/35 font-mono text-xs text-[#a89880] hover:text-[#e8e1d4] transition-all"
+                              className="px-3 py-1.5 glass border border-white/8 hover:border-white/20 font-mono text-xs text-white/40 hover:text-white transition-all"
                             >
                               Copy
                             </button>
                             <button
                               onClick={() => downloadText(result.text, result.file.name)}
-                              className="px-3 py-1.5 glass border border-[#c4a96a]/15 hover:border-[#c4a96a]/35 font-mono text-xs text-[#a89880] hover:text-[#e8e1d4] transition-all"
+                              className="px-3 py-1.5 glass border border-white/8 hover:border-white/20 font-mono text-xs text-white/40 hover:text-white transition-all"
                             >
                               Save TXT
                             </button>
@@ -203,7 +203,7 @@ export default function OCRPage() {
                         )}
                         <button
                           onClick={() => removeResult(result.id)}
-                          className="w-7 h-7 glass border border-[#c4a96a]/10 hover:border-[#c4a96a]/30 flex items-center justify-center text-[#6a5e4e] hover:text-[#e8e1d4] transition-all font-mono text-sm"
+                          className="w-7 h-7 glass border border-white/6 hover:border-white/18 flex items-center justify-center text-white/25 hover:text-white transition-all font-mono text-sm"
                         >
                           &times;
                         </button>
@@ -214,12 +214,12 @@ export default function OCRPage() {
                     {result.status === 'processing' && (
                       <div className="px-5 py-4">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="font-mono text-xs text-[#6a5e4e]">Processing...</span>
-                          <span className="font-mono text-xs text-[#4a4035]">{result.progress}%</span>
+                          <span className="font-mono text-xs text-white/30">Processing...</span>
+                          <span className="font-mono text-xs text-white/20">{result.progress}%</span>
                         </div>
-                        <div className="h-px bg-[#c4a96a]/10 overflow-hidden">
+                        <div className="h-px bg-white/8 overflow-hidden">
                           <motion.div
-                            className="h-full bg-gradient-to-r from-[#c4a96a] to-[#9a7a45]"
+                            className="h-full bg-white/60"
                             animate={{ width: `${result.progress}%` }}
                             transition={{ duration: 0.3 }}
                           />
@@ -229,18 +229,18 @@ export default function OCRPage() {
 
                     {result.status === 'error' && (
                       <div className="px-5 py-4">
-                        <p className="font-mono text-xs text-red-400/80">{result.error}</p>
+                        <p className="font-mono text-xs text-red-400/70">{result.error}</p>
                       </div>
                     )}
 
                     {result.status === 'done' && (
                       <div className="px-5 py-4">
                         {result.text.trim() ? (
-                          <pre className="font-mono text-xs text-[#a89880] whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto custom-scrollbar">
+                          <pre className="font-mono text-xs text-white/55 whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto custom-scrollbar">
                             {result.text}
                           </pre>
                         ) : (
-                          <p className="font-mono text-xs text-[#4a4035] italic">No text detected in this image.</p>
+                          <p className="font-mono text-xs text-white/20 italic">No text detected in this image.</p>
                         )}
                       </div>
                     )}
