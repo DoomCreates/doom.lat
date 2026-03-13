@@ -4,20 +4,20 @@
 
 /* ─── Design Tokens ──────────────────────────────────────── */
 :root {
-  --bg:          #0c0b09;
-  --bg-raised:   #141210;
-  --bg-card:     #1a1714;
-  --border:      rgba(200, 185, 155, 0.10);
-  --border-mid:  rgba(200, 185, 155, 0.18);
-  --border-hi:   rgba(200, 185, 155, 0.32);
+  --bg:          #000000;
+  --bg-raised:   #0a0a0a;
+  --bg-card:     #111111;
+  --border:      rgba(255, 255, 255, 0.07);
+  --border-mid:  rgba(255, 255, 255, 0.13);
+  --border-hi:   rgba(255, 255, 255, 0.25);
 
-  --text-primary:   #e8e1d4;
-  --text-secondary: #a89880;
-  --text-muted:     #6a5e4e;
+  --text-primary:   #ffffff;
+  --text-secondary: #888888;
+  --text-muted:     #444444;
 
-  --accent:      #c4a96a;
-  --accent-dim:  rgba(196, 169, 106, 0.15);
-  --accent-glow: rgba(196, 169, 106, 0.25);
+  --accent:      #ffffff;
+  --accent-dim:  rgba(255, 255, 255, 0.08);
+  --accent-glow: rgba(255, 255, 255, 0.06);
 }
 
 /* ─── Base ───────────────────────────────────────────────── */
@@ -26,8 +26,8 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background: var(--bg);
-  color: var(--text-primary);
+  background: #000000;
+  color: #ffffff;
   font-family: inherit;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -35,27 +35,27 @@ body {
 
 /* ─── Glass Surfaces ─────────────────────────────────────── */
 .glass {
-  background: rgba(26, 23, 20, 0.55);
-  backdrop-filter: blur(12px) saturate(120%);
-  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .glass-strong {
-  background: rgba(26, 23, 20, 0.80);
-  backdrop-filter: blur(20px) saturate(130%);
-  -webkit-backdrop-filter: blur(20px) saturate(130%);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 /* ─── Typography Utilities ───────────────────────────────── */
 .text-gradient {
-  background: linear-gradient(135deg, #e8e1d4 0%, #c4a96a 50%, #e8e1d4 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #888888 50%, #ffffff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .text-gradient-soft {
-  background: linear-gradient(135deg, #e8e1d4 0%, #b89e72 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #aaaaaa 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -63,63 +63,45 @@ body {
 
 /* ─── Buttons ────────────────────────────────────────────── */
 .btn-primary {
-  background: linear-gradient(135deg, #c4a96a 0%, #9a7a45 100%);
-  color: #0c0b09;
+  background: #ffffff;
+  color: #000000;
   font-weight: 600;
   transition: opacity 0.2s, transform 0.15s;
 }
-.btn-primary:hover  { opacity: 0.9; }
+.btn-primary:hover  { opacity: 0.88; }
 .btn-primary:active { transform: scale(0.97); }
 
-/* Legacy alias used across pages */
 .btn-gradient {
-  background: linear-gradient(135deg, #c4a96a 0%, #9a7a45 100%);
-  color: #0c0b09;
+  background: #ffffff;
+  color: #000000;
   font-weight: 600;
 }
 
-/* ─── Glow ───────────────────────────────────────────────── */
-.glow-accent {
-  box-shadow: 0 0 30px var(--accent-glow), 0 0 60px rgba(196, 169, 106, 0.08);
-}
-
-/* Legacy alias */
-.glow-purple { box-shadow: 0 0 30px var(--accent-glow); }
+/* ─── Glow (kept as stub — renders nothing on black) ─────── */
+.glow-accent  { box-shadow: none; }
+.glow-purple  { box-shadow: none; }
 
 /* ─── Subtle Grid Background ─────────────────────────────── */
 .grid-pattern {
   background-image:
-    linear-gradient(rgba(200, 185, 155, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(200, 185, 155, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
   background-size: 48px 48px;
-}
-
-/* ─── Noise texture overlay (adds grain/humanity) ────────── */
-.noise::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 200px 200px;
-  opacity: 0.4;
-  z-index: 0;
 }
 
 /* ─── Scrollbar ──────────────────────────────────────────── */
 .custom-scrollbar::-webkit-scrollbar       { width: 4px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: rgba(200, 185, 155, 0.04); }
+.custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.03); }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(196, 169, 106, 0.25);
+  background: rgba(255, 255, 255, 0.15);
   border-radius: 2px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(196, 169, 106, 0.45);
+  background: rgba(255, 255, 255, 0.30);
 }
 
-/* ─── Misc helpers ───────────────────────────────────────── */
+/* ─── Misc ───────────────────────────────────────────────── */
 ::selection {
-  background: rgba(196, 169, 106, 0.25);
-  color: #e8e1d4;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
 }
