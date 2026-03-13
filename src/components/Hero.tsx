@@ -24,16 +24,12 @@ const itemVariants = {
 export default function Hero() {
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-6 z-10 overflow-hidden">
-      {/* Ambient warmth */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#c4a96a]/[0.04] rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-[#9a7a45]/[0.03] rounded-full blur-3xl pointer-events-none" />
-
       {/* Grid pattern */}
       <div className="absolute inset-0 grid-pattern opacity-40 pointer-events-none" />
 
-      {/* Horizontal accent lines */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#c4a96a]/20 to-transparent pointer-events-none" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#c4a96a]/10 to-transparent pointer-events-none" />
+      {/* Top / bottom edge lines */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent pointer-events-none" />
 
       <motion.div
         variants={containerVariants}
@@ -43,7 +39,7 @@ export default function Hero() {
       >
         {/* Badge */}
         <motion.div variants={itemVariants} className="mb-8">
-          <span className="inline-block px-5 py-1.5 glass border border-[#c4a96a]/15 font-mono text-xs tracking-[0.25em] text-[#a89880] uppercase">
+          <span className="inline-block px-5 py-1.5 glass border border-white/8 font-mono text-xs tracking-[0.25em] text-white/40 uppercase">
             Developer &nbsp;/&nbsp; Creator &nbsp;/&nbsp; Engineer
           </span>
         </motion.div>
@@ -59,7 +55,7 @@ export default function Hero() {
         {/* Subheading */}
         <motion.p
           variants={itemVariants}
-          className="font-display text-2xl md:text-3xl text-[#a89880] mb-4 font-light"
+          className="font-display text-2xl md:text-3xl text-white/40 mb-4 font-light"
         >
           doom.lat
         </motion.p>
@@ -67,7 +63,7 @@ export default function Hero() {
         {/* Description */}
         <motion.p
           variants={itemVariants}
-          className="font-mono text-sm text-[#6a5e4e] max-w-2xl mx-auto leading-relaxed mb-4"
+          className="font-mono text-sm text-white/30 max-w-2xl mx-auto leading-relaxed mb-4"
         >
           Building things that shouldn&apos;t exist. Precision tools, experimental software,
           and whatever else demands to be made.
@@ -76,7 +72,7 @@ export default function Hero() {
         {/* Scroll hint */}
         <motion.p
           variants={itemVariants}
-          className="font-mono text-xs text-[#4a4035] tracking-[0.3em] uppercase mb-2"
+          className="font-mono text-xs text-white/20 tracking-[0.3em] uppercase mb-2"
         >
           Scroll to explore
         </motion.p>
@@ -84,7 +80,7 @@ export default function Hero() {
         {/* Divider */}
         <motion.div
           variants={itemVariants}
-          className="w-px h-10 bg-gradient-to-b from-[#c4a96a]/30 to-transparent mx-auto mb-2"
+          className="w-px h-10 bg-gradient-to-b from-white/20 to-transparent mx-auto mb-2"
         />
 
         {/* CTA Buttons */}
@@ -96,7 +92,7 @@ export default function Hero() {
             href="/ocr"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="px-7 py-2.5 glass border border-[#c4a96a]/20 hover:border-[#c4a96a]/40 font-mono text-sm text-[#a89880] hover:text-[#e8e1d4] transition-colors"
+            className="px-7 py-2.5 glass border border-white/10 hover:border-white/25 font-mono text-sm text-white/50 hover:text-white transition-colors"
           >
             OCR Tool
           </motion.a>
@@ -105,7 +101,7 @@ export default function Hero() {
             href="/chess"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="px-7 py-2.5 glass border border-[#c4a96a]/20 hover:border-[#c4a96a]/40 font-mono text-sm text-[#a89880] hover:text-[#e8e1d4] transition-colors"
+            className="px-7 py-2.5 glass border border-white/10 hover:border-white/25 font-mono text-sm text-white/50 hover:text-white transition-colors"
           >
             Chess
           </motion.a>
@@ -114,7 +110,7 @@ export default function Hero() {
             href="/lab"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            className="px-7 py-2.5 glass border border-[#c4a96a]/20 hover:border-[#c4a96a]/40 font-mono text-sm text-[#a89880] hover:text-[#e8e1d4] transition-colors"
+            className="px-7 py-2.5 glass border border-white/10 hover:border-white/25 font-mono text-sm text-white/50 hover:text-white transition-colors"
           >
             Hacker Lab
           </motion.a>
@@ -134,19 +130,19 @@ export default function Hero() {
           variants={itemVariants}
           className="flex items-center justify-center gap-8 mt-12"
         >
-          <Link href="#projects" className="font-mono text-xs text-[#4a4035] hover:text-[#a89880] transition-colors tracking-[0.15em] uppercase">
+          <Link href="#projects" className="font-mono text-xs text-white/20 hover:text-white/60 transition-colors tracking-[0.15em] uppercase">
             Projects
           </Link>
-          <div className="w-4 h-px bg-[#c4a96a]/20" />
-          <Link href="#quotes" className="font-mono text-xs text-[#4a4035] hover:text-[#a89880] transition-colors tracking-[0.15em] uppercase">
+          <div className="w-4 h-px bg-white/10" />
+          <Link href="#quotes" className="font-mono text-xs text-white/20 hover:text-white/60 transition-colors tracking-[0.15em] uppercase">
             Philosophy
           </Link>
-          <div className="w-4 h-px bg-[#c4a96a]/20" />
-          <Link href="#contact" className="font-mono text-xs text-[#4a4035] hover:text-[#a89880] transition-colors tracking-[0.15em] uppercase">
+          <div className="w-4 h-px bg-white/10" />
+          <Link href="#contact" className="font-mono text-xs text-white/20 hover:text-white/60 transition-colors tracking-[0.15em] uppercase">
             Contact
           </Link>
-          <div className="w-4 h-px bg-[#c4a96a]/20" />
-          <Link href="/lab" className="font-mono text-xs text-[#4a4035] hover:text-[#a89880] transition-colors tracking-[0.15em] uppercase">
+          <div className="w-4 h-px bg-white/10" />
+          <Link href="/lab" className="font-mono text-xs text-white/20 hover:text-white/60 transition-colors tracking-[0.15em] uppercase">
             Lab
           </Link>
         </motion.div>
