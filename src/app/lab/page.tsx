@@ -475,7 +475,7 @@ export default function LabPage() {
               Client-side / No data leaves your browser
             </span>
             <h1 className="font-display text-4xl sm:text-5xl md:text-7xl text-gradient mb-3 font-light tracking-tight">
-              Hacker Lab
+              CyberSec Lab
             </h1>
             <p className="font-mono text-xs md:text-sm text-white/30 max-w-sm mx-auto">
               A toolbox of mini utilities. Tap any card to expand it.
