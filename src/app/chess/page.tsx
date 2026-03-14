@@ -157,6 +157,7 @@ export default function ChessPage() {
   const [moveHistory, setMoveHistory] = useState<string[]>([]);
   const [statusMessage, setStatusMessage] = useState('Your move');
   const [lastMove, setLastMove] = useState<{ from: string; to: string } | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const historyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { setMounted(true); }, []);
@@ -244,56 +245,133 @@ export default function ChessPage() {
     <main className="relative bg-black min-h-screen">
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/6">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
           <Link href="/" className="font-display text-xl text-white font-light tracking-wide">DOOM</Link>
-          <div className="flex items-center gap-8">
+
+          {/* Desktop */}
+          <div className="hidden md:flex items-center gap-8">
             <Link href="/" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Home</Link>
             <Link href="/#projects" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Projects</Link>
             <Link href="/ocr" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">OCR Tool</Link>
             <Link href="/chess" className="font-mono text-sm text-white border-b border-white/50 pb-px">Chess</Link>
             <Link href="/lab" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Lab</Link>
           </div>
+
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMenuOpen(v => !v)}
+            className="md:hidden w-9 h-9 flex flex-col items-center justify-center gap-1.5"
+            aria-label="Toggle menu"
+          >
+            <span className={`block w-5 h-px bg-white/50 transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-[5px]' : ''}`} />
+            <span className={`block w-5 h-px bg-white/50 transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
+            <span className={`block w-5 h-px bg-white/50 transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-[5px]' : ''}`} />
+          </button>
         </div>
       </nav>
 
-      <div className="pt-24 px-6 pb-20">
+      {/* Mobile menu overlay */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 bg-black/98 backdrop-blur-md flex flex-col items-center justify-center gap-8 md:hidden"
+            onClick={() => setMenuOpen(false)}
+          >
+            {[
+              { href: '/', label: 'Home' },
+              { href: '/#projects', label: 'Projects' },
+              { href: '/ocr', label: 'OCR Tool' },
+              { href: '/chess', label: 'Chess' },
+              { href: '/lab', label: 'Lab' },
+            ].map(({ href, label }) => (
+              <Link key={href} href={href} onClick={() => setMenuOpen(false)}
+                className="font-mono text-2xl text-white/60 hover:text-white transition-colors tracking-[0.1em]">
+                {label}
+              </Link>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="pt-20 md:pt-24 px-4 sm:px-6 pb-20">
         <div className="max-w-7xl mx-auto">
 
           {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="text-center mb-12"
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="text-center mb-8 md:mb-12"
           >
-            <span className="inline-block px-5 py-1.5 glass border border-white/8 font-mono text-xs tracking-[0.22em] text-white/30 uppercase mb-5">
-              Minimax &nbsp;/&nbsp; Alpha-Beta Pruning
+            <span className="inline-block px-4 py-1.5 glass border border-white/8 font-mono text-[10px] md:text-xs tracking-[0.2em] text-white/30 uppercase mb-4">
+              Minimax / Alpha-Beta Pruning
             </span>
-            <h1 className="font-display text-5xl md:text-7xl text-gradient mb-4 font-light tracking-tight">Chess</h1>
-            <p className="font-mono text-sm text-white/30">You play White. The engine plays Black.</p>
+            <h1 className="font-display text-4xl sm:text-5xl md:text-7xl text-gradient mb-3 font-light tracking-tight">Chess</h1>
+            <p className="font-mono text-xs md:text-sm text-white/30">You play White. The engine plays Black.</p>
           </motion.div>
 
-          <div className="grid lg:grid-cols-[1fr_300px] gap-8 items-start">
+          {/* Difficulty selector — always visible, compact on mobile */}
+          <div className="mb-4 grid grid-cols-4 gap-2 lg:hidden">
+            {(Object.keys(DIFFICULTY_DEPTH) as Difficulty[]).map(d => (
+              <button
+                key={d}
+                onClick={() => { setDifficulty(d); resetGame(); }}
+                className={`py-2 font-mono text-xs border transition-all ${
+                  difficulty === d
+                    ? 'bg-white/10 border-white/25 text-white'
+                    : 'glass border-white/6 text-white/30'
+                }`}
+              >
+                {DIFFICULTY_INFO[d].label}
+              </button>
+            ))}
+          </div>
+
+          {/* Status bar — above board on mobile */}
+          <div className="flex items-center justify-between mb-3 lg:hidden px-1">
+            <div className="flex items-center gap-2">
+              <div className={`w-1.5 h-1.5 ${isThinking ? 'bg-white/60 animate-pulse' : 'bg-white/30'}`} />
+              <span className="font-mono text-xs text-white/25">{isThinking ? 'Thinking...' : 'Ready'}</span>
+            </div>
+            <span className={`font-mono text-xs ${gameStatus !== 'playing' ? 'text-white/80' : 'text-white/30'}`}>
+              {statusMessage}
+            </span>
+            <button onClick={resetGame} className="font-mono text-xs text-white/30 border border-white/10 px-3 py-1">
+              New
+            </button>
+          </div>
+
+          {/* Thinking bar */}
+          {isThinking && (
+            <div className="h-px mb-3 overflow-hidden bg-white/8 lg:hidden">
+              <motion.div
+                className="h-full w-1/3 bg-gradient-to-r from-transparent via-white/50 to-transparent"
+                animate={{ x: ['-200%', '400%'] }}
+                transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
+              />
+            </div>
+          )}
+
+          {/* Main layout: board full-width on mobile, sidebar on lg+ */}
+          <div className="grid lg:grid-cols-[1fr_300px] gap-6 items-start">
 
             {/* Board */}
             <motion.div
-              initial={{ opacity: 0, x: -40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.15 }}
               className="relative"
             >
-              {/* Corner marks */}
-              <div className="absolute -top-3 -left-3 w-14 h-14 border-t border-l border-white/10 pointer-events-none" />
-              <div className="absolute -bottom-3 -right-3 w-14 h-14 border-b border-r border-white/8 pointer-events-none" />
-
-              <div className="glass-strong border border-white/7 p-4 shadow-2xl">
-                {/* Status bar */}
-                <div className="flex items-center justify-between mb-4 px-1">
+              <div className="glass-strong border border-white/7 p-3 sm:p-4">
+                {/* Desktop-only status bar inside panel */}
+                <div className="hidden lg:flex items-center justify-between mb-4 px-1">
                   <div className="flex items-center gap-2">
-                    <div className={`w-1.5 h-1.5 transition-colors ${isThinking ? 'bg-white/60 animate-pulse' : 'bg-white/30'}`} />
-                    <span className="font-mono text-xs text-white/25">
-                      {isThinking ? 'Thinking...' : 'Ready'}
-                    </span>
+                    <div className={`w-1.5 h-1.5 ${isThinking ? 'bg-white/60 animate-pulse' : 'bg-white/30'}`} />
+                    <span className="font-mono text-xs text-white/25">{isThinking ? 'Thinking...' : 'Ready'}</span>
                   </div>
                   <AnimatePresence mode="wait">
                     <motion.span
@@ -301,19 +379,15 @@ export default function ChessPage() {
                       initial={{ opacity: 0, y: -4 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 4 }}
-                      className={`font-mono text-xs ${
-                        gameStatus !== 'playing' ? 'text-white/80' :
-                        isThinking ? 'text-white/40' : 'text-white/30'
-                      }`}
+                      className={`font-mono text-xs ${gameStatus !== 'playing' ? 'text-white/80' : 'text-white/30'}`}
                     >
                       {statusMessage}
                     </motion.span>
                   </AnimatePresence>
                 </div>
 
-                {/* Thinking bar */}
                 {isThinking && (
-                  <div className="h-px mb-4 overflow-hidden bg-white/8">
+                  <div className="hidden lg:block h-px mb-4 overflow-hidden bg-white/8">
                     <motion.div
                       className="h-full w-1/3 bg-gradient-to-r from-transparent via-white/50 to-transparent"
                       animate={{ x: ['-200%', '400%'] }}
@@ -336,22 +410,22 @@ export default function ChessPage() {
               </div>
             </motion.div>
 
-            {/* Sidebar */}
+            {/* Sidebar — shown below board on mobile, to the right on lg */}
             <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.25 }}
               className="space-y-4"
             >
-              {/* Difficulty */}
-              <div className="glass-strong border border-white/7 p-5">
+              {/* Difficulty — desktop only (mobile has the row above board) */}
+              <div className="hidden lg:block glass-strong border border-white/7 p-5">
                 <h3 className="font-mono text-xs text-white/20 uppercase tracking-[0.2em] mb-4">Difficulty</h3>
                 <div className="grid grid-cols-2 gap-2">
                   {(Object.keys(DIFFICULTY_DEPTH) as Difficulty[]).map(d => (
                     <button
                       key={d}
                       onClick={() => { setDifficulty(d); resetGame(); }}
-                      className={`px-3 py-2.5 font-mono text-xs transition-all border ${
+                      className={`px-3 py-2.5 font-mono text-xs border transition-all ${
                         difficulty === d
                           ? 'bg-white/10 border-white/25 text-white'
                           : 'glass border-white/6 text-white/30 hover:border-white/15 hover:text-white/60'
@@ -364,8 +438,8 @@ export default function ChessPage() {
                 </div>
               </div>
 
-              {/* New Game */}
-              <div className="glass-strong border border-white/7 p-5">
+              {/* New Game — desktop only (mobile has the "New" button above board) */}
+              <div className="hidden lg:block glass-strong border border-white/7 p-5">
                 <button
                   onClick={resetGame}
                   className="w-full px-4 py-3 btn-gradient font-mono text-sm flex items-center justify-center gap-2"
@@ -378,13 +452,13 @@ export default function ChessPage() {
               </div>
 
               {/* Move History */}
-              <div className="glass-strong border border-white/7 p-5">
-                <h3 className="font-mono text-xs text-white/20 uppercase tracking-[0.2em] mb-4">Move History</h3>
-                <div ref={historyRef} className="max-h-72 overflow-y-auto custom-scrollbar space-y-1">
+              <div className="glass-strong border border-white/7 p-4 sm:p-5">
+                <h3 className="font-mono text-xs text-white/20 uppercase tracking-[0.2em] mb-3">Move History</h3>
+                <div ref={historyRef} className="max-h-40 lg:max-h-72 overflow-y-auto custom-scrollbar space-y-1">
                   {movePairs.length === 0 ? (
-                    <p className="font-mono text-xs text-white/20 text-center py-6">No moves yet</p>
+                    <p className="font-mono text-xs text-white/20 text-center py-4">No moves yet</p>
                   ) : movePairs.map((pair, i) => (
-                    <div key={i} className="grid grid-cols-[24px_1fr_1fr] gap-1 items-center">
+                    <div key={i} className="grid grid-cols-[20px_1fr_1fr] gap-1 items-center">
                       <span className="font-mono text-[10px] text-white/20">{i + 1}.</span>
                       <span className="font-mono text-xs text-white/55 bg-white/4 px-2 py-0.5">{pair[0]}</span>
                       {pair[1] && <span className="font-mono text-xs text-white/30 bg-white/4 px-2 py-0.5">{pair[1]}</span>}
