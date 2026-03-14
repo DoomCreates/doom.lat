@@ -38,7 +38,7 @@ const PROJECTS = [
       "Movie-accurate voice and behavior"
     ],
     previewVideo: "/videos/JarvisShowcasePreview.mp4",
-    youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
+    youtubeUrl: "https://youtu.be/mFwV9RZCjDo",
     githubUrl: "https://github.com/DoomCreates/JarvisAI",
     label: "Open Source"
   },
