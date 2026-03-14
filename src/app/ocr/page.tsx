@@ -17,8 +17,35 @@ interface OCRResult {
   error?: string;
 }
 
+// ─── Shared mobile nav ────────────────────────────────────────────────────────
+function MobileMenuOverlay({ onClose }: { onClose: () => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-40 bg-black/98 backdrop-blur-md flex flex-col items-center justify-center gap-8 md:hidden"
+      onClick={onClose}
+    >
+      {[
+        { href: '/', label: 'Home' },
+        { href: '/#projects', label: 'Projects' },
+        { href: '/ocr', label: 'OCR Tool' },
+        { href: '/chess', label: 'Chess' },
+        { href: '/lab', label: 'Lab' },
+      ].map(({ href, label }) => (
+        <Link key={href} href={href} onClick={onClose} className="font-mono text-2xl text-white/60 hover:text-white transition-colors tracking-[0.1em]">
+          {label}
+        </Link>
+      ))}
+    </motion.div>
+  );
+}
+
 export default function OCRPage() {
   const [results, setResults] = useState<OCRResult[]>([]);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const processFile = useCallback(async (file: File) => {
     const id = Math.random().toString(36).slice(2);
@@ -81,70 +108,79 @@ export default function OCRPage() {
     <main className="relative bg-black min-h-screen">
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/6">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between">
           <Link href="/" className="font-display text-xl text-white font-light tracking-wide">DOOM</Link>
-          <div className="flex items-center gap-8">
+
+          {/* Desktop */}
+          <div className="hidden md:flex items-center gap-8">
             <Link href="/" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Home</Link>
             <Link href="/#projects" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Projects</Link>
             <Link href="/ocr" className="font-mono text-sm text-white border-b border-white/50 pb-px">OCR Tool</Link>
             <Link href="/chess" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Chess</Link>
             <Link href="/lab" className="font-mono text-sm text-white/30 hover:text-white/70 transition-colors">Lab</Link>
           </div>
+
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMenuOpen(v => !v)}
+            className="md:hidden w-9 h-9 flex flex-col items-center justify-center gap-1.5"
+            aria-label="Toggle menu"
+          >
+            <span className={`block w-5 h-px bg-white/50 transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-[5px]' : ''}`} />
+            <span className={`block w-5 h-px bg-white/50 transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`} />
+            <span className={`block w-5 h-px bg-white/50 transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-[5px]' : ''}`} />
+          </button>
         </div>
       </nav>
 
-      <div className="pt-24 px-6 pb-20">
+      <AnimatePresence>
+        {menuOpen && <MobileMenuOverlay onClose={() => setMenuOpen(false)} />}
+      </AnimatePresence>
+
+      <div className="pt-24 px-5 pb-20">
         <div className="max-w-5xl mx-auto">
 
           {/* Header */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="text-center mb-12"
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className="text-center mb-10 md:mb-12"
           >
-            <span className="inline-block px-5 py-1.5 glass border border-white/8 font-mono text-xs tracking-[0.22em] text-white/30 uppercase mb-5">
-              Client-side &nbsp;/&nbsp; No uploads &nbsp;/&nbsp; Tesseract.js
+            <span className="inline-block px-4 py-1.5 glass border border-white/8 font-mono text-[10px] md:text-xs tracking-[0.2em] text-white/30 uppercase mb-4">
+              Client-side / No uploads / Tesseract.js
             </span>
-            <h1 className="font-display text-5xl md:text-7xl text-gradient mb-4 font-light tracking-tight">OCR Tool</h1>
-            <p className="font-mono text-sm text-white/30">
+            <h1 className="font-display text-4xl sm:text-5xl md:text-7xl text-gradient mb-3 font-light tracking-tight">OCR Tool</h1>
+            <p className="font-mono text-xs md:text-sm text-white/30">
               Drop images to extract text. Everything runs in your browser.
             </p>
           </motion.div>
 
           {/* Dropzone */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
           >
             <div
               {...getRootProps()}
-              className={`relative glass-strong border transition-all cursor-pointer p-12 text-center
-                ${isDragActive
-                  ? 'border-white/30 bg-white/5'
-                  : 'border-white/8 hover:border-white/18 hover:bg-white/3'
-                }`}
+              className={`relative glass-strong border transition-all cursor-pointer p-8 sm:p-12 text-center
+                ${isDragActive ? 'border-white/30 bg-white/5' : 'border-white/8 hover:border-white/18'}`}
             >
               <input {...getInputProps()} />
-
-              {/* Corner accents */}
-              <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-white/12 pointer-events-none" />
-              <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-white/8 pointer-events-none" />
-
-              <div className="flex flex-col items-center gap-4">
-                <div className="w-14 h-14 glass border border-white/8 flex items-center justify-center">
-                  <svg className="w-7 h-7 text-white/25" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-12 h-12 glass border border-white/8 flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white/25" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2}
                       d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="font-mono text-sm text-white/45 mb-1">
-                    {isDragActive ? 'Drop your images here' : 'Drag & drop images, or click to browse'}
+                  <p className="font-mono text-xs sm:text-sm text-white/45 mb-1">
+                    {isDragActive ? 'Drop your images here' : 'Tap to browse or drag & drop'}
                   </p>
-                  <p className="font-mono text-xs text-white/20">
-                    PNG / JPG / WEBP / BMP / TIFF &mdash; Multiple files supported
+                  <p className="font-mono text-[10px] sm:text-xs text-white/20">
+                    PNG / JPG / WEBP / BMP / TIFF
                   </p>
                 </div>
               </div>
@@ -154,65 +190,53 @@ export default function OCRPage() {
           {/* Results */}
           <AnimatePresence>
             {results.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="mt-8 space-y-5"
-              >
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-6 space-y-4">
                 {results.map((result) => (
                   <motion.div
                     key={result.id}
-                    initial={{ opacity: 0, y: 16 }}
+                    initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.97 }}
                     className="glass-strong border border-white/7 overflow-hidden"
                   >
                     {/* Card header */}
-                    <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={result.preview}
-                          alt={result.file.name}
-                          className="w-10 h-10 object-cover border border-white/8"
-                        />
-                        <div>
-                          <p className="font-mono text-sm text-white/70 truncate max-w-[200px] md:max-w-sm">
-                            {result.file.name}
-                          </p>
-                          <p className="font-mono text-[10px] text-white/20 mt-0.5">
-                            {(result.file.size / 1024).toFixed(1)} KB
-                          </p>
+                    <div className="px-4 py-3 border-b border-white/5">
+                      {/* Row 1: thumbnail + filename + remove */}
+                      <div className="flex items-center gap-3 mb-2">
+                        <img src={result.preview} alt={result.file.name} className="w-9 h-9 object-cover border border-white/8 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-mono text-xs text-white/70 truncate">{result.file.name}</p>
+                          <p className="font-mono text-[10px] text-white/20">{(result.file.size / 1024).toFixed(1)} KB</p>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {result.status === 'done' && result.text && (
-                          <>
-                            <button
-                              onClick={() => copyText(result.text)}
-                              className="px-3 py-1.5 glass border border-white/8 hover:border-white/20 font-mono text-xs text-white/40 hover:text-white transition-all"
-                            >
-                              Copy
-                            </button>
-                            <button
-                              onClick={() => downloadText(result.text, result.file.name)}
-                              className="px-3 py-1.5 glass border border-white/8 hover:border-white/20 font-mono text-xs text-white/40 hover:text-white transition-all"
-                            >
-                              Save TXT
-                            </button>
-                          </>
-                        )}
                         <button
                           onClick={() => removeResult(result.id)}
-                          className="w-7 h-7 glass border border-white/6 hover:border-white/18 flex items-center justify-center text-white/25 hover:text-white transition-all font-mono text-sm"
+                          className="w-7 h-7 glass border border-white/6 flex items-center justify-center text-white/25 shrink-0 font-mono text-sm"
                         >
                           &times;
                         </button>
                       </div>
+                      {/* Row 2: action buttons (only when done) */}
+                      {result.status === 'done' && result.text && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => copyText(result.text)}
+                            className="flex-1 py-1.5 glass border border-white/8 font-mono text-xs text-white/40"
+                          >
+                            Copy
+                          </button>
+                          <button
+                            onClick={() => downloadText(result.text, result.file.name)}
+                            className="flex-1 py-1.5 glass border border-white/8 font-mono text-xs text-white/40"
+                          >
+                            Save TXT
+                          </button>
+                        </div>
+                      )}
                     </div>
 
                     {/* Progress */}
                     {result.status === 'processing' && (
-                      <div className="px-5 py-4">
+                      <div className="px-4 py-3">
                         <div className="flex items-center justify-between mb-2">
                           <span className="font-mono text-xs text-white/30">Processing...</span>
                           <span className="font-mono text-xs text-white/20">{result.progress}%</span>
@@ -228,15 +252,15 @@ export default function OCRPage() {
                     )}
 
                     {result.status === 'error' && (
-                      <div className="px-5 py-4">
+                      <div className="px-4 py-3">
                         <p className="font-mono text-xs text-red-400/70">{result.error}</p>
                       </div>
                     )}
 
                     {result.status === 'done' && (
-                      <div className="px-5 py-4">
+                      <div className="px-4 py-3">
                         {result.text.trim() ? (
-                          <pre className="font-mono text-xs text-white/55 whitespace-pre-wrap leading-relaxed max-h-64 overflow-y-auto custom-scrollbar">
+                          <pre className="font-mono text-xs text-white/55 whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto custom-scrollbar">
                             {result.text}
                           </pre>
                         ) : (
