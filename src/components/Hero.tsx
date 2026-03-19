@@ -107,7 +107,7 @@ export default function Hero() {
             whileTap={{ scale: 0.96 }}
             className="px-4 py-3 sm:px-7 sm:py-2.5 glass border border-white/10 active:border-white/25 font-mono text-xs sm:text-sm text-white/50 active:text-white transition-colors text-center"
           >
-            Hacker Lab
+            CyberSec Lab
           </motion.a>
 
           <motion.a
