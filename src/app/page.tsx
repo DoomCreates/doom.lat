@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 import CursorFollower from '@/components/CursorFollower';
 import Hero from '@/components/Hero';
 import MusicPlayer from '@/components/MusicPlayer';
+import AdminPortal from '@/components/AdminPortal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -38,7 +39,7 @@ const PROJECTS = [
       "Movie-accurate voice and behavior"
     ],
     previewVideo: "/videos/JarvisShowcasePreview.mp4",
-    youtubeUrl: "https://youtu.be/mFwV9RZCjDo",
+    youtubeUrl: "https://youtu.be/YOUR_VIDEO_ID_HERE",
     githubUrl: "https://github.com/DoomCreates/JarvisAI",
     label: "Open Source"
   },
@@ -497,6 +498,7 @@ export default function Home() {
       </section>
 
       <MusicPlayer />
+      <AdminPortal />
     </main>
   );
 }
