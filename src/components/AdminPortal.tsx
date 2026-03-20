@@ -51,7 +51,7 @@ async function hashPassword(password: string): Promise<string> {
     .join('');
 }
 
-async function deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey> {
+async function deriveKey(password: string, salt: Uint8Array<ArrayBuffer>): Promise<CryptoKey> {
   const km = await crypto.subtle.importKey(
     'raw',
     new TextEncoder().encode(password),
@@ -69,8 +69,8 @@ async function deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey>
 }
 
 async function encryptValue(text: string, password: string): Promise<string> {
-  const salt = crypto.getRandomValues(new Uint8Array(16));
-  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const salt = crypto.getRandomValues(new Uint8Array(16)) as Uint8Array<ArrayBuffer>;
+  const iv = crypto.getRandomValues(new Uint8Array(12)) as Uint8Array<ArrayBuffer>;
   const key = await deriveKey(password, salt);
   const encrypted = await crypto.subtle.encrypt(
     { name: 'AES-GCM', iv },
@@ -85,10 +85,10 @@ async function encryptValue(text: string, password: string): Promise<string> {
 }
 
 async function decryptValue(ciphertext: string, password: string): Promise<string> {
-  const combined = Uint8Array.from(atob(ciphertext), c => c.charCodeAt(0));
-  const salt = combined.slice(0, 16);
-  const iv = combined.slice(16, 28);
-  const data = combined.slice(28);
+  const combined = Uint8Array.from(atob(ciphertext), c => c.charCodeAt(0)) as Uint8Array<ArrayBuffer>;
+  const salt = combined.slice(0, 16) as Uint8Array<ArrayBuffer>;
+  const iv = combined.slice(16, 28) as Uint8Array<ArrayBuffer>;
+  const data = combined.slice(28) as Uint8Array<ArrayBuffer>;
   const key = await deriveKey(password, salt);
   const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
   return new TextDecoder().decode(decrypted);
