@@ -2,106 +2,151 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Design Tokens ──────────────────────────────────────── */
+/* ─── Tokens ─────────────────────────────────────────────── */
 :root {
-  --bg:          #000000;
-  --bg-raised:   #0a0a0a;
-  --bg-card:     #111111;
-  --border:      rgba(255, 255, 255, 0.07);
-  --border-mid:  rgba(255, 255, 255, 0.13);
-  --border-hi:   rgba(255, 255, 255, 0.25);
-
-  --text-primary:   #ffffff;
-  --text-secondary: #888888;
-  --text-muted:     #444444;
-
-  --accent:      #ffffff;
-  --accent-dim:  rgba(255, 255, 255, 0.08);
-  --accent-glow: rgba(255, 255, 255, 0.06);
+  --bg:       #000000;
+  --rule:     rgba(255, 255, 255, 0.08);
+  --rule-hi:  rgba(255, 255, 255, 0.18);
+  --dim:      rgba(255, 255, 255, 0.35);
+  --muted:    rgba(255, 255, 255, 0.18);
+  --ghost:    rgba(255, 255, 255, 0.07);
+  --accent:   #e8e0cc;            /* warm off-white — used sparingly */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ─── Base ───────────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; }
 
 body {
-  background: #000000;
-  color: #ffffff;
-  font-family: inherit;
+  background: #000;
+  color: #fff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-family: inherit;
+  overflow-x: hidden;
 }
 
-/* ─── Glass Surfaces ─────────────────────────────────────── */
-.glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
+/* ─── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
 
-.glass-strong {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
+.custom-scrollbar::-webkit-scrollbar { width: 3px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); }
+
+/* ─── Selection ──────────────────────────────────────────── */
+::selection { background: rgba(255,255,255,0.12); color: #fff; }
 
 /* ─── Typography Utilities ───────────────────────────────── */
+
+/* Large display — pure white */
+.text-hero {
+  color: #ffffff;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+}
+
+/* Gradient heading — white to warm off-white */
 .text-gradient {
-  background: linear-gradient(135deg, #ffffff 0%, #888888 50%, #ffffff 100%);
+  background: linear-gradient(160deg, #ffffff 0%, #c8c0ac 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .text-gradient-soft {
-  background: linear-gradient(135deg, #ffffff 0%, #aaaaaa 100%);
+  background: linear-gradient(160deg, #ffffff 0%, #aaaaaa 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* ─── Buttons ────────────────────────────────────────────── */
-.btn-primary {
-  background: #ffffff;
-  color: #000000;
-  font-weight: 600;
-  transition: opacity 0.2s, transform 0.15s;
+/* Index numbers — warm accent */
+.text-index {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
 }
-.btn-primary:hover  { opacity: 0.88; }
-.btn-primary:active { transform: scale(0.97); }
 
+/* ─── Surfaces ───────────────────────────────────────────── */
+
+/* Thin ruled border panel — no background fill */
+.panel {
+  border: 1px solid var(--rule);
+}
+
+.panel-hi {
+  border: 1px solid var(--rule-hi);
+}
+
+/* Glass (kept as alias for legacy use) */
+.glass {
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-strong {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* Thin surface — just a faint fill */
+.surface {
+  background: rgba(255,255,255,0.025);
+}
+
+/* ─── Ruled lines ────────────────────────────────────────── */
+.rule { border-top: 1px solid var(--rule); }
+.rule-hi { border-top: 1px solid var(--rule-hi); }
+
+/* ─── Buttons ────────────────────────────────────────────── */
+
+/* Primary — solid white */
+.btn-primary,
 .btn-gradient {
   background: #ffffff;
   color: #000000;
   font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: opacity 0.15s, transform 0.12s;
+}
+.btn-primary:hover,
+.btn-gradient:hover { opacity: 0.88; }
+.btn-primary:active,
+.btn-gradient:active { transform: scale(0.975); }
+
+/* Ghost button */
+.btn-ghost {
+  background: transparent;
+  color: rgba(255,255,255,0.5);
+  border: 1px solid var(--rule);
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-ghost:hover {
+  border-color: var(--rule-hi);
+  color: #fff;
 }
 
-/* ─── Glow (kept as stub — renders nothing on black) ─────── */
-.glow-accent  { box-shadow: none; }
-.glow-purple  { box-shadow: none; }
+/* ─── Orb — ambient glow ─────────────────────────────────── */
+.orb {
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
 
-/* ─── Subtle Grid Background ─────────────────────────────── */
+/* ─── Grid bg ────────────────────────────────────────────── */
 .grid-pattern {
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 64px 64px;
 }
 
-/* ─── Scrollbar ──────────────────────────────────────────── */
-.custom-scrollbar::-webkit-scrollbar       { width: 4px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.03); }
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 2px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.30);
-}
-
-/* ─── Misc ───────────────────────────────────────────────── */
-::selection {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-}
+/* ─── Misc stubs ─────────────────────────────────────────── */
+.glow-accent  { }
+.glow-purple  { }
+.text-gradient-warm { color: var(--accent); }
