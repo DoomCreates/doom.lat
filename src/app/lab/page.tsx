@@ -4,6 +4,7 @@ export const dynamic = 'force-dynamic';
 
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import SubNav from '@/components/SubNav';
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -204,6 +205,31 @@ export default function LabPage() {
           </motion.div>
         </div>
 
+        {/* ── Featured: Neural Network ──────────────────────── */}
+        <motion.div
+          initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }}
+          transition={{ duration:0.5, ease, delay:0.1 }}
+          className="border-b border-white/8 px-6 md:px-12 lg:px-20 py-8"
+        >
+          <Link href="/neural" className="group flex items-center gap-6 md:gap-10">
+            <span className="font-mono text-xs text-index opacity-60 shrink-0 w-6">★</span>
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4 mb-2">
+                <span className="font-mono text-sm text-white group-hover:text-white/90 transition-colors">
+                  Neural Network Playground
+                </span>
+                <span className="font-mono text-[10px] text-white/25 tracking-[0.2em] uppercase">Featured</span>
+              </div>
+              <p className="font-mono text-xs text-white/30 leading-relaxed max-w-lg">
+                Train neural networks in real-time. Live decision boundary visualization, architecture diagram with weight display, and loss curves. TensorFlow.js, runs entirely in your browser.
+              </p>
+            </div>
+            <span className="font-mono text-white/20 text-sm shrink-0 group-hover:text-white/60 transition-colors">
+              &rarr;
+            </span>
+          </Link>
+        </motion.div>
+
         {/* Tool list */}
         <div className="border-b border-white/6">
           {TOOLS.map((tool, i) => {
@@ -219,17 +245,12 @@ export default function LabPage() {
                   onClick={() => setActive(isOpen ? null : tool.id)}
                   className="w-full flex items-center gap-6 px-6 md:px-12 lg:px-20 py-5 text-left hover:bg-white/[0.012] transition-colors duration-150 group"
                 >
-                  {/* Index */}
                   <span className="font-mono text-xs text-index opacity-50 shrink-0 w-6 tabular-nums">
                     {String(i + 1).padStart(2, '0')}
                   </span>
-
-                  {/* Glyph */}
                   <span className={`font-mono text-xs w-8 shrink-0 transition-colors ${isOpen ? 'text-white/70' : 'text-white/25 group-hover:text-white/45'}`}>
                     {tool.glyph}
                   </span>
-
-                  {/* Label + description */}
                   <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
                     <span className={`font-mono text-sm transition-colors ${isOpen ? 'text-white' : 'text-white/60 group-hover:text-white/90'}`}>
                       {tool.label}
@@ -238,8 +259,6 @@ export default function LabPage() {
                       {tool.description}
                     </span>
                   </div>
-
-                  {/* Toggle */}
                   <span className={`font-mono text-white/22 text-base shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-45' : ''}`}>
                     +
                   </span>
