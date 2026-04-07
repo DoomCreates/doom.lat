@@ -34,10 +34,8 @@ export default function Hero() {
       {/* Top rule */}
       <div className="absolute top-0 left-0 right-0 h-px bg-white/8 pointer-events-none" />
 
-      {/* Scrollable content fades out as user scrolls */}
       <motion.div style={{ opacity }} className="relative z-10 w-full">
 
-        {/* Heading block — parallax */}
         <motion.div style={{ y: headingY }} className="px-6 md:px-12 lg:px-20 pt-24 pb-12">
           <motion.div variants={stagger} initial="hidden" animate="visible">
 
@@ -67,10 +65,7 @@ export default function Hero() {
             </motion.p>
 
             {/* CTA row */}
-            <motion.div
-              variants={up}
-              className="flex flex-wrap gap-3"
-            >
+            <motion.div variants={up} className="flex flex-wrap gap-3">
               <a href="/ocr"
                 className="px-6 py-2.5 panel font-mono text-xs text-white/50 hover:text-white hover:border-white/25 transition-all duration-150">
                 OCR Tool
@@ -78,6 +73,10 @@ export default function Hero() {
               <a href="/chess"
                 className="px-6 py-2.5 panel font-mono text-xs text-white/50 hover:text-white hover:border-white/25 transition-all duration-150">
                 Chess
+              </a>
+              <a href="/neural"
+                className="px-6 py-2.5 panel font-mono text-xs text-white/50 hover:text-white hover:border-white/25 transition-all duration-150">
+                Neural Network
               </a>
               <a href="/lab"
                 className="px-6 py-2.5 panel font-mono text-xs text-white/50 hover:text-white hover:border-white/25 transition-all duration-150">
@@ -91,7 +90,7 @@ export default function Hero() {
           </motion.div>
         </motion.div>
 
-        {/* Bottom rule + scroll hint */}
+        {/* Bottom rule + nav links */}
         <motion.div
           variants={up}
           initial="hidden"
@@ -103,6 +102,7 @@ export default function Hero() {
             <Link href="#projects" className="font-mono text-[10px] text-white/20 hover:text-white/50 transition-colors tracking-[0.2em] uppercase">Projects</Link>
             <Link href="#quotes"   className="font-mono text-[10px] text-white/20 hover:text-white/50 transition-colors tracking-[0.2em] uppercase">Philosophy</Link>
             <Link href="#contact"  className="font-mono text-[10px] text-white/20 hover:text-white/50 transition-colors tracking-[0.2em] uppercase">Contact</Link>
+            <Link href="/neural"   className="font-mono text-[10px] text-white/20 hover:text-white/50 transition-colors tracking-[0.2em] uppercase">Neural</Link>
             <Link href="/lab"      className="font-mono text-[10px] text-white/20 hover:text-white/50 transition-colors tracking-[0.2em] uppercase">Lab</Link>
           </div>
           <div className="h-px w-8 bg-white/8" />
