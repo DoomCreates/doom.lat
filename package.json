@@ -9,21 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@tensorflow/tfjs": "^4.22.0",
     "chess.js": "^1.0.0-beta.8",
+    "file-saver": "^2.0.5",
     "framer-motion": "^11.0.0",
     "next": "14.2.3",
     "react": "^18",
     "react-chessboard": "^4.6.0",
     "react-dom": "^18",
-    "tesseract.js": "^5.0.4",
     "react-dropzone": "^14.2.3",
-    "file-saver": "^2.0.5"
+    "tesseract.js": "^5.0.4"
   },
   "devDependencies": {
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "@types/file-saver": "^2.0.7",
     "autoprefixer": "^10.4.14",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
