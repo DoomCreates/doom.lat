@@ -19,7 +19,7 @@ const PROJECTS = [
     secondDescription: 'A two-person project, little to no external involvement.',
     features: ['First/Best of its kind', 'Real-time debug info', 'Advanced Detection Evasion', 'Perfect User Experience'],
     previewVideo: '/videos/blade-ball-showcase.mp4',
-    youtubeUrl: 'https://youtu.be/cmJxEHQ6Jjw',
+    youtubeUrl: 'https://youtu.be/LiY-GimrsqE',
     githubUrl: 'https://github.com/DoomCreates/Nebula.lua',
     label: 'Notable Project',
   },
@@ -30,7 +30,7 @@ const PROJECTS = [
     secondDescription: 'Press a single key, speak naturally — JARVIS handles the rest. Built to be as close to the movie version as possible.',
     features: ['Voice activation via backtick', 'Natural language processing', 'Windows PC control', 'Movie-accurate voice and behavior'],
     previewVideo: '/videos/JarvisShowcasePreview.mp4',
-    youtubeUrl: 'https://youtu.be/mFwV9RZCjDo',
+    youtubeUrl: 'https://youtu.be/YOUR_VIDEO_ID_HERE',
     githubUrl: 'https://github.com/DoomCreates/JarvisAI',
     label: 'Open Source',
   },
@@ -70,7 +70,7 @@ const QUOTES = [
   { text: 'Stay hungry, stay foolish.', author: 'Steve Jobs', category: 'Innovation' },
 ];
 
-// ─── Mobile nav overlay ───────────────────────────────────────────────────────
+// ─── Mobile nav ───────────────────────────────────────────────────────────────
 function MobileNav() {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
@@ -101,13 +101,14 @@ function MobileNav() {
             onClick={close}
           >
             {[
-              { href: '/', label: 'Home' },
-              { href: '/#projects', label: 'Projects' },
-              { href: '/#quotes', label: 'Philosophy' },
-              { href: '/#contact', label: 'Contact' },
-              { href: '/ocr', label: 'OCR Tool' },
-              { href: '/chess', label: 'Chess' },
-              { href: '/lab', label: 'Lab' },
+              { href: '/',        label: 'Home'           },
+              { href: '/#projects', label: 'Projects'     },
+              { href: '/#quotes', label: 'Philosophy'     },
+              { href: '/#contact', label: 'Contact'       },
+              { href: '/ocr',     label: 'OCR Tool'       },
+              { href: '/chess',   label: 'Chess'          },
+              { href: '/neural',  label: 'Neural Network' },
+              { href: '/lab',     label: 'Lab'            },
             ].map(({ href, label }, i) => (
               <motion.div
                 key={href}
@@ -138,12 +139,13 @@ function Nav() {
         </Link>
         <div className="hidden md:flex items-center gap-8">
           {[
-            { href: '/#projects', label: 'Projects' },
-            { href: '/#quotes',   label: 'Philosophy' },
-            { href: '/#contact',  label: 'Contact' },
-            { href: '/ocr',       label: 'OCR' },
-            { href: '/chess',     label: 'Chess' },
-            { href: '/lab',       label: 'Lab' },
+            { href: '/#projects', label: 'Projects'       },
+            { href: '/#quotes',   label: 'Philosophy'     },
+            { href: '/#contact',  label: 'Contact'        },
+            { href: '/ocr',       label: 'OCR'            },
+            { href: '/chess',     label: 'Chess'          },
+            { href: '/neural',    label: 'Neural'         },
+            { href: '/lab',       label: 'Lab'            },
           ].map(({ href, label }) => (
             <Link key={href} href={href}
               className="font-mono text-xs text-white/30 hover:text-white/80 transition-colors duration-150 tracking-wide">
@@ -232,7 +234,6 @@ export default function Home() {
               <button
                 onClick={() => setShowVideo(false)}
                 className="absolute -top-9 right-0 font-mono text-xs text-white/30 hover:text-white transition-colors"
-                aria-label="Close"
               >
                 ESC to close
               </button>
@@ -243,7 +244,6 @@ export default function Home() {
 
       {/* ── Projects ─────────────────────────────────────────── */}
       <section id="projects" className="relative">
-        {/* Section header */}
         <div className="border-t border-b border-white/8 px-6 md:px-12 lg:px-20 py-5 flex items-center justify-between">
           <motion.h2
             initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
@@ -255,7 +255,6 @@ export default function Home() {
           <span className="font-mono text-[10px] text-white/20">{PROJECTS.length} projects</span>
         </div>
 
-        {/* Project rows */}
         <div>
           {PROJECTS.map((project, i) => (
             <motion.div
@@ -266,15 +265,11 @@ export default function Home() {
               viewport={{ once: true }}
               className="border-b border-white/6"
             >
-              {/* Row header — always visible, click to expand */}
               <details className="group">
                 <summary className="flex items-start gap-6 md:gap-10 px-6 md:px-12 lg:px-20 py-8 md:py-10 cursor-pointer list-none select-none hover:bg-white/[0.015] transition-colors duration-150">
-                  {/* Index */}
                   <span className="font-mono text-xs text-index opacity-60 shrink-0 pt-1 w-6">
                     {String(i + 1).padStart(2, '0')}
                   </span>
-
-                  {/* Name + label */}
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4 mb-3">
                       <h3 className="font-display text-2xl sm:text-3xl md:text-4xl font-light tracking-tight text-gradient-soft leading-tight">
@@ -288,17 +283,13 @@ export default function Home() {
                       {project.description}
                     </p>
                   </div>
-
-                  {/* Expand indicator */}
                   <span className="font-mono text-white/20 text-lg shrink-0 pt-1 transition-transform duration-200 group-open:rotate-45">
                     +
                   </span>
                 </summary>
 
-                {/* Expanded content */}
                 <div className="px-6 md:px-12 lg:px-20 pb-10">
                   <div className="ml-0 sm:ml-16 flex flex-col lg:flex-row gap-8 lg:gap-16">
-                    {/* Video */}
                     <div className="flex-1 min-w-0">
                       <div className="aspect-video border border-white/8 overflow-hidden mb-4 bg-black">
                         <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
@@ -325,7 +316,6 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Details */}
                     <div className="lg:w-72 xl:w-80 shrink-0 space-y-6">
                       <p className="font-mono text-xs text-white/35 leading-relaxed">
                         {project.secondDescription}
@@ -349,7 +339,6 @@ export default function Home() {
 
       {/* ── Philosophy ────────────────────────────────────────── */}
       <section id="quotes" className="relative py-24 md:py-32">
-        {/* Header rule */}
         <div className="border-t border-white/8 px-6 md:px-12 lg:px-20 py-5 mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
@@ -423,9 +412,10 @@ export default function Home() {
             <div className="border-t border-white/8 pt-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <p className="font-mono text-xs text-white/15">&copy; 2026 doom.lat</p>
               <div className="flex gap-6">
-                <Link href="/ocr"   className="font-mono text-xs text-white/15 hover:text-white/40 transition-colors">OCR</Link>
-                <Link href="/chess" className="font-mono text-xs text-white/15 hover:text-white/40 transition-colors">Chess</Link>
-                <Link href="/lab"   className="font-mono text-xs text-white/15 hover:text-white/40 transition-colors">Lab</Link>
+                <Link href="/ocr"    className="font-mono text-xs text-white/15 hover:text-white/40 transition-colors">OCR</Link>
+                <Link href="/chess"  className="font-mono text-xs text-white/15 hover:text-white/40 transition-colors">Chess</Link>
+                <Link href="/neural" className="font-mono text-xs text-white/15 hover:text-white/40 transition-colors">Neural</Link>
+                <Link href="/lab"    className="font-mono text-xs text-white/15 hover:text-white/40 transition-colors">Lab</Link>
               </div>
             </div>
           </motion.div>
