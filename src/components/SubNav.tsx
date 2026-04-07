@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const ease = [0.16, 1, 0.3, 1] as const;
 
 interface SubNavProps {
-  active: string; // label of the active link
+  active: string;
 }
 
 export default function SubNav({ active }: SubNavProps) {
@@ -19,10 +19,11 @@ export default function SubNav({ active }: SubNavProps) {
   }, [menuOpen]);
 
   const links = [
-    { href: '/',      label: 'Home'    },
-    { href: '/ocr',   label: 'OCR'     },
-    { href: '/chess', label: 'Chess'   },
-    { href: '/lab',   label: 'Lab'     },
+    { href: '/',        label: 'Home'    },
+    { href: '/ocr',     label: 'OCR'     },
+    { href: '/chess',   label: 'Chess'   },
+    { href: '/neural',  label: 'Neural'  },
+    { href: '/lab',     label: 'Lab'     },
   ];
 
   return (
@@ -45,7 +46,6 @@ export default function SubNav({ active }: SubNavProps) {
             ))}
           </div>
 
-          {/* Mobile hamburger */}
           <button
             onClick={() => setMenuOpen(v => !v)}
             className="md:hidden flex flex-col items-center justify-center gap-[5px] w-8 h-8"
