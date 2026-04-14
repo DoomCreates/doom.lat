@@ -399,13 +399,13 @@ export default function Home() {
               Let&apos;s<br className="hidden sm:block" /> Connect
             </h2>
             <div className="flex flex-col sm:flex-row gap-3 mb-24">
-              <a href="https://pastebin.com/G4yHeMKG" target="_blank" rel="noopener noreferrer"
+              <a href="https://discord.gg/true" target="_blank" rel="noopener noreferrer"
                 className="px-8 py-3 btn-ghost font-mono text-sm text-center">
                 Discord
               </a>
               <a href="about:blank"
                 className="px-8 py-3 btn-gradient font-mono text-sm text-center">
-                TBD
+                Email
               </a>
             </div>
 
