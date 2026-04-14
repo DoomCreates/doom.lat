@@ -80,7 +80,7 @@ export default function Hero() {
               </a>
               <a href="/lab"
                 className="px-6 py-2.5 panel font-mono text-xs text-white/50 hover:text-white hover:border-white/25 transition-all duration-150">
-                Hacker Lab
+                CyberSec Lab
               </a>
               <a href="#contact"
                 className="px-6 py-2.5 btn-gradient font-mono text-xs">
