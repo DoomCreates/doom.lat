@@ -200,7 +200,7 @@ export default function LabPage() {
               Client-side &nbsp;·&nbsp; No data leaves your browser
             </p>
             <h1 className="font-display text-4xl sm:text-5xl md:text-7xl font-light tracking-tight text-white leading-tight">
-              Hacker Lab
+              CyberSec Lab
             </h1>
           </motion.div>
         </div>
