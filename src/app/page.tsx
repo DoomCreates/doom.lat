@@ -403,7 +403,7 @@ export default function Home() {
                 className="px-8 py-3 btn-ghost font-mono text-sm text-center">
                 Discord
               </a>
-              <a href="about:blank"
+              <a href="https://kade.lol"
                 className="px-8 py-3 btn-gradient font-mono text-sm text-center">
                 Email
               </a>
