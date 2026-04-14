@@ -4,87 +4,63 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const PLAYLIST = [
-  { id: 1, name: 'Track 1', src: '/music/track.mp3' },
+  { id: 1, name: 'Track 1', src: '/music/track.mp3'  },
   { id: 2, name: 'Track 2', src: '/music/track2.mp3' },
   { id: 3, name: 'Track 3', src: '/music/track3.mp3' },
 ];
 
 export default function MusicPlayer() {
-  const [mounted, setMounted] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTrack, setCurrentTrack] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(0.7);
-  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
+  const [mounted, setMounted]               = useState(false);
+  const [isPlaying, setIsPlaying]           = useState(false);
+  const [currentTrack, setCurrentTrack]     = useState(0);
+  const [currentTime, setCurrentTime]       = useState(0);
+  const [duration, setDuration]             = useState(0);
+  const [volume, setVolume]                 = useState(0.7);
+  const [showVolumeSlider, setShowVolume]   = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
-    const updateTime = () => setCurrentTime(audio.currentTime);
+    const updateTime     = () => setCurrentTime(audio.currentTime);
     const updateDuration = () => setDuration(audio.duration);
-    const handleEnded = () => nextTrack();
-
-    audio.addEventListener('timeupdate', updateTime);
+    const handleEnded    = () => nextTrack();
+    audio.addEventListener('timeupdate',    updateTime);
     audio.addEventListener('loadedmetadata', updateDuration);
-    audio.addEventListener('ended', handleEnded);
-
+    audio.addEventListener('ended',         handleEnded);
     return () => {
-      audio.removeEventListener('timeupdate', updateTime);
+      audio.removeEventListener('timeupdate',    updateTime);
       audio.removeEventListener('loadedmetadata', updateDuration);
-      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('ended',         handleEnded);
     };
   }, [currentTrack]);
 
   const togglePlay = () => {
     if (!audioRef.current) return;
-    
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play();
-    }
-    setIsPlaying(!isPlaying);
+    isPlaying ? audioRef.current.pause() : audioRef.current.play();
+    setIsPlaying(p => !p);
   };
 
-  const nextTrack = () => {
-    setCurrentTrack((prev) => (prev + 1) % PLAYLIST.length);
-    setIsPlaying(true);
-  };
-
-  const previousTrack = () => {
-    setCurrentTrack((prev) => (prev - 1 + PLAYLIST.length) % PLAYLIST.length);
-    setIsPlaying(true);
-  };
+  const nextTrack     = () => { setCurrentTrack(p => (p + 1) % PLAYLIST.length); setIsPlaying(true); };
+  const previousTrack = () => { setCurrentTrack(p => (p - 1 + PLAYLIST.length) % PLAYLIST.length); setIsPlaying(true); };
 
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!audioRef.current) return;
-    
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const percentage = x / rect.width;
-    audioRef.current.currentTime = percentage * duration;
+    audioRef.current.currentTime = ((e.clientX - rect.left) / rect.width) * duration;
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(e.target.value);
-    setVolume(newVolume);
-    if (audioRef.current) {
-      audioRef.current.volume = newVolume;
-    }
+    const v = parseFloat(e.target.value);
+    setVolume(v);
+    if (audioRef.current) audioRef.current.volume = v;
   };
 
-  const formatTime = (time: number) => {
-    if (isNaN(time)) return '0:00';
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  const fmt = (t: number) => {
+    if (isNaN(t)) return '0:00';
+    return `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
   };
 
   if (!mounted) return null;
@@ -93,11 +69,7 @@ export default function MusicPlayer() {
 
   return (
     <>
-      <audio
-        ref={audioRef}
-        src={PLAYLIST[currentTrack].src}
-        autoPlay={isPlaying}
-      />
+      <audio ref={audioRef} src={PLAYLIST[currentTrack].src} autoPlay={isPlaying} />
 
       <motion.div
         initial={{ y: 100, opacity: 0 }}
@@ -105,39 +77,53 @@ export default function MusicPlayer() {
         transition={{ delay: 1, duration: 0.8 }}
         className="fixed bottom-8 right-8 z-50"
       >
-        <div className="glass-strong rounded-2xl p-4 min-w-[320px] border border-purple-500/30 glow-purple">
+        <div
+          className="rounded-2xl p-4 min-w-[320px] shadow-xl"
+          style={{
+            background: 'rgba(12, 12, 12, 0.92)',
+            border: '1px solid rgba(139,0,0,0.3)',
+            backdropFilter: 'blur(16px)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.7), 0 0 0 1px rgba(139,0,0,0.15)',
+          }}
+        >
           {/* Track info */}
           <div className="mb-4">
-            <div className="font-mono text-sm text-purple-300 mb-1">
+            <div className="font-mono text-sm text-white/70 mb-1">
               {PLAYLIST[currentTrack].name}
             </div>
-            <div className="font-mono text-xs text-purple-400/50">
-              {formatTime(currentTime)} / {formatTime(duration)}
+            <div className="font-mono text-xs text-white/25">
+              {fmt(currentTime)} / {fmt(duration)}
             </div>
           </div>
 
           {/* Progress bar */}
           <div
             onClick={handleSeek}
-            className="h-1.5 bg-purple-900/30 rounded-full mb-4 cursor-pointer overflow-hidden group"
+            className="h-1 bg-white/8 rounded-full mb-4 cursor-pointer overflow-hidden group"
           >
             <motion.div
-              className="h-full bg-gradient-to-r from-purple-500 to-pink-500 rounded-full relative"
-              style={{ width: `${progress}%` }}
+              className="h-full rounded-full relative"
+              style={{
+                width: `${progress}%`,
+                background: 'linear-gradient(90deg, #8b0000, #c0392b)',
+              }}
             >
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity" />
             </motion.div>
           </div>
 
           {/* Controls */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              {/* Previous */}
+              {/* Prev */}
               <button
                 onClick={previousTrack}
-                className="w-8 h-8 rounded-full glass flex items-center justify-center hover:bg-purple-500/20 transition-colors group"
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                style={{ background: 'rgba(139,0,0,0.12)', border: '1px solid rgba(139,0,0,0.2)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(139,0,0,0.25)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(139,0,0,0.12)')}
               >
-                <svg className="w-4 h-4 text-purple-400 group-hover:text-purple-300" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-[#c0392b]" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
                 </svg>
               </button>
@@ -145,7 +131,8 @@ export default function MusicPlayer() {
               {/* Play/Pause */}
               <button
                 onClick={togglePlay}
-                className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center hover:from-purple-600 hover:to-pink-600 transition-all shadow-lg hover:shadow-purple-500/50"
+                className="w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-lg"
+                style={{ background: 'linear-gradient(135deg, #8b0000, #c0392b)' }}
               >
                 {isPlaying ? (
                   <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -161,22 +148,28 @@ export default function MusicPlayer() {
               {/* Next */}
               <button
                 onClick={nextTrack}
-                className="w-8 h-8 rounded-full glass flex items-center justify-center hover:bg-purple-500/20 transition-colors group"
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                style={{ background: 'rgba(139,0,0,0.12)', border: '1px solid rgba(139,0,0,0.2)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(139,0,0,0.25)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(139,0,0,0.12)')}
               >
-                <svg className="w-4 h-4 text-purple-400 group-hover:text-purple-300" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-[#c0392b]" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
                 </svg>
               </button>
             </div>
 
             {/* Volume */}
-            <div 
+            <div
               className="relative"
-              onMouseEnter={() => setShowVolumeSlider(true)}
-              onMouseLeave={() => setShowVolumeSlider(false)}
+              onMouseEnter={() => setShowVolume(true)}
+              onMouseLeave={() => setShowVolume(false)}
             >
-              <button className="w-8 h-8 rounded-full glass flex items-center justify-center hover:bg-purple-500/20 transition-colors group">
-                <svg className="w-4 h-4 text-purple-400 group-hover:text-purple-300" fill="currentColor" viewBox="0 0 24 24">
+              <button
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-colors"
+                style={{ background: 'rgba(139,0,0,0.12)', border: '1px solid rgba(139,0,0,0.2)' }}
+              >
+                <svg className="w-4 h-4 text-[#c0392b]" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z" />
                 </svg>
               </button>
@@ -184,19 +177,23 @@ export default function MusicPlayer() {
               <AnimatePresence>
                 {showVolumeSlider && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute bottom-full right-0 mb-2 p-2 glass-strong rounded-lg border border-purple-500/30"
+                    exit={{ opacity: 0, y: 8 }}
+                    className="absolute bottom-full right-0 mb-2 p-3 rounded-xl shadow-xl"
+                    style={{
+                      background: 'rgba(12,12,12,0.95)',
+                      border: '1px solid rgba(139,0,0,0.25)',
+                      backdropFilter: 'blur(12px)',
+                    }}
                   >
                     <input
-                      type="range"
-                      min="0"
-                      max="1"
-                      step="0.01"
-                      value={volume}
+                      type="range" min="0" max="1" step="0.01" value={volume}
                       onChange={handleVolumeChange}
-                      className="w-24 h-1 bg-purple-900/30 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-gradient-to-r [&::-webkit-slider-thumb]:from-purple-500 [&::-webkit-slider-thumb]:to-pink-500"
+                      className="w-24 h-1 rounded-lg appearance-none cursor-pointer"
+                      style={{
+                        background: `linear-gradient(to right, #8b0000 ${volume * 100}%, rgba(255,255,255,0.1) ${volume * 100}%)`,
+                      }}
                     />
                   </motion.div>
                 )}
