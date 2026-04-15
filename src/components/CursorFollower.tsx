@@ -63,12 +63,12 @@ export default function CursorFollower() {
         <motion.div
           animate={{
             scale: isPointer ? 1.5 : 1,
-            opacity: isPointer ? 0.8 : 0.6,
+            opacity: isPointer ? 0.9 : 0.7,
           }}
           transition={{ duration: 0.2 }}
-          className="w-full h-full rounded-full border-2 border-purple-500"
+          className="w-full h-full rounded-full border-2 border-white"
           style={{
-            boxShadow: '0 0 20px rgba(139, 92, 246, 0.5)',
+            boxShadow: '0 0 25px rgba(255, 255, 255, 0.9)',
           }}
         />
       </motion.div>
@@ -88,9 +88,9 @@ export default function CursorFollower() {
             scale: isPointer ? 0 : 1,
           }}
           transition={{ duration: 0.15 }}
-          className="w-full h-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500"
+          className="w-full h-full rounded-full bg-white"
           style={{
-            boxShadow: '0 0 10px rgba(236, 72, 153, 0.8)',
+            boxShadow: '0 0 15px rgba(255, 255, 255, 1)',
           }}
         />
       </motion.div>
